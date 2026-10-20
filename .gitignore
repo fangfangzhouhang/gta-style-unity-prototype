@@ -1,0 +1,53 @@
+# Unity generated
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+[Mm]emoryCaptures/
+[Rr]ecordings/
+
+# IDE
+.vs/
+.idea/
+.vscode/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Crash / local
+sysinfo.txt
+crashlytics-buildid.txt
+InitTestScene*.unity
+*.apk
+*.aab
+*.unitypackage
+*.app
+ExportedObj/
+.consulo/
+Assets/AssetStoreTools*
+Assets/Plugins/Editor/JetBrains*
+Assets/StreamingAssets/aa*
+ServerData/
+.gradle/
+.plastic/
+*.stackdump
+__pycache__/
+*.pyc

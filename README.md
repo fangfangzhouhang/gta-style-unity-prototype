@@ -75,3 +75,52 @@
 工程的 `ProjectSettings` 里 `activeInputHandler` 为 **Input Manager (Old)**。
 
 如果以后装了 Input System，并且弹出选择窗口，请保持 **Input Manager** 或 **Both**。不要改成只使用新输入系统，否则 WASD 会失效。
+
+## Agent Skills
+
+本仓库已经带好给 Cursor / 云端代理用的 skills。文件在 `.agents/skills/<名称>/SKILL.md`。`.cursor/skills` 是指向该目录的链接，两边看到的是同一套。
+
+`npx skills add -a cursor` 会把 skill 装进 `.agents/skills`，并写进根目录的 `skills-lock.json`。玩法脚本和场景没有因此改动。
+
+### Unity 官方（34 个，整套）
+
+来源：[Unity-Technologies/skills](https://github.com/Unity-Technologies/skills)（Unity Companion License）。
+
+`2d-pixel-perfect`、`asset-transformer-toolkit`、`audio-setup-mixers`、`build-gtk`、`build-live-game`、`create-2d-physics`、`create-tile-palette-or-rule-tiles`、`generate-editor-search-query`、`implement-in-app-purchases`、`initialize-ai-navigation`、`levelplay-unity-integration`、`localization`、`manage-sprite-atlas`、`migrate-birp-to-urp`、`new-unity-project`、`optimize-audio`、`optimize-text-mesh-pro`、`optimize-web`、`physics-3d-collision`、`project-auditor-fixes`、`setup-multiplayer-services`、`setup-vivox-voice-chat`、`shader-graph-create-custom-node`、`sprite-editor`、`sprite-segment-3x3grid`、`ui`、`ui-imgui`、`ui-ugui`、`ui-uitk`、`unity-cli`、`unity-package-management`、`unity-pipeline`、`urp-postprocessing`、`validate-urp-render-graph-renderer-feature`。
+
+### 社区游戏向（15 个，只留和本原型相关的）
+
+来源：[gamedev-skills/awesome-gamedev-agent-skills](https://github.com/gamedev-skills/awesome-gamedev-agent-skills)（Apache 2.0）。没有装 Godot、Unreal、Roblox 或其他引擎整包。
+
+- 路由：`router`
+- Unity：`unity-animation`、`unity-build-pipeline`、`unity-csharp-scripting`、`unity-input-system`、`unity-navmesh`、`unity-physics`、`unity-scriptableobjects`、`unity-tilemap-2d`
+- 工作流：`prototype-fast`
+- 通用：`camera-systems`、`input-systems`、`game-feel`、`level-design`、`physics-tuning`
+
+上游 router 里写的路径 `skills/unity/<名称>/SKILL.md`，在本仓库对应 `.agents/skills/<名称>/SKILL.md`。
+
+### 更新
+
+在仓库根目录执行。已安装的全部按锁文件更新：
+
+```bash
+npx skills update -p -y
+```
+
+重新装官方整套：
+
+```bash
+npx skills add Unity-Technologies/skills -a cursor -s '*' -y --copy
+```
+
+只补社区里这 15 个（`--full-depth` 才会扫到子目录）：
+
+```bash
+npx skills add gamedev-skills/awesome-gamedev-agent-skills -a cursor --full-depth -y --copy \
+  -s router \
+  -s unity-animation -s unity-build-pipeline -s unity-csharp-scripting \
+  -s unity-input-system -s unity-navmesh -s unity-physics \
+  -s unity-scriptableobjects -s unity-tilemap-2d \
+  -s prototype-fast \
+  -s camera-systems -s input-systems -s game-feel -s level-design -s physics-tuning
+```

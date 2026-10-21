@@ -2,7 +2,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 /// <summary>
-/// 交通枢纽流程：购票面板 → 检票 → 淡出加载旅行任务场景。
+/// 交通枢纽：需留条 + 手机看价 + 资金购票 → 检票 → 旅行。
+/// 逃出教学楼前不应直接进入本场景作为主线终点。
 /// </summary>
 public class TransitFlowController : MonoBehaviour
 {
@@ -19,6 +20,13 @@ public class TransitFlowController : MonoBehaviour
         "C-远方03"
     };
 
+    public static readonly int[] TrainPrices =
+    {
+        80,
+        50,
+        30
+    };
+
     public bool HasClearedHub { get; private set; }
     public bool TicketPanelOpen { get; private set; }
     public bool IsBusy { get { return HasClearedHub || clearing; } }
@@ -30,6 +38,10 @@ public class TransitFlowController : MonoBehaviour
 
     void Start()
     {
+        GameProgress.Ensure();
+        PauseMenu.Ensure();
+        GameProgress.Ensure().stage = GameProgress.StageTransit;
+
         if (player == null)
         {
             ThirdPersonController motor = UnityCompat.FindOne<ThirdPersonController>();
@@ -45,6 +57,9 @@ public class TransitFlowController : MonoBehaviour
 
     void Update()
     {
+        if (PauseMenu.Instance != null && PauseMenu.Instance.IsOpen)
+            return;
+
         if (TicketPanelOpen)
         {
             Cursor.lockState = CursorLockMode.None;
@@ -81,12 +96,20 @@ public class TransitFlowController : MonoBehaviour
         if (HasClearedHub || TicketPanelOpen)
             return;
 
+        GameProgress gp = GameProgress.Ensure();
+        if (!gp.leftNote)
+        {
+            NotifyBlocked("还没留纸条", "先回家桌上留条（自己赚钱出去旅游），再来购票");
+            return;
+        }
+
         TicketPanelOpen = true;
         if (hud != null)
         {
             hud.ticketPanelOpen = true;
             hud.showTipBanner = false;
             hud.showSuccessBanner = false;
+            hud.needPhoneForPrices = !PhoneInventory.HasPhone;
         }
 
         if (player != null)
@@ -118,9 +141,29 @@ public class TransitFlowController : MonoBehaviour
 
     public void ConfirmBuyTicket(string trainName)
     {
+        GameProgress gp = GameProgress.Ensure();
+        if (!gp.leftNote)
+        {
+            NotifyBlocked("还没留纸条", "先回家留条再购票");
+            CloseTicketPanel();
+            return;
+        }
+        if (!PhoneInventory.HasPhone)
+        {
+            NotifyBlocked("需要手机", "需要手机才能查看票价并购票");
+            return;
+        }
+
+        int price = PriceOf(trainName);
+        if (!Wallet.TrySpend(price))
+        {
+            NotifyBlocked("资金不足", "票价 " + price + "，当前资金 " + Wallet.Balance + "。回城镇做任务赚钱");
+            return;
+        }
+
         TicketInventory.Grant(trainName);
         CloseTicketPanel();
-        tipText = "已获得车票：" + trainName;
+        tipText = "已购：" + trainName + "（-" + price + "）　余额 " + Wallet.Balance;
         tipUntil = Time.time + 2.2f;
         if (hud != null)
         {
@@ -128,22 +171,37 @@ public class TransitFlowController : MonoBehaviour
             hud.tipTitle = "购票成功";
             hud.tipSubtitle = tipText;
         }
+        SaveSystem.Save();
         RefreshHudIdle();
+    }
+
+    public static int PriceOf(string trainName)
+    {
+        for (int i = 0; i < TrainChoices.Length; i++)
+        {
+            if (TrainChoices[i] == trainName)
+                return TrainPrices[i];
+        }
+        return 50;
+    }
+
+    public void NotifyBlocked(string title, string hint)
+    {
+        tipText = hint;
+        tipUntil = Time.time + 2.0f;
+        if (hud != null)
+        {
+            hud.showTipBanner = true;
+            hud.tipTitle = title;
+            hud.tipSubtitle = tipText;
+        }
     }
 
     public void NotifyNoTicket(string hint)
     {
         if (HasClearedHub || TicketPanelOpen)
             return;
-
-        tipText = string.IsNullOrEmpty(hint) ? "请先购票" : hint;
-        tipUntil = Time.time + 1.6f;
-        if (hud != null)
-        {
-            hud.showTipBanner = true;
-            hud.tipTitle = "无法进站";
-            hud.tipSubtitle = tipText;
-        }
+        NotifyBlocked("无法进站", string.IsNullOrEmpty(hint) ? "请先购票" : hint);
     }
 
     public void NotifyGatePassed()
@@ -160,6 +218,8 @@ public class TransitFlowController : MonoBehaviour
         clearing = true;
         bannerUntil = Time.time + successHoldSeconds;
         TicketInventory.Consume();
+        GameProgress.Ensure().stage = GameProgress.StageTravel;
+        SaveSystem.Save();
 
         if (hud != null)
         {
@@ -187,8 +247,7 @@ public class TransitFlowController : MonoBehaviour
 
         if (!Application.CanStreamedLevelBeLoaded(travelSceneName))
         {
-            Debug.LogWarning("旅行场景未加入 Build Settings：" + travelSceneName +
-                             "。请用菜单 EscapeExam → 生成旅行任务场景 后再试。");
+            Debug.LogWarning("旅行场景未加入 Build Settings：" + travelSceneName);
             if (hud != null)
             {
                 hud.showSuccessBanner = true;
@@ -200,7 +259,6 @@ public class TransitFlowController : MonoBehaviour
 
         SceneManager.LoadScene(travelSceneName);
     }
-
 
     void UpdateNearPrompt()
     {
@@ -218,9 +276,9 @@ public class TransitFlowController : MonoBehaviour
         }
 
         if (TicketInventory.HasTicket)
-            hud.bottomPrompt = "WASD 移动    走近闸机自动检票";
+            hud.bottomPrompt = "WASD 移动  空格跳跃  走近闸机自动检票  Esc 暂停";
         else
-            hud.bottomPrompt = "WASD 移动    E 购票    无票无法过闸机";
+            hud.bottomPrompt = "WASD 移动  空格跳跃  E 购票  Esc 暂停";
     }
 
     public void RefreshHudIdle()
@@ -228,17 +286,33 @@ public class TransitFlowController : MonoBehaviour
         if (hud == null)
             return;
 
+        GameProgress gp = GameProgress.Ensure();
+        string status = "资金：" + gp.money + "　手机：" + (gp.hasPhone ? "有" : "无") +
+                        "　留条：" + (gp.leftNote ? "已留" : "未留");
+
         if (TicketInventory.HasTicket)
         {
             hud.objective = "检票进站";
-            hud.detail = "持有：" + TicketInventory.TicketName + "　走近蓝色闸机进站";
-            hud.bottomPrompt = "WASD 移动    走近闸机自动检票";
+            hud.detail = "持有：" + TicketInventory.TicketName + "　" + status;
+            hud.bottomPrompt = "WASD 移动  走近闸机自动检票";
+        }
+        else if (!gp.leftNote)
+        {
+            hud.objective = "无法购票：尚未留条";
+            hud.detail = "请先回 HubTown → 家门潜行留条。" + status;
+            hud.bottomPrompt = "Esc 暂停保存　回城镇完成留条";
+        }
+        else if (!gp.hasPhone)
+        {
+            hud.objective = "购票窗口需要手机";
+            hud.detail = "无手机只能看到提示，看不到票价。回城镇买手机。" + status;
+            hud.bottomPrompt = "E 打开窗口（仅提示）  Esc 暂停";
         }
         else
         {
-            hud.objective = "在综合交通枢纽购票出行";
-            hud.detail = "靠近橙色高铁窗口按 E 选车次；右侧为机场值机占位";
-            hud.bottomPrompt = "WASD 移动    E 购票    无票无法过闸机";
+            hud.objective = "查看票价并购票";
+            hud.detail = "靠近橙色窗口按 E；票价花费旅游资金。" + status;
+            hud.bottomPrompt = "WASD 移动  E 购票  空格跳跃  Esc 暂停";
         }
     }
 }

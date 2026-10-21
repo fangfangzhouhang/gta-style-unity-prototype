@@ -17,6 +17,9 @@ public class TravelMissionController : MonoBehaviour
 
     void Start()
     {
+        GameProgress.Ensure();
+        PauseMenu.Ensure();
+        GameProgress.Ensure().stage = GameProgress.StageTravel;
         if (hud == null)
             hud = UnityCompat.FindOne<TravelGameHUD>();
         if (points == null || points.Length == 0)
@@ -34,13 +37,15 @@ public class TravelMissionController : MonoBehaviour
 
         lastCompletedTitle = point.title;
         feedbackUntil = Time.time + 2.4f;
+        int reward = 25;
+        Wallet.Add(reward);
         Recount();
 
         if (hud != null)
         {
             hud.showFeedbackBanner = true;
             hud.feedbackTitle = "完成：" + lastCompletedTitle;
-            hud.feedbackSubtitle = CompletedCount + " / " + TotalCount + " 处地标已打卡";
+            hud.feedbackSubtitle = CompletedCount + " / " + TotalCount + " 处地标已打卡　+" + reward + " 资金";
         }
 
         RefreshHud();
@@ -78,7 +83,7 @@ public class TravelMissionController : MonoBehaviour
         {
             hud.showFeedbackBanner = true;
             hud.feedbackTitle = "旅行任务完成";
-            hud.feedbackSubtitle = "v0.3 切片通关 · 三处地标已打卡";
+            hud.feedbackSubtitle = "v0.4 旅行通关 · 三处地标已打卡　资金 " + Wallet.Balance;
             hud.objective = "旅行任务完成";
             hud.detail = "西湖 · 长城 · 黄山";
             hud.bottomPrompt = "可退出 Play；后续里程碑再扩展更多城市";

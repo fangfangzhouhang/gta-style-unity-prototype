@@ -1,7 +1,7 @@
 using UnityEngine;
 
 /// <summary>
-/// 交通枢纽中文 OnGUI：目标条、购票面板、提示横幅。风格贴近 StealthGameHUD。
+/// 交通枢纽中文 OnGUI：无手机时只提示需要手机；有手机显示票价。
 /// </summary>
 public class TransitGameHUD : MonoBehaviour
 {
@@ -13,6 +13,7 @@ public class TransitGameHUD : MonoBehaviour
     public string bottomPrompt = "WASD 移动    E 购票";
 
     public bool ticketPanelOpen;
+    public bool needPhoneForPrices;
     public bool showTipBanner;
     public bool showSuccessBanner;
     public string tipTitle = "提示";
@@ -32,8 +33,9 @@ public class TransitGameHUD : MonoBehaviour
         "点击游戏画面，开始控制镜头。目标在综合交通枢纽购票出行检票进站。" +
         "靠近橙色高铁窗口按选车次右侧为机场值机占位。持有走近蓝色闸机。" +
         "购票成功已获得车票无法进站请先到窗口核验通过正在前往旅行任务区。" +
+        "需要手机才能查看票价资金不足留条票价旅游资金余额。" +
         "请打开菜单生成旅行场景。确认关闭取消自由出走远方。" +
-        "WASD E Esc ：，。0123456789 G-D-C 米";
+        "WASD E Esc 空格跳跃：，。0123456789 G-D-C 米";
 
     void Awake()
     {
@@ -62,6 +64,8 @@ public class TransitGameHUD : MonoBehaviour
 
     void OnGUI()
     {
+        if (PauseMenu.Instance != null && PauseMenu.Instance.IsOpen)
+            return;
         EnsureStyles();
 
         if (!ticketPanelOpen && Cursor.lockState != CursorLockMode.Locked)
@@ -81,20 +85,38 @@ public class TransitGameHUD : MonoBehaviour
     void DrawTicketPanel()
     {
         float w = Mathf.Min(Screen.width * 0.55f, 520f);
-        float h = 320f;
+        float h = needPhoneForPrices ? 260f : 340f;
         Rect panel = new Rect((Screen.width - w) * 0.5f, (Screen.height - h) * 0.5f, w, h);
         DrawPanel(panel, new Color(0.06f, 0.1f, 0.16f, 0.92f));
 
-        GUI.Label(new Rect(panel.x, panel.y + 16f, panel.width, 40f), "选择车次", title);
+        GUI.Label(new Rect(panel.x, panel.y + 16f, panel.width, 40f), "购票窗口", title);
+
+        if (needPhoneForPrices)
+        {
+            GUI.Label(new Rect(panel.x + 20f, panel.y + 70f, panel.width - 40f, 80f),
+                "需要手机才能查看票价\n请先回城镇路边摊购买手机", body);
+            Rect closeOnly = new Rect(panel.x + 40f, panel.y + h - 52f, panel.width - 80f, 36f);
+            if (GUI.Button(closeOnly, "关闭（Esc）", button))
+            {
+                if (flow == null)
+                    flow = UnityCompat.FindOne<TransitFlowController>();
+                if (flow != null)
+                    flow.CloseTicketPanel();
+            }
+            return;
+        }
+
         GUI.Label(new Rect(panel.x + 20f, panel.y + 56f, panel.width - 40f, 28f),
-            "高铁窗口 · 确认后获得车票", body);
+            "资金：" + Wallet.Balance + "　选择车次（确认扣款）", body);
 
         string[] trains = TransitFlowController.TrainChoices;
+        int[] prices = TransitFlowController.TrainPrices;
         float by = panel.y + 100f;
         for (int i = 0; i < trains.Length; i++)
         {
             Rect br = new Rect(panel.x + 40f, by + i * 48f, panel.width - 80f, 40f);
-            if (GUI.Button(br, trains[i], button))
+            string label = trains[i] + "　票价 " + prices[i];
+            if (GUI.Button(br, label, button))
             {
                 if (flow == null)
                     flow = UnityCompat.FindOne<TransitFlowController>();

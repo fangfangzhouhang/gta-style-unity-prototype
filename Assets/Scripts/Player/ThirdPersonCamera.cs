@@ -45,17 +45,27 @@ public class ThirdPersonCamera : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) &&
+            (PauseMenu.Instance == null || !PauseMenu.Instance.IsOpen))
         {
+            WorldMapUI map = UnityCompat.FindOne<WorldMapUI>();
+            if (map != null && map.IsOpen)
+                return;
+            TransitFlowController transit = UnityCompat.FindOne<TransitFlowController>();
+            if (transit != null && transit.TicketPanelOpen)
+                return;
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
 
-        if (Input.GetKeyDown(KeyCode.Escape))
+        // Esc 由 PauseMenu 接管；无暂停菜单时仍解锁鼠标
+        if (Input.GetKeyDown(KeyCode.Escape) && PauseMenu.Instance == null)
         {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
         }
+        if (PauseMenu.Instance != null && PauseMenu.Instance.IsOpen)
+            return;
 
         if (Cursor.lockState != CursorLockMode.Locked)
             return;

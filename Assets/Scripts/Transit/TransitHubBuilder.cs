@@ -152,6 +152,8 @@ public static class TransitHubBuilder
             LevelBuildUtil.DestroyObject(legacy);
 
         flow.RefreshHudIdle();
+        PauseMenu.Ensure();
+        GameProgress.Ensure();
         follow.Snap();
     }
 }

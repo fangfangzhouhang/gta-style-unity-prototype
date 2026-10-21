@@ -26,4 +26,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/TravelMissions.unity
     guid: d1000000000000000000000000000021
+  - enabled: 1
+    path: Assets/Scenes/NetLobby.unity
+    guid: d1000000000000000000000000000040
+  - enabled: 1
+    path: Assets/Scenes/NetExamHall.unity
+    guid: d1000000000000000000000000000041
+  - enabled: 1
+    path: Assets/Scenes/NetMeetup.unity
+    guid: d1000000000000000000000000000042
   m_configObjects: {}

@@ -40,19 +40,39 @@ public static class SchoolEscapeBuilder
         CreateCabinet(root, new Vector3(3.2f, 1f, 24f));
         CreateCabinet(root, new Vector3(-3.2f, 1f, 30f));
 
-        // 巡逻 1：走廊中段
+        // 多老师随机路线巡逻（走廊 + 近校门）
         CreatePatrol(root, "Patrol_A",
             new Vector3(1.5f, 0f, 10f),
-            new Vector3(1.5f, 0f, 8f),
-            new Vector3(1.5f, 0f, 22f),
-            2.0f);
+            new[]
+            {
+                new Vector3(1.5f, 0f, 6f),
+                new Vector3(1.5f, 0f, 14f),
+                new Vector3(-1.5f, 0f, 18f),
+                new Vector3(1.5f, 0f, 22f)
+            },
+            2.0f, 4.8f);
 
-        // 巡逻 2：靠校门
         CreatePatrol(root, "Patrol_B",
             new Vector3(-1.2f, 0f, 28f),
-            new Vector3(-1.2f, 0f, 26f),
-            new Vector3(-1.2f, 0f, 36f),
-            1.8f);
+            new[]
+            {
+                new Vector3(-1.2f, 0f, 24f),
+                new Vector3(1.5f, 0f, 30f),
+                new Vector3(-1.2f, 0f, 36f),
+                new Vector3(0f, 0f, 32f)
+            },
+            1.8f, 4.6f);
+
+        CreatePatrol(root, "Patrol_C",
+            new Vector3(0f, 0f, 16f),
+            new[]
+            {
+                new Vector3(-2f, 0f, 12f),
+                new Vector3(2f, 0f, 16f),
+                new Vector3(-2f, 0f, 20f),
+                new Vector3(2f, 0f, 24f)
+            },
+            1.9f, 4.7f);
 
         Vector3 spawn = new Vector3(0f, 1.02f, -1.5f);
         GameObject player = LevelBuildUtil.CreatePlayer(root, spawn, true);
@@ -89,7 +109,7 @@ public static class SchoolEscapeBuilder
         cab.AddComponent<CoverTag>().label = "柜子";
     }
 
-    static void CreatePatrol(Transform root, string name, Vector3 start, Vector3 a, Vector3 b, float speed)
+    static void CreatePatrol(Transform root, string name, Vector3 start, Vector3[] route, float patrolSpeed, float chaseSpeed)
     {
         var go = new GameObject(name);
         go.transform.SetParent(root, false);
@@ -108,18 +128,23 @@ public static class SchoolEscapeBuilder
         cone.viewDistance = 9f;
         cone.viewAngle = 60f;
         cone.eyeHeight = 1.55f;
+        cone.keepCheckingAfterSpot = true;
 
-        var wpA = new GameObject(name + "_A");
-        wpA.transform.SetParent(root, false);
-        wpA.transform.position = a;
-        var wpB = new GameObject(name + "_B");
-        wpB.transform.SetParent(root, false);
-        wpB.transform.position = b;
+        var wps = new Transform[route.Length];
+        for (int i = 0; i < route.Length; i++)
+        {
+            var wp = new GameObject(name + "_WP" + i);
+            wp.transform.SetParent(root, false);
+            wp.transform.position = route[i];
+            wps[i] = wp.transform;
+        }
 
-        var patrol = go.AddComponent<SimplePatrol>();
-        patrol.waypoints = new[] { wpA.transform, wpB.transform };
-        patrol.moveSpeed = speed;
-        patrol.waitAtPoint = 0.6f;
+        var agent = go.AddComponent<TeacherAgent>();
+        agent.waypoints = wps;
+        agent.patrolSpeed = patrolSpeed;
+        agent.chaseSpeed = chaseSpeed;
+        agent.randomPatrol = true;
+        agent.catchDistance = 1.35f;
     }
 
     static void Wire(GameObject player, Camera cam, Transform checkpoint)
@@ -127,6 +152,7 @@ public static class SchoolEscapeBuilder
         var motor = player.GetComponent<ThirdPersonController>();
         var follow = cam.GetComponent<ThirdPersonCamera>();
         motor.view = cam.transform;
+        motor.allowCrouch = true;
         follow.target = player.transform;
         follow.targetOffset = ThirdPersonCamera.OnFootOffset;
         follow.distance = ThirdPersonCamera.OnFootDistance;
@@ -155,7 +181,8 @@ public static class SchoolEscapeBuilder
         if (gate != null)
             gate.flow = flow;
 
-        flow.BindDetectors();
+        flow.BindTeachers();
+        PauseMenu.Ensure();
         follow.Snap();
 
         MissionHUD legacy = systems.GetComponent<MissionHUD>();

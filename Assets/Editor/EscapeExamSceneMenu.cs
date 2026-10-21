@@ -5,12 +5,14 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 
 /// <summary>
-/// 《逃离考场》编辑器菜单：考场 / 学校 / 交通枢纽 / 旅行任务场景生成与 Build Settings。
+/// 《逃离考场》编辑器菜单：考场 / 学校 / 现实城镇 / 家庭 / 枢纽 / 旅行。
 /// </summary>
 public static class EscapeExamSceneMenu
 {
     const string ExamScenePath = "Assets/Scenes/ExamHall.unity";
     const string SchoolScenePath = "Assets/Scenes/SchoolEscape.unity";
+    const string HubTownScenePath = "Assets/Scenes/HubTown.unity";
+    const string HomeScenePath = "Assets/Scenes/Home.unity";
     const string TransitScenePath = "Assets/Scenes/TransitHub.unity";
     const string TravelScenePath = "Assets/Scenes/TravelMissions.unity";
     const string OpenWorldScenePath = "Assets/Scenes/OpenWorld.unity";
@@ -31,7 +33,7 @@ public static class EscapeExamSceneMenu
         EnsureBuildSettings();
         EditorUtility.DisplayDialog(
             "EscapeExam",
-            "考场场景已生成并保存。\n点 Play：蹲走躲监考 → 走到绿色出口 →「逃出考场」。",
+            "考场场景已生成。\n点 Play：空格跳、蹲走躲老师追赶；被抓→座位被迫学习→再逃；绿门逃出。",
             "好");
     }
 
@@ -51,7 +53,47 @@ public static class EscapeExamSceneMenu
         EnsureBuildSettings();
         EditorUtility.DisplayDialog(
             "EscapeExam",
-            "学校场景已生成并保存。\n点 Play：避开巡逻 → 走到蓝色校门 →「逃出学校」→ 可进枢纽。",
+            "学校场景已生成。\n点 Play：多老师随机巡视追赶 → 蓝校门 → 进入现实城镇（非直接 TransitHub）。",
+            "好");
+    }
+
+    [MenuItem("EscapeExam/生成现实城镇场景")]
+    public static void GenerateHubTown()
+    {
+        if (!GuardEditMode())
+            return;
+        if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+            return;
+
+        EnsureSceneAssetWithBootstrap(HubTownScenePath, "b400000000000000000000000000000e");
+        var scene = EditorSceneManager.OpenScene(HubTownScenePath, OpenSceneMode.Single);
+        HubTownBuilder.Build();
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene);
+        EnsureBuildSettings();
+        EditorUtility.DisplayDialog(
+            "EscapeExam",
+            "现实城镇已生成。\n回家留条 → 买手机 → 黄圈赚钱 → M 地图 → 蓝门进枢纽。",
+            "好");
+    }
+
+    [MenuItem("EscapeExam/生成家庭场景")]
+    public static void GenerateHome()
+    {
+        if (!GuardEditMode())
+            return;
+        if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+            return;
+
+        EnsureSceneAssetWithBootstrap(HomeScenePath, "b400000000000000000000000000000a");
+        var scene = EditorSceneManager.OpenScene(HomeScenePath, OpenSceneMode.Single);
+        HomeBuilder.Build();
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene);
+        EnsureBuildSettings();
+        EditorUtility.DisplayDialog(
+            "EscapeExam",
+            "家庭场景已生成。\n避开家长视野，桌上按 E 留条（自己赚钱出去旅游）。",
             "好");
     }
 
@@ -71,7 +113,7 @@ public static class EscapeExamSceneMenu
         EnsureBuildSettings();
         EditorUtility.DisplayDialog(
             "EscapeExam",
-            "交通枢纽已生成。\n点 Play：靠近橙色窗口按 E 选「G-自由01」→ 走过蓝色闸机 → 进入旅行区。",
+            "交通枢纽已生成。\n需已留条；无手机看不到票价；有手机花钱购票 → 闸机 → 旅行。",
             "好");
     }
 
@@ -91,33 +133,27 @@ public static class EscapeExamSceneMenu
         EnsureBuildSettings();
         EditorUtility.DisplayDialog(
             "EscapeExam",
-            "旅行任务场景已生成。\n点 Play：走进三个黄圈（西湖 / 长城 / 黄山）完成打卡。",
+            "旅行任务场景已生成。\n点 Play：走进三个黄圈打卡并获得旅游资金。",
             "好");
     }
 
     [MenuItem("EscapeExam/打开考场场景")]
-    public static void OpenExam()
-    {
-        OpenPath(ExamScenePath);
-    }
+    public static void OpenExam() { OpenPath(ExamScenePath); }
 
     [MenuItem("EscapeExam/打开学校场景")]
-    public static void OpenSchool()
-    {
-        OpenPath(SchoolScenePath);
-    }
+    public static void OpenSchool() { OpenPath(SchoolScenePath); }
+
+    [MenuItem("EscapeExam/打开现实城镇场景")]
+    public static void OpenHubTown() { OpenPath(HubTownScenePath); }
+
+    [MenuItem("EscapeExam/打开家庭场景")]
+    public static void OpenHome() { OpenPath(HomeScenePath); }
 
     [MenuItem("EscapeExam/打开交通枢纽场景")]
-    public static void OpenTransit()
-    {
-        OpenPath(TransitScenePath);
-    }
+    public static void OpenTransit() { OpenPath(TransitScenePath); }
 
     [MenuItem("EscapeExam/打开旅行任务场景")]
-    public static void OpenTravel()
-    {
-        OpenPath(TravelScenePath);
-    }
+    public static void OpenTravel() { OpenPath(TravelScenePath); }
 
     [MenuItem("EscapeExam/将场景写入 Build Settings")]
     public static void MenuEnsureBuildSettings()
@@ -125,7 +161,7 @@ public static class EscapeExamSceneMenu
         EnsureBuildSettings();
         EditorUtility.DisplayDialog(
             "EscapeExam",
-            "已确保 OpenWorld / ExamHall / SchoolEscape / TransitHub / TravelMissions 在 Build Settings 中。",
+            "已确保 OpenWorld / ExamHall / SchoolEscape / HubTown / Home / TransitHub / TravelMissions 在 Build Settings 中。",
             "好");
     }
 
@@ -165,11 +201,9 @@ public static class EscapeExamSceneMenu
         if (File.Exists(path))
             return;
 
-        // bootstrapGuid 预留给将来写入带组件的 YAML；目前仓库已带 Bootstrap 场景文件。
         if (string.IsNullOrEmpty(bootstrapGuid))
             bootstrapGuid = "";
 
-        // 仓库已提供带 Bootstrap 的 YAML 场景；若缺失则建空场景，生成菜单会挂上 Builder。
         var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
         EditorSceneManager.SaveScene(scene, path);
         AssetDatabase.Refresh();
@@ -182,6 +216,8 @@ public static class EscapeExamSceneMenu
             OpenWorldScenePath,
             ExamScenePath,
             SchoolScenePath,
+            HubTownScenePath,
+            HomeScenePath,
             TransitScenePath,
             TravelScenePath
         };

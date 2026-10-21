@@ -43,27 +43,46 @@ public static class ExamHallBuilder
         CreateCabinet(root, new Vector3(-9.2f, 1.0f, 8f));
         CreateCabinet(root, new Vector3(9.2f, 1.0f, 12f));
 
-        // 监考老师：面向教室后方（-Z），盯着座位区
-        CreateTeacher(root, new Vector3(0f, 0f, 17.2f), Quaternion.Euler(0f, 180f, 0f));
+        // 讲台主监考：多路点随机巡视（考场前区）
+        Transform[] frontRoute =
+        {
+            MakeWp(root, "T1_A", new Vector3(-3f, 0f, 16.5f)),
+            MakeWp(root, "T1_B", new Vector3(3f, 0f, 16.5f)),
+            MakeWp(root, "T1_C", new Vector3(0f, 0f, 18.5f)),
+            MakeWp(root, "T1_D", new Vector3(0f, 0f, 14.5f))
+        };
+        CreateTeacher(root, new Vector3(0f, 0f, 17.2f), Quaternion.Euler(0f, 180f, 0f),
+            frontRoute, 1.5f, 4.4f);
 
-        // 第二监考：侧边缓慢踱步
-        GameObject sideProctor = CreateTeacher(root, new Vector3(8.5f, 0f, 10f), Quaternion.Euler(0f, -90f, 0f));
+        // 侧边监考：走廊式随机路点
+        Transform[] sideRoute =
+        {
+            MakeWp(root, "T2_A", new Vector3(8.5f, 0f, 4f)),
+            MakeWp(root, "T2_B", new Vector3(8.5f, 0f, 10f)),
+            MakeWp(root, "T2_C", new Vector3(8.5f, 0f, 16f)),
+            MakeWp(root, "T2_D", new Vector3(6.5f, 0f, 12f))
+        };
+        GameObject sideProctor = CreateTeacher(root, new Vector3(8.5f, 0f, 10f),
+            Quaternion.Euler(0f, -90f, 0f), sideRoute, 1.8f, 4.8f);
         sideProctor.name = "SideProctor";
-        var patrol = sideProctor.AddComponent<SimplePatrol>();
-        var wpA = new GameObject("WP_A");
-        wpA.transform.SetParent(root, false);
-        wpA.transform.position = new Vector3(8.5f, 0f, 6f);
-        var wpB = new GameObject("WP_B");
-        wpB.transform.SetParent(root, false);
-        wpB.transform.position = new Vector3(8.5f, 0f, 16f);
-        patrol.waypoints = new[] { wpA.transform, wpB.transform };
-        patrol.moveSpeed = 1.6f;
         VisionConeDetector sideCone = sideProctor.GetComponent<VisionConeDetector>();
         if (sideCone != null)
         {
-            sideCone.viewDistance = 8f;
+            sideCone.viewDistance = 8.5f;
             sideCone.viewAngle = 55f;
         }
+
+        // 后排巡视老师（考场深处）
+        Transform[] rearRoute =
+        {
+            MakeWp(root, "T3_A", new Vector3(-7f, 0f, 2f)),
+            MakeWp(root, "T3_B", new Vector3(0f, 0f, 0.5f)),
+            MakeWp(root, "T3_C", new Vector3(7f, 0f, 2f)),
+            MakeWp(root, "T3_D", new Vector3(0f, 0f, 4f))
+        };
+        GameObject rear = CreateTeacher(root, new Vector3(-7f, 0f, 2f),
+            Quaternion.Euler(0f, 90f, 0f), rearRoute, 1.7f, 4.5f);
+        rear.name = "RearProctor";
 
         // 玩家出生：后排座位附近（检查点）
         Vector3 spawn = new Vector3(0f, 1.02f, -2.5f);
@@ -154,7 +173,7 @@ public static class ExamHallBuilder
         cab.AddComponent<CoverTag>().label = "柜子";
     }
 
-    static GameObject CreateTeacher(Transform root, Vector3 pos, Quaternion rot)
+    static GameObject CreateTeacher(Transform root, Vector3 pos, Quaternion rot, Transform[] route, float patrolSpeed, float chaseSpeed)
     {
         var go = new GameObject("Teacher");
         go.transform.SetParent(root, false);
@@ -165,7 +184,6 @@ public static class ExamHallBuilder
             new Vector3(0f, 1f, 0f), new Vector3(0.85f, 1f, 0.85f), Quaternion.identity,
             EscapePalette.Teacher, "CarBody", false);
 
-        // 简单阻挡碰撞
         var box = go.AddComponent<CapsuleCollider>();
         box.center = new Vector3(0f, 1f, 0f);
         box.height = 2f;
@@ -175,7 +193,23 @@ public static class ExamHallBuilder
         cone.viewDistance = 11f;
         cone.viewAngle = 65f;
         cone.eyeHeight = 1.55f;
+        cone.keepCheckingAfterSpot = true;
+
+        var agent = go.AddComponent<TeacherAgent>();
+        agent.waypoints = route;
+        agent.patrolSpeed = patrolSpeed;
+        agent.chaseSpeed = chaseSpeed;
+        agent.randomPatrol = true;
+        agent.catchDistance = 1.35f;
         return go;
+    }
+
+    static Transform MakeWp(Transform root, string name, Vector3 pos)
+    {
+        var wp = new GameObject(name);
+        wp.transform.SetParent(root, false);
+        wp.transform.position = pos;
+        return wp.transform;
     }
 
     static void Wire(GameObject player, Camera cam, Transform checkpoint)
@@ -183,6 +217,7 @@ public static class ExamHallBuilder
         var motor = player.GetComponent<ThirdPersonController>();
         var follow = cam.GetComponent<ThirdPersonCamera>();
         motor.view = cam.transform;
+        motor.allowCrouch = true;
         follow.target = player.transform;
         follow.targetOffset = ThirdPersonCamera.OnFootOffset;
         follow.distance = ThirdPersonCamera.OnFootDistance;
@@ -213,7 +248,8 @@ public static class ExamHallBuilder
         if (exit != null)
             exit.flow = flow;
 
-        flow.BindDetectors();
+        flow.BindTeachers();
+        PauseMenu.Ensure();
         follow.Snap();
 
         // 避免残留开世界 HUD

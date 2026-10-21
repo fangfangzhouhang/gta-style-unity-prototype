@@ -2,27 +2,34 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 /// <summary>
-/// 学校逃离流程：发现 → 回检查点；校门 → 「逃出学校」→ 可选进入交通枢纽。
+/// 学校逃离：老师追赶抓住 → 送回检查点短暂锁定；校门成功 → 现实城镇（非 TransitHub）。
 /// </summary>
 public class SchoolFlowController : MonoBehaviour
 {
     public Transform checkpoint;
     public Transform player;
     public StealthGameHUD hud;
-    public float failHoldSeconds = 1.6f;
+    public float failHoldSeconds = 1.4f;
+    public float studyHoldSeconds = 2.2f;
     public float successHoldSeconds = 1.8f;
-    public string transitSceneName = "TransitHub";
-    public bool autoLoadTransit = true;
+    public string hubSceneName = "HubTown";
+    public bool autoLoadHub = true;
 
     public bool HasEscapedSchool { get; private set; }
+    public bool IsBusy { get { return failing || studying || successPending; } }
 
     bool failing;
+    bool studying;
     bool successPending;
     float bannerUntil;
-    VisionConeDetector[] cones;
+    TeacherAgent[] agents;
 
     void Start()
     {
+        GameProgress.Ensure();
+        PauseMenu.Ensure();
+        GameProgress.Ensure().stage = GameProgress.StageSchool;
+
         if (player == null)
         {
             ThirdPersonController motor = UnityCompat.FindOne<ThirdPersonController>();
@@ -33,88 +40,92 @@ public class SchoolFlowController : MonoBehaviour
         if (hud == null)
             hud = UnityCompat.FindOne<StealthGameHUD>();
 
-        BindDetectors();
+        BindTeachers();
         RefreshHudIdle();
     }
 
+    public void BindTeachers()
+    {
+        agents = UnityCompat.FindAll<TeacherAgent>();
+        for (int i = 0; i < agents.Length; i++)
+        {
+            if (agents[i] == null)
+                continue;
+            agents[i].OnCaughtPlayer -= HandleCaught;
+            agents[i].OnCaughtPlayer += HandleCaught;
+        }
+    }
+
+    // 兼容旧 Builder 调用名
     public void BindDetectors()
     {
-        cones = UnityCompat.FindAll<VisionConeDetector>();
-        for (int i = 0; i < cones.Length; i++)
-        {
-            if (cones[i] == null)
-                continue;
-            cones[i].OnPlayerSpotted -= HandleSpotted;
-            cones[i].OnPlayerSpotted += HandleSpotted;
-        }
+        BindTeachers();
     }
 
     void OnDestroy()
     {
-        if (cones == null)
+        if (agents == null)
             return;
-        for (int i = 0; i < cones.Length; i++)
+        for (int i = 0; i < agents.Length; i++)
         {
-            if (cones[i] != null)
-                cones[i].OnPlayerSpotted -= HandleSpotted;
+            if (agents[i] != null)
+                agents[i].OnCaughtPlayer -= HandleCaught;
         }
     }
 
     void Update()
     {
+        if (PauseMenu.Instance != null && PauseMenu.Instance.IsOpen)
+            return;
+
         if (failing && Time.time >= bannerUntil)
-            FinishFail();
+            BeginForcedStudy();
+
+        if (studying && Time.time >= bannerUntil)
+            FinishStudy();
 
         if (successPending && Time.time >= bannerUntil)
         {
             successPending = false;
             if (hud != null)
                 hud.showSuccessBanner = false;
-            if (autoLoadTransit)
-                TryLoadTransit();
+            if (autoLoadHub)
+                TryLoadHub();
         }
     }
 
-    void HandleSpotted(VisionConeDetector source, Transform spotted)
+    void HandleCaught(TeacherAgent source, Transform spotted)
     {
-        if (HasEscapedSchool || failing || successPending)
+        if (HasEscapedSchool || IsBusy)
             return;
-        BeginFail();
+        BeginCatchSequence();
     }
 
-    void BeginFail()
+    void BeginCatchSequence()
     {
         failing = true;
         bannerUntil = Time.time + failHoldSeconds;
-
         if (hud != null)
         {
             hud.showFailBanner = true;
             hud.showSuccessBanner = false;
-            hud.failTitle = "被发现了";
-            hud.failSubtitle = "正在回到检查点…";
+            hud.failTitle = "被老师抓住了";
+            hud.failSubtitle = "正在带回…";
         }
-
         if (player != null)
         {
             ThirdPersonController motor = player.GetComponent<ThirdPersonController>();
             if (motor != null)
                 motor.controlEnabled = false;
         }
-
-        SimplePatrol[] patrols = UnityCompat.FindAll<SimplePatrol>();
-        for (int i = 0; i < patrols.Length; i++)
-        {
-            if (patrols[i] != null)
-                patrols[i].SetPaused(true);
-        }
+        PauseTeachers(true);
     }
 
-    void FinishFail()
+    void BeginForcedStudy()
     {
         failing = false;
-        if (hud != null)
-            hud.showFailBanner = false;
+        studying = true;
+        bannerUntil = Time.time + studyHoldSeconds;
 
         if (player != null && checkpoint != null)
         {
@@ -125,7 +136,41 @@ public class SchoolFlowController : MonoBehaviour
             player.rotation = checkpoint.rotation;
             if (body != null)
                 body.enabled = true;
+            ThirdPersonCamera cam = UnityCompat.FindOne<ThirdPersonCamera>();
+            if (cam != null)
+                cam.Snap();
+            GameProgress.Ensure().SetCheckpoint(checkpoint.position);
+        }
 
+        TeacherAgent[] all = UnityCompat.FindAll<TeacherAgent>();
+        for (int i = 0; i < all.Length; i++)
+        {
+            if (all[i] != null)
+                all[i].ResetToPatrol();
+        }
+        VisionConeDetector[] cones = UnityCompat.FindAll<VisionConeDetector>();
+        for (int i = 0; i < cones.Length; i++)
+        {
+            if (cones[i] != null)
+                cones[i].ResetSpot();
+        }
+
+        if (hud != null)
+        {
+            hud.showFailBanner = true;
+            hud.failTitle = "被迫学习";
+            hud.failSubtitle = "走廊反省片刻，再继续逃向校门…";
+        }
+    }
+
+    void FinishStudy()
+    {
+        studying = false;
+        if (hud != null)
+            hud.showFailBanner = false;
+        PauseTeachers(false);
+        if (player != null)
+        {
             ThirdPersonController motor = player.GetComponent<ThirdPersonController>();
             if (motor != null)
             {
@@ -134,45 +179,46 @@ public class SchoolFlowController : MonoBehaviour
                 motor.controlEnabled = true;
             }
         }
+        RefreshHudIdle();
+    }
 
-        VisionConeDetector[] all = UnityCompat.FindAll<VisionConeDetector>();
+    static void PauseTeachers(bool paused)
+    {
+        TeacherAgent[] all = UnityCompat.FindAll<TeacherAgent>();
         for (int i = 0; i < all.Length; i++)
         {
             if (all[i] != null)
-                all[i].ResetSpot();
+                all[i].SetPaused(paused);
         }
-
         SimplePatrol[] patrols = UnityCompat.FindAll<SimplePatrol>();
         for (int i = 0; i < patrols.Length; i++)
         {
             if (patrols[i] != null)
-                patrols[i].SetPaused(false);
+                patrols[i].SetPaused(paused);
         }
-
-        ThirdPersonCamera cam = UnityCompat.FindOne<ThirdPersonCamera>();
-        if (cam != null)
-            cam.Snap();
-
-        RefreshHudIdle();
     }
 
     public void NotifySchoolEscaped()
     {
-        if (HasEscapedSchool || failing)
+        if (HasEscapedSchool || IsBusy)
             return;
 
         HasEscapedSchool = true;
         successPending = true;
         bannerUntil = Time.time + successHoldSeconds;
 
+        GameProgress gp = GameProgress.Ensure();
+        gp.MarkEscapedSchool();
+        SaveSystem.Save();
+
         if (hud != null)
         {
             hud.showFailBanner = false;
             hud.showSuccessBanner = true;
             hud.successTitle = "逃出学校";
-            hud.successSubtitle = autoLoadTransit ? "正在前往交通枢纽…" : "学校段完成";
+            hud.successSubtitle = autoLoadHub ? "正在进入现实世界…" : "学校段完成 · 地图已解锁";
             hud.objective = "逃出学校";
-            hud.detail = "你已离开校园";
+            hud.detail = "现实世界旅行已解锁（先回家留条再购票）";
         }
 
         if (player != null)
@@ -181,34 +227,28 @@ public class SchoolFlowController : MonoBehaviour
             if (motor != null)
                 motor.controlEnabled = false;
         }
-
-        SimplePatrol[] patrols = UnityCompat.FindAll<SimplePatrol>();
-        for (int i = 0; i < patrols.Length; i++)
-        {
-            if (patrols[i] != null)
-                patrols[i].SetPaused(true);
-        }
+        PauseTeachers(true);
     }
 
-    void TryLoadTransit()
+    void TryLoadHub()
     {
-        if (string.IsNullOrEmpty(transitSceneName))
+        if (string.IsNullOrEmpty(hubSceneName))
             return;
 
-        if (!Application.CanStreamedLevelBeLoaded(transitSceneName))
+        if (!Application.CanStreamedLevelBeLoaded(hubSceneName))
         {
-            Debug.LogWarning("交通枢纽场景未加入 Build Settings：" + transitSceneName +
-                             "。请用菜单 EscapeExam → 生成交通枢纽场景 后再试。");
+            Debug.LogWarning("现实城镇场景未加入 Build Settings：" + hubSceneName +
+                             "。请用菜单 EscapeExam → 生成现实城镇场景。");
             if (hud != null)
             {
                 hud.showSuccessBanner = true;
                 hud.successTitle = "逃出学校";
-                hud.successSubtitle = "请打开菜单生成交通枢纽场景";
+                hud.successSubtitle = "请打开菜单生成 HubTown（不要直接进 TransitHub）";
             }
             return;
         }
 
-        SceneManager.LoadScene(transitSceneName);
+        SceneManager.LoadScene(hubSceneName);
     }
 
     void RefreshHudIdle()
@@ -216,8 +256,8 @@ public class SchoolFlowController : MonoBehaviour
         if (hud == null)
             return;
         hud.objective = "逃出学校";
-        hud.detail = "沿着走廊避开巡逻，走到蓝色校门";
-        hud.bottomPrompt = "WASD 移动    Ctrl/C 蹲走    利用柜子掩体";
+        hud.detail = "走廊老师随机巡视追赶；走到蓝色校门进入现实世界";
+        hud.bottomPrompt = "WASD 移动  空格跳跃  Ctrl/C 蹲走  Esc 暂停";
         hud.showFailBanner = false;
         hud.showSuccessBanner = false;
     }

@@ -7,6 +7,8 @@ public class ExamHallBootstrap : MonoBehaviour
 {
     void Awake()
     {
+        GameProgress.Ensure();
+        PauseMenu.Ensure();
         if (GameObject.Find("LevelRoot") != null || GameObject.Find("Player") != null)
             return;
         ExamHallBuilder.Build();

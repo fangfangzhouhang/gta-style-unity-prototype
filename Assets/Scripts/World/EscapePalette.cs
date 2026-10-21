@@ -21,5 +21,8 @@ public static class EscapePalette
     public static readonly Color TicketScreen = new Color(0.2f, 0.75f, 0.85f, 1f);
     public static readonly Color AirportDesk = new Color(0.35f, 0.55f, 0.72f, 1f);
     public static readonly Color TravelGround = new Color(0.45f, 0.58f, 0.38f, 1f);
+    public static readonly Color HomeFloor = new Color(0.78f, 0.72f, 0.62f, 1f);
+    public static readonly Color Parent = new Color(0.35f, 0.28f, 0.55f, 1f);
 }
+
 

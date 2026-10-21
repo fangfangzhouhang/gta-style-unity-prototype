@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 /// <summary>
-/// 考场潜行流程：监听视野发现 → 失败回检查点；出口成功 → 提示并可进学校场景。
+/// 考场潜行：老师抓住 → 送回座位被迫学习 → 再逃；出口成功 → 学校。
 /// </summary>
 public class ExamFlowController : MonoBehaviour
 {
@@ -10,19 +10,26 @@ public class ExamFlowController : MonoBehaviour
     public Transform player;
     public StealthGameHUD hud;
     public string schoolSceneName = "SchoolEscape";
-    public float failHoldSeconds = 1.6f;
+    public float failHoldSeconds = 1.4f;
+    public float studyHoldSeconds = 2.6f;
     public float successHoldSeconds = 1.8f;
     public bool autoLoadSchool = true;
 
     public bool HasEscaped { get; private set; }
+    public bool IsBusy { get { return failing || studying || successPending; } }
 
     bool failing;
+    bool studying;
     bool successPending;
     float bannerUntil;
-    VisionConeDetector[] cones;
+    TeacherAgent[] agents;
 
     void Start()
     {
+        GameProgress.Ensure();
+        PauseMenu.Ensure();
+        GameProgress.Ensure().stage = GameProgress.StageExam;
+
         if (player == null)
         {
             ThirdPersonController motor = UnityCompat.FindOne<ThirdPersonController>();
@@ -33,37 +40,43 @@ public class ExamFlowController : MonoBehaviour
         if (hud == null)
             hud = UnityCompat.FindOne<StealthGameHUD>();
 
-        BindDetectors();
+        BindTeachers();
         RefreshHudIdle();
     }
 
-    public void BindDetectors()
+    public void BindTeachers()
     {
-        cones = UnityCompat.FindAll<VisionConeDetector>();
-        for (int i = 0; i < cones.Length; i++)
+        agents = UnityCompat.FindAll<TeacherAgent>();
+        for (int i = 0; i < agents.Length; i++)
         {
-            if (cones[i] == null)
+            if (agents[i] == null)
                 continue;
-            cones[i].OnPlayerSpotted -= HandleSpotted;
-            cones[i].OnPlayerSpotted += HandleSpotted;
+            agents[i].OnCaughtPlayer -= HandleCaught;
+            agents[i].OnCaughtPlayer += HandleCaught;
         }
     }
 
     void OnDestroy()
     {
-        if (cones == null)
+        if (agents == null)
             return;
-        for (int i = 0; i < cones.Length; i++)
+        for (int i = 0; i < agents.Length; i++)
         {
-            if (cones[i] != null)
-                cones[i].OnPlayerSpotted -= HandleSpotted;
+            if (agents[i] != null)
+                agents[i].OnCaughtPlayer -= HandleCaught;
         }
     }
 
     void Update()
     {
+        if (PauseMenu.Instance != null && PauseMenu.Instance.IsOpen)
+            return;
+
         if (failing && Time.time >= bannerUntil)
-            FinishFail();
+            BeginForcedStudy();
+
+        if (studying && Time.time >= bannerUntil)
+            FinishStudy();
 
         if (successPending && Time.time >= bannerUntil)
         {
@@ -75,14 +88,14 @@ public class ExamFlowController : MonoBehaviour
         }
     }
 
-    void HandleSpotted(VisionConeDetector source, Transform spotted)
+    void HandleCaught(TeacherAgent source, Transform spotted)
     {
-        if (HasEscaped || failing || successPending)
+        if (HasEscaped || IsBusy)
             return;
-        BeginFail();
+        BeginCatchSequence();
     }
 
-    void BeginFail()
+    void BeginCatchSequence()
     {
         failing = true;
         bannerUntil = Time.time + failHoldSeconds;
@@ -91,8 +104,8 @@ public class ExamFlowController : MonoBehaviour
         {
             hud.showFailBanner = true;
             hud.showSuccessBanner = false;
-            hud.failTitle = "被发现了";
-            hud.failSubtitle = "正在回到检查点…";
+            hud.failTitle = "被老师抓住了";
+            hud.failSubtitle = "正在送回座位…";
         }
 
         if (player != null)
@@ -102,18 +115,35 @@ public class ExamFlowController : MonoBehaviour
                 motor.controlEnabled = false;
         }
 
-        PausePatrols(true);
+        PauseTeachers(true);
     }
 
-    void FinishFail()
+    void BeginForcedStudy()
     {
         failing = false;
+        studying = true;
+        bannerUntil = Time.time + studyHoldSeconds;
+
+        RespawnAtCheckpoint();
+        ResetTeachers();
+
+        if (hud != null)
+        {
+            hud.showFailBanner = true;
+            hud.failTitle = "被迫学习";
+            hud.failSubtitle = "先老实坐一会儿，再想办法逃跑…";
+            hud.objective = "被迫学习中";
+            hud.detail = "锁定结束后方可再次潜行逃跑";
+        }
+    }
+
+    void FinishStudy()
+    {
+        studying = false;
         if (hud != null)
             hud.showFailBanner = false;
 
-        RespawnAtCheckpoint();
-        ResetDetectors();
-        PausePatrols(false);
+        PauseTeachers(false);
         RefreshHudIdle();
 
         if (player != null)
@@ -146,20 +176,34 @@ public class ExamFlowController : MonoBehaviour
         ThirdPersonCamera cam = UnityCompat.FindOne<ThirdPersonCamera>();
         if (cam != null)
             cam.Snap();
+
+        GameProgress.Ensure().SetCheckpoint(checkpoint.position);
     }
 
-    void ResetDetectors()
+    void ResetTeachers()
     {
-        VisionConeDetector[] all = UnityCompat.FindAll<VisionConeDetector>();
+        TeacherAgent[] all = UnityCompat.FindAll<TeacherAgent>();
         for (int i = 0; i < all.Length; i++)
         {
             if (all[i] != null)
-                all[i].ResetSpot();
+                all[i].ResetToPatrol();
+        }
+        VisionConeDetector[] cones = UnityCompat.FindAll<VisionConeDetector>();
+        for (int i = 0; i < cones.Length; i++)
+        {
+            if (cones[i] != null)
+                cones[i].ResetSpot();
         }
     }
 
-    static void PausePatrols(bool paused)
+    static void PauseTeachers(bool paused)
     {
+        TeacherAgent[] all = UnityCompat.FindAll<TeacherAgent>();
+        for (int i = 0; i < all.Length; i++)
+        {
+            if (all[i] != null)
+                all[i].SetPaused(paused);
+        }
         SimplePatrol[] patrols = UnityCompat.FindAll<SimplePatrol>();
         for (int i = 0; i < patrols.Length; i++)
         {
@@ -170,12 +214,13 @@ public class ExamFlowController : MonoBehaviour
 
     public void NotifyExamEscaped()
     {
-        if (HasEscaped || failing)
+        if (HasEscaped || IsBusy)
             return;
 
         HasEscaped = true;
         successPending = true;
         bannerUntil = Time.time + successHoldSeconds;
+        GameProgress.Ensure().stage = GameProgress.StageSchool;
 
         if (hud != null)
         {
@@ -193,6 +238,8 @@ public class ExamFlowController : MonoBehaviour
             if (motor != null)
                 motor.controlEnabled = false;
         }
+        PauseTeachers(true);
+        SaveSystem.Save();
     }
 
     void TryLoadSchool()
@@ -202,7 +249,7 @@ public class ExamFlowController : MonoBehaviour
 
         if (!Application.CanStreamedLevelBeLoaded(schoolSceneName))
         {
-            Debug.LogWarning("学校场景未加入 Build Settings：" + schoolSceneName + "。请用菜单 EscapeExam → 生成学校场景 后再试。");
+            Debug.LogWarning("学校场景未加入 Build Settings：" + schoolSceneName);
             if (hud != null)
             {
                 hud.showSuccessBanner = true;
@@ -220,8 +267,8 @@ public class ExamFlowController : MonoBehaviour
         if (hud == null)
             return;
         hud.objective = "潜行逃出考场";
-        hud.detail = "利用课桌掩体，避开监考视野，走到绿色出口";
-        hud.bottomPrompt = "WASD 移动    Ctrl/C 蹲走    避开监考红色视野锥";
+        hud.detail = "老师会随机巡视并追赶；被抓会送回座位被迫学习";
+        hud.bottomPrompt = "WASD 移动  空格跳跃  Ctrl/C 蹲走  Esc 暂停";
         hud.showFailBanner = false;
         hud.showSuccessBanner = false;
     }

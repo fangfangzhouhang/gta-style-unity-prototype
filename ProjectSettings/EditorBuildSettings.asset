@@ -15,6 +15,12 @@ EditorBuildSettings:
     path: Assets/Scenes/SchoolEscape.unity
     guid: d1000000000000000000000000000011
   - enabled: 1
+    path: Assets/Scenes/HubTown.unity
+    guid: d1000000000000000000000000000031
+  - enabled: 1
+    path: Assets/Scenes/Home.unity
+    guid: d1000000000000000000000000000030
+  - enabled: 1
     path: Assets/Scenes/TransitHub.unity
     guid: d1000000000000000000000000000020
   - enabled: 1

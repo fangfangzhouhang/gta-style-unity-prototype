@@ -8,4 +8,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/OpenWorld.unity
     guid: d1000000000000000000000000000001
+  - enabled: 1
+    path: Assets/Scenes/ExamHall.unity
+    guid: d1000000000000000000000000000010
+  - enabled: 1
+    path: Assets/Scenes/SchoolEscape.unity
+    guid: d1000000000000000000000000000011
   m_configObjects: {}

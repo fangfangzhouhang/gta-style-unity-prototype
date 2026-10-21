@@ -141,7 +141,8 @@ public static class PrototypeWorldBuilder
             Vector3.zero, new Vector3(0.8f, 0.92f, 0.8f), Quaternion.identity,
             CityPalette.Player, "Player", false);
 
-        player.AddComponent<ThirdPersonController>();
+        var motor = player.AddComponent<ThirdPersonController>();
+        motor.allowCrouch = false;
         player.AddComponent<PlayerVehicleSwitch>();
         return player;
     }

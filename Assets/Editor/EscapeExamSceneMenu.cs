@@ -19,6 +19,34 @@ public static class EscapeExamSceneMenu
     const string NetLobbyScenePath = "Assets/Scenes/NetLobby.unity";
     const string NetExamScenePath = "Assets/Scenes/NetExamHall.unity";
     const string NetMeetupScenePath = "Assets/Scenes/NetMeetup.unity";
+    const string CampusWorldScenePath = "Assets/Scenes/CampusWorld.unity";
+
+
+    [MenuItem("EscapeExam/生成连通校园大地图 (CampusWorld)")]
+    public static void GenerateCampusWorld()
+    {
+        if (!GuardEditMode())
+            return;
+        if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+            return;
+
+        EnsureSceneAssetWithBootstrap(CampusWorldScenePath, "b6000000000000000000000000000006");
+        var scene = EditorSceneManager.OpenScene(CampusWorldScenePath, OpenSceneMode.Single);
+        CampusWorldBuilder.Build();
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene);
+        EnsureBuildSettings();
+        EditorUtility.DisplayDialog(
+            "EscapeExam",
+            "CampusWorld 连通大地图已生成并写入场景。\n" +
+            "点 Play：考场→走廊/楼梯/秘密通道→校门→公路城镇（同场景不跳转）。\n" +
+            "老师冷红灯 / 家长冷紫灯；被发现安全回位。\n" +
+            "枢纽/旅行仍可走场景门。",
+            "好");
+    }
+
+    [MenuItem("EscapeExam/打开连通校园大地图")]
+    public static void OpenCampusWorld() { OpenPath(CampusWorldScenePath); }
 
     [MenuItem("EscapeExam/生成考场场景")]
     public static void GenerateExamHall()
@@ -223,7 +251,7 @@ public static class EscapeExamSceneMenu
         EnsureBuildSettings();
         EditorUtility.DisplayDialog(
             "EscapeExam",
-            "已确保 OpenWorld / ExamHall / SchoolEscape / HubTown / Home / TransitHub / TravelMissions / NetLobby / NetExamHall / NetMeetup 在 Build Settings 中。",
+            "已确保 CampusWorld（默认第0）/ OpenWorld / ExamHall / SchoolEscape / HubTown / Home / TransitHub / TravelMissions / Net* 在 Build Settings 中。",
             "好");
     }
 
@@ -298,6 +326,7 @@ public static class EscapeExamSceneMenu
     {
         var wanted = new[]
         {
+            CampusWorldScenePath,
             OpenWorldScenePath,
             ExamScenePath,
             SchoolScenePath,
@@ -331,6 +360,23 @@ public static class EscapeExamSceneMenu
             existing.Add(norm);
         }
 
+
+        // 保证 CampusWorld 为 Build Settings 第 0 项（默认 Play 入口）
+        int campusIdx = -1;
+        for (int i = 0; i < list.Count; i++)
+        {
+            if (list[i] != null && list[i].path.Replace('\\', '/') == CampusWorldScenePath)
+            {
+                campusIdx = i;
+                break;
+            }
+        }
+        if (campusIdx > 0)
+        {
+            var campus = list[campusIdx];
+            list.RemoveAt(campusIdx);
+            list.Insert(0, campus);
+        }
         EditorBuildSettings.scenes = list.ToArray();
     }
 }

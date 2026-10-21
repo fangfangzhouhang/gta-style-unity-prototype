@@ -145,6 +145,8 @@ public static class SchoolEscapeBuilder
         agent.chaseSpeed = chaseSpeed;
         agent.randomPatrol = true;
         agent.catchDistance = 1.35f;
+        var aura = go.AddComponent<ScrutinyAura>();
+        aura.SetRole(ScrutinyAura.Role.Patrol);
     }
 
     static void Wire(GameObject player, Camera cam, Transform checkpoint)

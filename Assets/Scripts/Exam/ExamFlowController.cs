@@ -90,7 +90,7 @@ public class ExamFlowController : MonoBehaviour
 
     void HandleCaught(TeacherAgent source, Transform spotted)
     {
-        if (HasEscaped || IsBusy)
+        if (HasEscaped || IsBusy || SafeDiscoveryReset.IsInvulnerable)
             return;
         BeginCatchSequence();
     }
@@ -160,40 +160,14 @@ public class ExamFlowController : MonoBehaviour
 
     void RespawnAtCheckpoint()
     {
-        if (player == null || checkpoint == null)
+        if (player == null)
             return;
-
-        CharacterController body = player.GetComponent<CharacterController>();
-        if (body != null)
-            body.enabled = false;
-
-        player.position = checkpoint.position;
-        player.rotation = checkpoint.rotation;
-
-        if (body != null)
-            body.enabled = true;
-
-        ThirdPersonCamera cam = UnityCompat.FindOne<ThirdPersonCamera>();
-        if (cam != null)
-            cam.Snap();
-
-        GameProgress.Ensure().SetCheckpoint(checkpoint.position);
+        SafeDiscoveryReset.TryRespawn(player, checkpoint);
     }
 
     void ResetTeachers()
     {
-        TeacherAgent[] all = UnityCompat.FindAll<TeacherAgent>();
-        for (int i = 0; i < all.Length; i++)
-        {
-            if (all[i] != null)
-                all[i].ResetToPatrol();
-        }
-        VisionConeDetector[] cones = UnityCompat.FindAll<VisionConeDetector>();
-        for (int i = 0; i < cones.Length; i++)
-        {
-            if (cones[i] != null)
-                cones[i].ResetSpot();
-        }
+        SafeDiscoveryReset.ResetAllThreats();
     }
 
     static void PauseTeachers(bool paused)

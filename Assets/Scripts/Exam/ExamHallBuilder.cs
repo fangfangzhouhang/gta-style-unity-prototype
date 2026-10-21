@@ -201,6 +201,8 @@ public static class ExamHallBuilder
         agent.chaseSpeed = chaseSpeed;
         agent.randomPatrol = true;
         agent.catchDistance = 1.35f;
+        var aura = go.AddComponent<ScrutinyAura>();
+        aura.SetRole(ScrutinyAura.Role.Teacher);
         return go;
     }
 

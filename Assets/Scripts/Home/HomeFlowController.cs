@@ -76,14 +76,31 @@ public class HomeFlowController : MonoBehaviour
             successPending = false;
             if (hud != null)
                 hud.showSuccessBanner = false;
+            if (player != null)
+            {
+                ThirdPersonController motor = player.GetComponent<ThirdPersonController>();
+                if (motor != null)
+                    motor.controlEnabled = true;
+            }
+            PauseAgents(false);
             if (autoReturnHub)
                 TryLoadHub();
+            else
+            {
+                CampusFlowController campus = UnityCompat.FindOne<CampusFlowController>();
+                if (campus != null)
+                    campus.NotifyEnteredHub();
+                RefreshHudAfterNote();
+            }
         }
     }
 
     void HandleSpotted(VisionConeDetector source, Transform spotted)
     {
-        if (NoteDone || failing || successPending)
+        // CampusWorld 由 CampusFlowController 统一处理发现，避免双重回位
+        if (UnityCompat.FindOne<CampusFlowController>() != null)
+            return;
+        if (NoteDone || failing || successPending || SafeDiscoveryReset.IsInvulnerable)
             return;
         BeginFail();
     }
@@ -114,41 +131,14 @@ public class HomeFlowController : MonoBehaviour
         if (hud != null)
             hud.showFailBanner = false;
 
-        if (player != null && checkpoint != null)
+        SafeDiscoveryReset.TryRespawn(player, checkpoint);
+        if (player != null)
         {
-            CharacterController body = player.GetComponent<CharacterController>();
-            if (body != null)
-                body.enabled = false;
-            player.position = checkpoint.position;
-            player.rotation = checkpoint.rotation;
-            if (body != null)
-                body.enabled = true;
             ThirdPersonController motor = player.GetComponent<ThirdPersonController>();
             if (motor != null)
-            {
-                motor.ForceStand();
-                motor.ResetVerticalSpeed();
                 motor.controlEnabled = true;
-            }
         }
-
-        VisionConeDetector[] all = UnityCompat.FindAll<VisionConeDetector>();
-        for (int i = 0; i < all.Length; i++)
-        {
-            if (all[i] != null)
-                all[i].ResetSpot();
-        }
-        TeacherAgent[] agents = UnityCompat.FindAll<TeacherAgent>();
-        for (int i = 0; i < agents.Length; i++)
-        {
-            if (agents[i] != null)
-                agents[i].ResetToPatrol();
-        }
-
         PauseAgents(false);
-        ThirdPersonCamera cam = UnityCompat.FindOne<ThirdPersonCamera>();
-        if (cam != null)
-            cam.Snap();
         RefreshHudIdle();
     }
 

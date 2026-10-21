@@ -1,7 +1,8 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
-/// 学校逃离流程：发现 → 回检查点；校门 → 「逃出学校」成功。
+/// 学校逃离流程：发现 → 回检查点；校门 → 「逃出学校」→ 可选进入交通枢纽。
 /// </summary>
 public class SchoolFlowController : MonoBehaviour
 {
@@ -9,10 +10,14 @@ public class SchoolFlowController : MonoBehaviour
     public Transform player;
     public StealthGameHUD hud;
     public float failHoldSeconds = 1.6f;
+    public float successHoldSeconds = 1.8f;
+    public string transitSceneName = "TransitHub";
+    public bool autoLoadTransit = true;
 
     public bool HasEscapedSchool { get; private set; }
 
     bool failing;
+    bool successPending;
     float bannerUntil;
     VisionConeDetector[] cones;
 
@@ -59,11 +64,20 @@ public class SchoolFlowController : MonoBehaviour
     {
         if (failing && Time.time >= bannerUntil)
             FinishFail();
+
+        if (successPending && Time.time >= bannerUntil)
+        {
+            successPending = false;
+            if (hud != null)
+                hud.showSuccessBanner = false;
+            if (autoLoadTransit)
+                TryLoadTransit();
+        }
     }
 
     void HandleSpotted(VisionConeDetector source, Transform spotted)
     {
-        if (HasEscapedSchool || failing)
+        if (HasEscapedSchool || failing || successPending)
             return;
         BeginFail();
     }
@@ -148,13 +162,15 @@ public class SchoolFlowController : MonoBehaviour
             return;
 
         HasEscapedSchool = true;
+        successPending = true;
+        bannerUntil = Time.time + successHoldSeconds;
 
         if (hud != null)
         {
             hud.showFailBanner = false;
             hud.showSuccessBanner = true;
             hud.successTitle = "逃出学校";
-            hud.successSubtitle = "v0.2 切片完成";
+            hud.successSubtitle = autoLoadTransit ? "正在前往交通枢纽…" : "学校段完成";
             hud.objective = "逃出学校";
             hud.detail = "你已离开校园";
         }
@@ -172,6 +188,27 @@ public class SchoolFlowController : MonoBehaviour
             if (patrols[i] != null)
                 patrols[i].SetPaused(true);
         }
+    }
+
+    void TryLoadTransit()
+    {
+        if (string.IsNullOrEmpty(transitSceneName))
+            return;
+
+        if (!Application.CanStreamedLevelBeLoaded(transitSceneName))
+        {
+            Debug.LogWarning("交通枢纽场景未加入 Build Settings：" + transitSceneName +
+                             "。请用菜单 EscapeExam → 生成交通枢纽场景 后再试。");
+            if (hud != null)
+            {
+                hud.showSuccessBanner = true;
+                hud.successTitle = "逃出学校";
+                hud.successSubtitle = "请打开菜单生成交通枢纽场景";
+            }
+            return;
+        }
+
+        SceneManager.LoadScene(transitSceneName);
     }
 
     void RefreshHudIdle()

@@ -29,6 +29,7 @@ public class StealthGameHUD : MonoBehaviour
     const string Glyphs =
         "点击游戏画面，开始控制镜头。目标潜行逃出考场学校走廊校门。" +
         "被发现了正在回到检查点。逃出考场逃出学校继续前往学校大门。" +
+        "正在前往交通枢纽请打开菜单生成交通枢纽场景学校段完成。" +
         "步行移动鼠标蹲走冲刺跳跃避开监考巡逻视野。利用课桌柜子掩体。" +
         "WASD Ctrl C Shift Esc ：，。0123456789 米";
 

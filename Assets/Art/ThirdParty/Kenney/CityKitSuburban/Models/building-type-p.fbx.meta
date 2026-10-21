@@ -1,0 +1,20 @@
+fileFormatVersion: 2
+guid: ad89c8ab26642c32e9b8ca6de5a68428
+ModelImporter:
+  serializedVersion: 22200
+  internalIDToNameTable: []
+  externalObjects: {}
+  materials:
+    materialImportMode: 1
+    materialName: 0
+    materialSearch: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addCollider: 0
+    useFileUnits: 1
+  animations:
+    animationCompression: 1
+  assetBundleName: 
+  assetBundleVariant: 

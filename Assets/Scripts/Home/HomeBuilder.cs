@@ -101,6 +101,8 @@ public static class HomeBuilder
         agent.patrolSpeed = 1.7f;
         agent.chaseSpeed = 3.8f;
         agent.randomPatrol = true;
+        var aura = go.AddComponent<ScrutinyAura>();
+        aura.SetRole(ScrutinyAura.Role.Parent);
         // 家长抓住也走视野事件：HomeFlow 直接听 VisionCone；追赶仅为压迫感
         // 发现即失败由 keepCheckingAfterSpot=false + HomeFlow 订阅实现
     }

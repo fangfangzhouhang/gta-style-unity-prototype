@@ -107,7 +107,7 @@ public class SchoolFlowController : MonoBehaviour
 
     void HandleCaught(TeacherAgent source, Transform spotted)
     {
-        if (HasEscapedSchool || IsBusy)
+        if (HasEscapedSchool || IsBusy || SafeDiscoveryReset.IsInvulnerable)
             return;
         BeginCatchSequence();
     }
@@ -138,33 +138,7 @@ public class SchoolFlowController : MonoBehaviour
         studying = true;
         bannerUntil = Time.time + studyHoldSeconds;
 
-        if (player != null && checkpoint != null)
-        {
-            CharacterController body = player.GetComponent<CharacterController>();
-            if (body != null)
-                body.enabled = false;
-            player.position = checkpoint.position;
-            player.rotation = checkpoint.rotation;
-            if (body != null)
-                body.enabled = true;
-            ThirdPersonCamera cam = UnityCompat.FindOne<ThirdPersonCamera>();
-            if (cam != null)
-                cam.Snap();
-            GameProgress.Ensure().SetCheckpoint(checkpoint.position);
-        }
-
-        TeacherAgent[] all = UnityCompat.FindAll<TeacherAgent>();
-        for (int i = 0; i < all.Length; i++)
-        {
-            if (all[i] != null)
-                all[i].ResetToPatrol();
-        }
-        VisionConeDetector[] cones = UnityCompat.FindAll<VisionConeDetector>();
-        for (int i = 0; i < cones.Length; i++)
-        {
-            if (cones[i] != null)
-                cones[i].ResetSpot();
-        }
+        SafeDiscoveryReset.TryRespawn(player, checkpoint);
 
         if (hud != null)
         {

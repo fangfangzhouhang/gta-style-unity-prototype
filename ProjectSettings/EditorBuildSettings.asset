@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/CampusWorld.unity
+    guid: d1000000000000000000000000000050
+  - enabled: 1
     path: Assets/Scenes/OpenWorld.unity
     guid: d1000000000000000000000000000001
   - enabled: 1

@@ -17,8 +17,8 @@ public class CampusFlowController : MonoBehaviour
     public HubTownHUD hubHud;
     public WorldMapUI mapUi;
 
-    public float failHoldSeconds = 1.35f;
-    public float studyHoldSeconds = 2.2f;
+    public float failHoldSeconds = 0.7f;
+    public float studyHoldSeconds = 0.8f;
 
     public enum Zone
     {
@@ -60,6 +60,7 @@ public class CampusFlowController : MonoBehaviour
         CurrentZone = Zone.Exam;
         GameProgress.Ensure().stage = GameProgress.StageExam;
         BindTeachers();
+        SafeDiscoveryReset.BeginInvulnerability(3.5f);
         RefreshHud();
     }
 
@@ -166,6 +167,7 @@ public class CampusFlowController : MonoBehaviour
         bannerUntil = Time.time + studyHoldSeconds;
 
         Transform cp = activeCheckpoint != null ? activeCheckpoint : examCheckpoint;
+        foreach (var teacher in UnityCompat.FindAll<TeacherAgent>()) teacher.ReturnHome();
         SafeDiscoveryReset.TryRespawn(player, cp);
 
         if (hud != null)
@@ -252,6 +254,12 @@ public class CampusFlowController : MonoBehaviour
 
     public void SetZone(Zone zone)
     {
+        if (zone == CurrentZone) return;
+        if (zone == Zone.Hub)
+        {
+            var home = GameObject.Find("Zone_Home");
+            if (home != null && player != null && home.GetComponent<Collider>().bounds.Contains(player.position)) return;
+        }
         CurrentZone = zone;
         switch (zone)
         {
@@ -269,6 +277,19 @@ public class CampusFlowController : MonoBehaviour
                 break;
         }
         RefreshHud();
+    }
+
+    public void RecoverFromFall()
+    {
+        failing = false;
+        studying = false;
+        foreach (var teacher in UnityCompat.FindAll<TeacherAgent>()) teacher.ReturnHome();
+        PauseThreats(false);
+        SafeDiscoveryReset.TryRespawn(player, activeCheckpoint != null ? activeCheckpoint : examCheckpoint);
+        var motor = player != null ? player.GetComponent<ThirdPersonController>() : null;
+        if (motor != null) motor.controlEnabled = true;
+        RefreshHud();
+        ShowTip("已返回检查点", "跌出地图后回到上一个出生点，短时间内不会被抓捕");
     }
 
     public void NotifyEnteredHome()
@@ -304,12 +325,12 @@ public class CampusFlowController : MonoBehaviour
         switch (CurrentZone)
         {
             case Zone.Exam:
-                hud.objective = "潜行逃出考场";
-                hud.detail = "冷红审查灯光=老师；蹲走躲课桌；找通风口捷径";
+                hud.objective = "潜行逃出二楼考场";
+                hud.detail = "201 考场 · 避开红灯老师，前往左后方绿门或通风口";
                 break;
             case Zone.School:
                 hud.objective = "逃出学校";
-                hud.detail = "走廊 / 二楼楼梯 / 储物间；走到蓝色校门进入公路";
+                hud.detail = "沿二楼走廊前进 → 安全出口楼梯下至一楼 → 蓝色校门";
                 break;
             case Zone.Hub:
                 hud.objective = "现实城镇准备旅行";

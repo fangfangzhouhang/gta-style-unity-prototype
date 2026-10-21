@@ -15,13 +15,16 @@ public class HubTownFlowController : MonoBehaviour
     {
         GameProgress gp = GameProgress.Ensure();
         PauseMenu.Ensure();
-        if (!gp.escapedSchool)
+        if (UnityCompat.FindOne<CampusFlowController>() == null && !gp.escapedSchool)
         {
             // 允许直接 Play 验收；标记为已逃出以便测城镇内容
             gp.MarkEscapedSchool();
         }
-        gp.stage = GameProgress.StageHub;
-        gp.mapUnlocked = true;
+        if (UnityCompat.FindOne<CampusFlowController>() == null)
+        {
+            gp.stage = GameProgress.StageHub;
+            gp.mapUnlocked = true;
+        }
 
         if (player == null)
         {

@@ -31,6 +31,7 @@ public class ThirdPersonController : MonoBehaviour
 
     [Tooltip("为 false 时禁用蹲（开世界切片可关掉）。")]
     public bool allowCrouch = true;
+    public bool faceViewDirection;
 
     [Tooltip("转向平滑，越大越跟手。")]
     public float turnSharpness = 14f;
@@ -53,7 +54,7 @@ public class ThirdPersonController : MonoBehaviour
             if (standingHeight <= 0.1f)
                 standingHeight = body.height;
             standingCenterY = body.center.y;
-            crouchCenterY = crouchHeight * 0.5f - 0.05f;
+            crouchCenterY = standingCenterY - (standingHeight - crouchHeight) * 0.5f;
         }
     }
 
@@ -82,11 +83,14 @@ public class ThirdPersonController : MonoBehaviour
 
         Vector3 velocity = move * speed;
         velocity.y = verticalSpeed;
-        body.Move(velocity * Time.deltaTime);
+        Vector3 displacement = velocity * Mathf.Min(Time.deltaTime, 0.05f);
+        int steps = Mathf.Max(1, Mathf.CeilToInt(displacement.magnitude / 0.15f));
+        for (int i = 0; i < steps; i++) body.Move(displacement / steps);
 
-        if (move.sqrMagnitude > 0.0001f)
+        Vector3 facing = faceViewDirection && view != null ? Vector3.ProjectOnPlane(view.forward, Vector3.up) : move;
+        if (facing.sqrMagnitude > 0.0001f)
         {
-            Quaternion face = Quaternion.LookRotation(move, Vector3.up);
+            Quaternion face = Quaternion.LookRotation(facing, Vector3.up);
             float t = 1f - Mathf.Exp(-turnSharpness * Time.deltaTime);
             transform.rotation = Quaternion.Slerp(transform.rotation, face, t);
         }
@@ -105,6 +109,24 @@ public class ThirdPersonController : MonoBehaviour
         ApplyCrouchPose();
     }
 
+    public void ConfigureHumanScale(float height = 1.8f)
+    {
+        body = GetComponent<CharacterController>();
+        standingHeight = height;
+        crouchHeight = 1.1f;
+        body.height = height;
+        body.radius = 0.28f;
+        body.center = Vector3.zero;
+        standingCenterY = 0f;
+        crouchCenterY = -(standingHeight - crouchHeight) * 0.5f;
+        walkSpeed = 2.8f;
+        sprintSpeed = 6.2f;
+        crouchSpeed = 1.35f;
+        faceViewDirection = true;
+        Transform visual = transform.Find("Visual");
+        if (visual != null) visual.localScale = new Vector3(0.46f, height * 0.5f, 0.46f);
+    }
+
     void UpdateCrouch()
     {
         if (!allowCrouch)
@@ -118,14 +140,21 @@ public class ThirdPersonController : MonoBehaviour
         }
 
         bool wantCrouch = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.C);
+        TrySetCrouching(wantCrouch);
+    }
+
+    public bool TrySetCrouching(bool wantCrouch)
+    {
+        if (wantCrouch && !allowCrouch) return false;
         if (wantCrouch == IsCrouching)
-            return;
+            return true;
 
         if (!wantCrouch && !CanStandUp())
-            return;
+            return false;
 
         IsCrouching = wantCrouch;
         ApplyCrouchPose();
+        return true;
     }
 
     bool CanStandUp()
@@ -134,16 +163,12 @@ public class ThirdPersonController : MonoBehaviour
             return true;
 
         float radius = Mathf.Max(0.05f, body.radius * 0.95f);
-        Vector3 origin = transform.position + Vector3.up * (radius + 0.05f);
-        float cast = Mathf.Max(0.1f, standingHeight - radius * 2f - 0.1f);
-        return !Physics.SphereCast(
-            origin,
-            radius,
-            Vector3.up,
-            out _,
-            cast,
-            ~0,
-            QueryTriggerInteraction.Ignore);
+        Vector3 center = transform.position + Vector3.up * standingCenterY;
+        float halfLine = standingHeight * 0.5f - radius;
+        foreach (var obstacle in Physics.OverlapCapsule(center - Vector3.up * halfLine,
+            center + Vector3.up * halfLine, radius, ~0, QueryTriggerInteraction.Ignore))
+            if (obstacle.transform != transform && !obstacle.transform.IsChildOf(transform)) return false;
+        return true;
     }
 
     void ApplyCrouchPose()
@@ -159,11 +184,11 @@ public class ThirdPersonController : MonoBehaviour
         Transform visual = transform.Find("Visual");
         if (visual != null)
         {
-            float sy = IsCrouching ? 0.58f : 0.92f;
+            float sy = (IsCrouching ? crouchHeight : standingHeight) * 0.5f;
             Vector3 scale = visual.localScale;
             scale.y = sy;
             visual.localScale = scale;
-            visual.localPosition = IsCrouching ? new Vector3(0f, -0.2f, 0f) : Vector3.zero;
+            visual.localPosition = new Vector3(0f, body.center.y, 0f);
         }
     }
 

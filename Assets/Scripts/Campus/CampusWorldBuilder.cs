@@ -8,6 +8,7 @@ public static class CampusWorldBuilder
 {
     // 布局原点：考场中心约 (0,0,8)；走廊沿 +Z；校门外公路向 +Z 延伸到 Hub。
     const float FloorY = -0.1f;
+    public const float ExamFloorHeight = 4f;
 
     public static void Build()
     {
@@ -24,7 +25,8 @@ public static class CampusWorldBuilder
             sun.intensity = 0.72f;
             sun.transform.rotation = Quaternion.Euler(38f, -40f, 0f);
         }
-        RenderSettings.ambientLight = new Color(0.28f, 0.30f, 0.38f);
+        RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
+        RenderSettings.ambientLight = new Color(0.55f, 0.58f, 0.65f);
         RenderSettings.ambientIntensity = 0.85f;
 
         Camera cam = LevelBuildUtil.EnsureCamera();
@@ -36,19 +38,36 @@ public static class CampusWorldBuilder
         BuildSchoolGateAndYard(root);
         BuildRoadAndHub(root);
         BuildHome(root);
+        CampusExpansion.Build(root);
+        root.gameObject.AddComponent<CampusNavigation>();
 
         // 尝试摆放第三方模型装饰（编辑器生成时）
         TryPlaceThirdPartyDressing(root);
+        CampusSitePlan.Build(root);
 
-        Vector3 spawn = new Vector3(0f, 1.02f, -2.2f);
+        Vector3 spawn = new Vector3(-7.5f, ExamFloorHeight + 0.92f, -2.2f);
+        new GameObject("CampusLayout_v09").transform.SetParent(root, false);
         GameObject player = LevelBuildUtil.CreatePlayer(root, spawn, true);
+        player.GetComponent<ThirdPersonController>().ConfigureHumanScale();
+        var avoidance=player.AddComponent<UnityEngine.AI.NavMeshObstacle>();
+        avoidance.shape=UnityEngine.AI.NavMeshObstacleShape.Capsule;
+        avoidance.height=1.8f; avoidance.radius=0.32f; avoidance.carving=false;
+        player.AddComponent<CampusSafety>();
+        CampusMotorcycle.Create(root, player.GetComponent<ThirdPersonController>(), cam.GetComponent<ThirdPersonCamera>());
 
         var examCp = MakeCheckpoint(root, "ExamCheckpoint", spawn);
-        var corridorCp = MakeCheckpoint(root, "CorridorCheckpoint", new Vector3(-14f, 1.02f, 2f));
+        var corridorCp = MakeCheckpoint(root, "CorridorCheckpoint", new Vector3(-14.4f, ExamFloorHeight + 0.92f, -1.2f));
         var hubCp = MakeCheckpoint(root, "HubCheckpoint", new Vector3(0f, 1.02f, 78f));
-        var homeCp = MakeCheckpoint(root, "HomeCheckpoint", new Vector3(-28f, 1.02f, 88f));
+        var homeCp = MakeCheckpoint(root, "HomeCheckpoint", new Vector3(-28f, 0.92f, 115f));
 
         Wire(player, cam, examCp, corridorCp, hubCp, homeCp);
+        var groundCp = MakeCheckpoint(root,"GroundSchoolCheckpoint",new Vector3(-14.4f,0.92f,32.5f));
+        var checkpointTrigger = new GameObject("GroundCheckpointTrigger");
+        checkpointTrigger.transform.SetParent(root,false);
+        checkpointTrigger.transform.localPosition = new Vector3(-14.4f,1.1f,33.5f);
+        var checkpointBox=checkpointTrigger.AddComponent<BoxCollider>(); checkpointBox.isTrigger=true; checkpointBox.size=new Vector3(4f,2.2f,2.4f);
+        checkpointTrigger.AddComponent<CampusCheckpoint>().checkpoint=groundCp;
+        if (!Application.isPlaying) LevelBuildUtil.BakeCampusMaterials();
     }
 
     static Transform MakeCheckpoint(Transform root, string name, Vector3 pos)
@@ -65,76 +84,45 @@ public static class CampusWorldBuilder
         var exam = new GameObject("ExamHall").transform;
         exam.SetParent(root, false);
 
-        // 地面
-        LevelBuildUtil.Make(PrimitiveType.Cube, exam, "Floor",
-            new Vector3(0f, FloorY, 8f), new Vector3(24f, 0.2f, 28f), Quaternion.identity,
-            EscapePalette.Floor, "Sidewalk", true);
-
-        // 四面墙（左墙出口留缝）
-        MakeWall(exam, "WallBack", new Vector3(0f, 1.9f, -5.8f), new Vector3(24f, 3.8f, 0.4f));
-        MakeWall(exam, "WallFront", new Vector3(0f, 1.9f, 21.8f), new Vector3(24f, 3.8f, 0.4f));
-        MakeWall(exam, "WallRight", new Vector3(12f, 1.9f, 8f), new Vector3(0.4f, 3.8f, 27.8f));
-        // 左墙两段，中间门口
-        MakeWall(exam, "WallLeftA", new Vector3(-12f, 1.9f, 11f), new Vector3(0.4f, 3.8f, 21f));
-        MakeWall(exam, "WallLeftB", new Vector3(-12f, 1.9f, -4.5f), new Vector3(0.4f, 3.8f, 2.4f));
-
-        // 窗户（右侧）
-        for (int i = 0; i < 4; i++)
-        {
-            float z = 0f + i * 5f;
-            LevelBuildUtil.Make(PrimitiveType.Cube, exam, "Window_" + i,
-                new Vector3(11.75f, 2.1f, z), new Vector3(0.12f, 1.4f, 2.2f), Quaternion.identity,
-                new Color(0.55f, 0.75f, 0.9f, 1f), "Glass", false, true, 0.65f);
-        }
-
-        // 黑板 + 讲台
-        LevelBuildUtil.Make(PrimitiveType.Cube, exam, "Blackboard",
-            new Vector3(0f, 2.3f, 21.45f), new Vector3(9f, 2.4f, 0.12f), Quaternion.identity,
-            EscapePalette.Blackboard, "BuildingC", false);
-        LevelBuildUtil.Make(PrimitiveType.Cube, exam, "Podium",
-            new Vector3(0f, 0.45f, 18.6f), new Vector3(2.6f, 0.9f, 1.3f), Quaternion.identity,
-            EscapePalette.Desk, "Crate", true);
-
-        // 课桌 4×4
-        float[] xs = { -7f, -2.3f, 2.3f, 7f };
-        float[] zs = { 0.5f, 5f, 9.5f, 14f };
+        // 米制教室：9m × 12m，净高 3.4m。西侧门沿用原走廊连接位置。
+        DeskPart(exam, "Floor", new Vector3(-7.5f, -0.1f, 2f), new Vector3(9f, 0.2f, 12f), EscapePalette.Floor);
+        MakeWall(exam, "WallBack", new Vector3(-7.5f, 1.7f, -4f), new Vector3(9.4f, 3.4f, 0.2f));
+        MakeWall(exam, "WallFront", new Vector3(-7.5f, 1.7f, 8f), new Vector3(9.4f, 3.4f, 0.2f));
+        // 窗洞真实开口，上下墙带闭合，不用整面实墙盖住窗。
+        MakeWall(exam, "WindowSillWall", new Vector3(-3f, 0.5f, 2f), new Vector3(0.2f, 1f, 12f));
+        MakeWall(exam, "WindowLintelWall", new Vector3(-3f, 3.05f, 2f), new Vector3(0.2f, 0.7f, 12f));
+        foreach (float z in new[] { -3.75f, -0.9f, 2f, 4.9f, 7.75f })
+            MakeWall(exam, "WindowPier", new Vector3(-3f, 1.85f, z), new Vector3(0.2f, 1.7f, 0.5f));
+        MakeWall(exam, "WallLeftA", new Vector3(-12f, 1.7f, 3.95f), new Vector3(0.2f, 3.4f, 8.1f));
+        MakeWall(exam, "WallLeftB", new Vector3(-12f, 1.7f, -3.15f), new Vector3(0.2f, 3.4f, 1.7f));
+        MakeWall(exam, "DoorLintel", new Vector3(-12f, 2.85f, -1.2f), new Vector3(0.2f, 1.1f, 2.2f));
+        DeskPart(exam, "Blackboard", new Vector3(-7.5f, 2.05f, 7.85f), new Vector3(4f, 1.25f, 0.08f), EscapePalette.Blackboard, false);
+        DeskPart(exam, "Podium", new Vector3(-7.5f, 0.51f, 7f), new Vector3(1.2f, 1.02f, 0.6f), EscapePalette.Desk);
+        float[] xs = { -10.2f, -8.6f, -7f, -5.4f };
+        float[] zs = { 0.35f, 1.75f, 3.15f, 4.55f, 5.95f };
         int id = 0;
-        for (int r = 0; r < zs.Length; r++)
-        {
-            for (int c = 0; c < xs.Length; c++)
-            {
-                CreateDesk(exam, new Vector3(xs[c], 0f, zs[r]), "Desk_" + id);
-                id++;
-            }
-        }
-
-        CreateCabinet(exam, new Vector3(-10f, 1f, 4f));
-        CreateCabinet(exam, new Vector3(-10f, 1f, 9f));
-        CreateCabinet(exam, new Vector3(10f, 1f, 12f));
-
-        // 出口门视觉
-        LevelBuildUtil.Make(PrimitiveType.Cube, exam, "ExitDoor",
-            new Vector3(-11.7f, 1.25f, -1.2f), new Vector3(0.2f, 2.5f, 1.8f), Quaternion.identity,
-            EscapePalette.Exit, "Checkpoint", false, true, 0.55f);
-
+        foreach (float z in zs) foreach (float x in xs)
+            CreateDesk(exam, new Vector3(x, 0f, z), "Desk_" + id++);
+        CreateCabinet(exam, new Vector3(-11.2f, 1f, 2f));
+        CreateCabinet(exam, new Vector3(-11.2f, 1f, 5f));
+        DeskPart(exam, "ExitDoor", new Vector3(-11.92f, 1.1f, -1.2f), new Vector3(0.03f, 2.2f, 1.1f), EscapePalette.Exit, false);
         var exit = new GameObject("ExamExit");
         exit.transform.SetParent(exam, false);
-        exit.transform.position = new Vector3(-11.2f, 1f, -1.2f);
+        exit.transform.localPosition = new Vector3(-12.05f, 1f, -1.2f);
         var exitBox = exit.AddComponent<BoxCollider>();
         exitBox.isTrigger = true;
-        exitBox.size = new Vector3(2.2f, 2.4f, 2.4f);
+        exitBox.size = new Vector3(1.5f, 2.2f, 1.7f);
         exit.AddComponent<ExamExitTrigger>();
-
-        // 老师
-        CreateTeacher(exam, "ExamTeacher_Front", new Vector3(0f, 0f, 17.2f), Quaternion.Euler(0f, 180f, 0f),
-            new[] { new Vector3(-3f, 0f, 16.5f), new Vector3(3f, 0f, 16.5f), new Vector3(0f, 0f, 18.5f), new Vector3(0f, 0f, 14.5f) },
-            1.5f, 4.4f, ScrutinyAura.Role.Teacher, 11f, 65f);
-        CreateTeacher(exam, "ExamTeacher_Side", new Vector3(9f, 0f, 10f), Quaternion.Euler(0f, -90f, 0f),
-            new[] { new Vector3(9f, 0f, 4f), new Vector3(9f, 0f, 10f), new Vector3(9f, 0f, 16f), new Vector3(7f, 0f, 12f) },
-            1.8f, 4.8f, ScrutinyAura.Role.Teacher, 8.5f, 55f);
-
-        // 区域触发
-        MakeZone(exam, "Zone_Exam", new Vector3(0f, 1f, 8f), new Vector3(22f, 3f, 26f), CampusFlowController.Zone.Exam);
+        CreateTeacher(exam, "ExamTeacher_Front", new Vector3(-7.5f, 0f, 6.5f), Quaternion.Euler(0f, 180f, 0f),
+            new[] { new Vector3(-10f, 0f, 6.6f), new Vector3(-5f, 0f, 6.6f) },
+            0.8f, 2.8f, ScrutinyAura.Role.Teacher, 7f, 65f);
+        CreateTeacher(exam, "ExamTeacher_Side", new Vector3(-4.1f, 0f, 4f), Quaternion.Euler(0f, -90f, 0f),
+            new[] { new Vector3(-4.1f, 0f, 1f), new Vector3(-4.1f, 0f, 6f) },
+            0.9f, 3f, ScrutinyAura.Role.Teacher, 6f, 55f);
+        MakeZone(exam, "Zone_Exam", new Vector3(-7.5f, 1.5f, 2f), new Vector3(8.8f, 3f, 11.8f), CampusFlowController.Zone.Exam);
+        DressClassroom(exam);
+        AddCeiling(exam, "ExamCeiling", new Vector3(-7.5f, 3.5f, 2f), new Vector3(9.4f, 0.2f, 12.4f));
+        exam.localPosition = Vector3.up * ExamFloorHeight;
     }
 
     // -------------------- Corridor + Stairs + Floor2 --------------------
@@ -163,29 +151,33 @@ public static class CampusWorldBuilder
         for (int i = 0; i < 6; i++)
             CreateCabinet(school, new Vector3(-17.5f, 1f, 4f + i * 7f));
 
-        // 楼梯（向 +X 进入侧翼，爬到二层）
-        BuildStaircase(school, new Vector3(-6f, 0f, 18f));
-
-        // 二层走廊（y=4）
-        LevelBuildUtil.Make(PrimitiveType.Cube, school, "Floor2",
-            new Vector3(-2f, 3.9f, 28f), new Vector3(14f, 0.25f, 28f), Quaternion.identity,
+        // 二楼考场门外的连续走廊，末端接下行楼梯。
+        LevelBuildUtil.Make(PrimitiveType.Cube, school, "UpperCorridor",
+            new Vector3(-14.4f, 3.9f, 9f), new Vector3(5.2f, 0.2f, 26f), Quaternion.identity,
             EscapePalette.Corridor, "Sidewalk", true);
-        MakeWall(school, "F2_WallL", new Vector3(-9f, 5.8f, 28f), new Vector3(0.35f, 3.6f, 28f));
-        MakeWall(school, "F2_WallR", new Vector3(5f, 5.8f, 28f), new Vector3(0.35f, 3.6f, 28f));
-        // 二层教室占位 + 侧门
-        LevelBuildUtil.Make(PrimitiveType.Cube, school, "F2_RoomFloor",
-            new Vector3(-2f, 3.9f, 42f), new Vector3(12f, 0.25f, 10f), Quaternion.identity,
-            EscapePalette.Floor, "Sidewalk", true);
-        LevelBuildUtil.Make(PrimitiveType.Cube, school, "F2_Blackboard",
-            new Vector3(-2f, 5.8f, 46.6f), new Vector3(6f, 1.8f, 0.1f), Quaternion.identity,
-            EscapePalette.Blackboard, "BuildingC", false);
-        CreateDesk(school, new Vector3(-5f, 4f, 40f), "F2_DeskA");
-        CreateDesk(school, new Vector3(1f, 4f, 40f), "F2_DeskB");
+        MakeWall(school, "UpperBack", new Vector3(-14.4f, 5.7f, -4f), new Vector3(5.2f, 3.4f, 0.2f));
+        MakeWall(school, "UpperLeftRail", new Vector3(-17f, 5.7f, 9f), new Vector3(0.16f, 3.4f, 26f));
+        MakeWall(school, "UpperRightRail", new Vector3(-11.8f, 5.7f, 11.3f), new Vector3(0.16f, 3.4f, 21.4f));
+        BuildStaircase(school, new Vector3(-14.4f, 0f, 22f));
+        AddCeiling(school, "UpperCorridorCeiling", new Vector3(-14.4f, 7.5f, 9f), new Vector3(5.4f, 0.2f, 26.2f));
+        AddCeiling(school, "GroundCorridorCeiling", new Vector3(-14f, 3.9f, 42f), new Vector3(10f, 0.2f, 20f));
+        AddCeiling(school, "GroundSideCeilingL", new Vector3(-18.05f, 3.9f, 9f), new Vector3(2.1f, 0.2f, 26f));
+        AddCeiling(school, "GroundSideCeilingR", new Vector3(-10.35f, 3.9f, 9f), new Vector3(2.9f, 0.2f, 26f));
+        DeskPart(school, "StairCeiling", new Vector3(-14.4f, 5.5f, 27f), new Vector3(5.4f, 0.2f, 10.95f), new Color(0.9f, 0.9f, 0.86f));
+        school.Find("StairCeiling").localRotation = Quaternion.Euler(21.8f, 0f, 0f);
+        MakeWall(school, "StairEnclosureL", new Vector3(-17f, 3.7f, 27f), new Vector3(0.16f, 7.4f, 10f));
+        MakeWall(school, "StairEnclosureR", new Vector3(-11.8f, 3.7f, 27f), new Vector3(0.16f, 7.4f, 10f));
+        for (int i = 0; i < 4; i++)
+            AddRoomLight(school, new Vector3(-14.4f, 7.25f, -1f + i * 6f), 3.6f);
+        AddRoomLight(school, new Vector3(-14.4f, 5.5f, 27f), 5f);
+        AddRoomLight(school, new Vector3(-14f, 3.6f, 38f), 5f);
+        AddRoomLight(school, new Vector3(-14f, 3.6f, 48f), 5f);
 
-        // 楼梯护栏
-        LevelBuildUtil.Make(PrimitiveType.Cube, school, "StairRail",
-            new Vector3(-0.5f, 2.2f, 18f), new Vector3(0.15f, 1.2f, 4f), Quaternion.identity,
-            EscapePalette.Cabinet, "BuildingB", true);
+        MakeZone(school, "Zone_UpperSchool", new Vector3(-14.4f, 5.3f, 9f),
+            new Vector3(5f, 2.4f, 26f), CampusFlowController.Zone.School);
+        MakeSign(school, "Floor2Sign", "2F  考场 · 安全出口 →", new Vector3(-16.85f, 6f, 14f), Quaternion.Euler(0f, 90f, 0f));
+        MakeSign(school, "StairSign", "安全出口 ↓ 1F", new Vector3(-14.4f, 6.8f, 21.5f), Quaternion.identity);
+        MakeSign(school, "Floor1Sign", "1F  校门 →", new Vector3(-18.75f, 2.5f, 37f), Quaternion.Euler(0f, 90f, 0f));
 
         // 巡逻老师
         CreateTeacher(school, "Patrol_A", new Vector3(-13f, 0f, 12f), Quaternion.identity,
@@ -194,28 +186,40 @@ public static class CampusWorldBuilder
         CreateTeacher(school, "Patrol_B", new Vector3(-15f, 0f, 36f), Quaternion.identity,
             new[] { new Vector3(-15f, 0f, 30f), new Vector3(-12.5f, 0f, 38f), new Vector3(-15f, 0f, 46f), new Vector3(-13f, 0f, 42f) },
             1.85f, 4.6f, ScrutinyAura.Role.Patrol, 9f, 58f);
-        CreateTeacher(school, "Patrol_F2", new Vector3(-2f, 4f, 30f), Quaternion.identity,
-            new[] { new Vector3(-5f, 4f, 24f), new Vector3(1f, 4f, 28f), new Vector3(-5f, 4f, 36f), new Vector3(0f, 4f, 40f) },
-            1.7f, 4.2f, ScrutinyAura.Role.Patrol, 8f, 55f);
+        CreateTeacher(school, "Patrol_F2", new Vector3(-14.4f, 4f, 13f), Quaternion.identity,
+            new[] { new Vector3(-14.4f, 4f, 6f), new Vector3(-14.4f, 4f, 19f) },
+            1.5f, 3.8f, ScrutinyAura.Role.Patrol, 7f, 55f);
 
         MakeZone(school, "Zone_School", new Vector3(-14f, 1f, 24f), new Vector3(12f, 4f, 54f), CampusFlowController.Zone.School);
     }
 
     static void BuildStaircase(Transform parent, Vector3 origin)
     {
-        // 8 级台阶到 y≈4
-        for (int i = 0; i < 10; i++)
+        // 每级 0.20m，低于 CharacterController.stepOffset=0.35m。
+        for (int i = 0; i < 20; i++)
         {
-            float y = 0.2f + i * 0.4f;
-            float x = origin.x + i * 0.55f;
-            LevelBuildUtil.Make(PrimitiveType.Cube, parent, "Step_" + i,
-                new Vector3(x, y, origin.z), new Vector3(1.1f, 0.4f, 3.2f), Quaternion.identity,
-                new Color(0.55f, 0.52f, 0.48f, 1f), "BuildingA", true);
+            float top = ExamFloorHeight - (i + 1) * 0.2f;
+            float height = Mathf.Max(0.08f, top);
+            LevelBuildUtil.Make(PrimitiveType.Cube, parent, "EscapeStep_" + i,
+                new Vector3(origin.x, top - height * 0.5f, origin.z + 0.25f + i * 0.5f),
+                new Vector3(3.2f, height, 0.5f), Quaternion.identity,
+                new Color(0.62f, 0.65f, 0.64f), "Sidewalk", true);
+            // 窄色条标识踏步前缘。
+            LevelBuildUtil.Make(PrimitiveType.Cube, parent, "StepEdge_" + i,
+                new Vector3(origin.x, top + 0.006f, origin.z + 0.47f + i * 0.5f),
+                new Vector3(3.2f, 0.012f, 0.04f), Quaternion.identity,
+                new Color(0.8f, 0.69f, 0.3f), "LaneMark", false);
         }
-        // 楼梯平台
-        LevelBuildUtil.Make(PrimitiveType.Cube, parent, "StairLanding",
-            new Vector3(origin.x + 6.2f, 3.9f, origin.z), new Vector3(3.5f, 0.25f, 4.5f), Quaternion.identity,
-            EscapePalette.Corridor, "Sidewalk", true);
+        for (int side = -1; side <= 1; side += 2)
+        {
+            LevelBuildUtil.Make(PrimitiveType.Cube, parent, "StairHandrail",
+                new Vector3(origin.x + side * 1.66f, 3f, origin.z + 5f),
+                new Vector3(0.1f, 0.1f, 10.77f), Quaternion.Euler(21.8f, 0f, 0f),
+                EscapePalette.Cabinet, "BuildingB", true);
+            for (int i = 0; i <= 10; i++)
+                MakeWall(parent, "RailPost", new Vector3(origin.x + side * 1.66f,
+                    4.5f - i * 0.4f, origin.z + i), new Vector3(0.08f, 1f, 0.08f));
+        }
     }
 
     // -------------------- Secrets --------------------
@@ -226,22 +230,14 @@ public static class CampusWorldBuilder
 
         // 通风口：考场后墙内侧 → 走廊中段（蹲走）
         LevelBuildUtil.Make(PrimitiveType.Cube, secrets, "VentVisual_A",
-            new Vector3(-4f, 0.55f, -5.4f), new Vector3(1.6f, 0.9f, 0.2f), Quaternion.identity,
+            new Vector3(-10.7f, 4.55f, -3.85f), new Vector3(1.6f, 0.9f, 0.2f), Quaternion.identity,
             new Color(0.35f, 0.38f, 0.4f, 1f), "BuildingB", false, true, 0.3f);
-        // 通风管道地面（无高大碰撞，可爬行感）
-        LevelBuildUtil.Make(PrimitiveType.Cube, secrets, "VentTunnel",
-            new Vector3(-8f, 0.15f, -7.5f), new Vector3(10f, 0.3f, 1.4f), Quaternion.identity,
-            new Color(0.3f, 0.32f, 0.34f, 1f), "BuildingC", true);
-        LevelBuildUtil.Make(PrimitiveType.Cube, secrets, "VentTunnel2",
-            new Vector3(-14f, 0.15f, 2f), new Vector3(1.4f, 0.3f, 18f), Quaternion.identity,
-            new Color(0.3f, 0.32f, 0.34f, 1f), "BuildingC", true);
-
         var ventEntry = new GameObject("VentEntry");
         ventEntry.transform.SetParent(secrets, false);
-        ventEntry.transform.position = new Vector3(-4f, 0.6f, -4.8f);
+        ventEntry.transform.position = new Vector3(-10.7f, 4.6f, -3.45f);
         var ventDest = new GameObject("VentDest");
         ventDest.transform.SetParent(secrets, false);
-        ventDest.transform.position = new Vector3(-14f, 1.0f, 10f);
+        ventDest.transform.position = new Vector3(-14.4f, 4.92f, 10f);
         var tele = ventEntry.AddComponent<ZoneTeleporter>();
         tele.destination = ventDest.transform;
         tele.prompt = "通风口捷径（建议蹲走按 E）";
@@ -312,11 +308,11 @@ public static class CampusWorldBuilder
 
         // 大地面
         LevelBuildUtil.Make(PrimitiveType.Cube, hub, "TownGround",
-            new Vector3(0f, FloorY, 95f), new Vector3(90f, 0.2f, 80f), Quaternion.identity,
+            new Vector3(0f, FloorY, 125f), new Vector3(180f, 0.2f, 180f), Quaternion.identity,
             EscapePalette.TravelGround, "Sidewalk", true);
 
         // 公路（程序化条带；编辑器可叠 Kenney road FBX）
-        for (int i = 0; i < 12; i++)
+        for (int i = 0; i < 26; i++)
         {
             LevelBuildUtil.Make(PrimitiveType.Cube, hub, "Road_" + i,
                 new Vector3(-8f, 0.02f, 62f + i * 6f), new Vector3(8f, 0.08f, 6f), Quaternion.identity,
@@ -359,7 +355,7 @@ public static class CampusWorldBuilder
             "按 E 回家留纸条");
         var homeDest = new GameObject("HomeWarpDest");
         homeDest.transform.SetParent(hub, false);
-        homeDest.transform.position = new Vector3(-28f, 1.02f, 112f);
+        homeDest.transform.position = new Vector3(-28f, 0.92f, 115f);
         var ht = homePortal.AddComponent<ZoneTeleporter>();
         ht.destination = homeDest.transform;
         ht.prompt = "按 E 回家留纸条";
@@ -373,7 +369,7 @@ public static class CampusWorldBuilder
         CreateScenePortal(hub, "PortalTravelHint", new Vector3(20f, 0f, 118f), EscapePalette.TicketScreen,
             "TravelMissions", "按 E 前往旅行任务区（远端场景）", false, true, false);
 
-        MakeZone(hub, "Zone_Hub", new Vector3(0f, 1f, 95f), new Vector3(80f, 4f, 70f), CampusFlowController.Zone.Hub);
+        MakeZone(hub, "Zone_Hub", new Vector3(0f, 1f, 125f), new Vector3(176f, 4f, 176f), CampusFlowController.Zone.Hub);
     }
 
     static GameObject CreateInWorldPortal(Transform root, string name, Vector3 pos, Color color, string prompt)
@@ -429,77 +425,48 @@ public static class CampusWorldBuilder
     {
         var home = new GameObject("HomeArea").transform;
         home.SetParent(root, false);
-
-        LevelBuildUtil.Make(PrimitiveType.Cube, home, "Floor",
-            new Vector3(-28f, FloorY, 118f), new Vector3(16f, 0.2f, 18f), Quaternion.identity,
-            EscapePalette.HomeFloor, "Sidewalk", true);
-        MakeWall(home, "WallBack", new Vector3(-28f, 1.8f, 126.8f), new Vector3(16f, 3.6f, 0.35f));
-        MakeWall(home, "WallFront", new Vector3(-28f, 1.8f, 109.2f), new Vector3(16f, 3.6f, 0.35f));
-        // 前门缺口
-        MakeWall(home, "WallL", new Vector3(-36f, 1.8f, 118f), new Vector3(0.35f, 3.6f, 18f));
-        MakeWall(home, "WallR_A", new Vector3(-20f, 1.8f, 122f), new Vector3(0.35f, 3.6f, 10f));
-        MakeWall(home, "WallR_B", new Vector3(-20f, 1.8f, 111f), new Vector3(0.35f, 3.6f, 4f));
-
-        LevelBuildUtil.Make(PrimitiveType.Cube, home, "Table",
-            new Vector3(-28f, 0.5f, 122f), new Vector3(2.2f, 0.2f, 1.2f), Quaternion.identity,
-            EscapePalette.Desk, "Crate", true);
+        DeskPart(home, "Floor", new Vector3(-28f, -0.1f, 118f), new Vector3(8.8f, 0.2f, 9f), EscapePalette.HomeFloor);
+        MakeWall(home, "WallBack", new Vector3(-28f, 1.6f, 122.5f), new Vector3(9f, 3.2f, 0.2f));
+        MakeWall(home, "WallFront", new Vector3(-28f, 1.6f, 113.5f), new Vector3(9f, 3.2f, 0.2f));
+        MakeWall(home, "WallL", new Vector3(-32.4f, 1.6f, 118f), new Vector3(0.2f, 3.2f, 9f));
+        MakeWall(home, "WallR_A", new Vector3(-23.6f, 1.6f, 119.2f), new Vector3(0.2f, 3.2f, 6.6f));
+        MakeWall(home, "WallR_B", new Vector3(-23.6f, 1.6f, 114f), new Vector3(0.2f, 3.2f, 1f));
+        MakeWall(home, "DoorLintel", new Vector3(-23.6f, 2.7f, 115.2f), new Vector3(0.2f, 1f, 1.4f));
+        DeskPart(home, "Table", new Vector3(-28f, 0.725f, 121f), new Vector3(1.4f, 0.05f, 0.75f), EscapePalette.Desk);
+        foreach (float x in new[] { -28.6f, -27.4f }) foreach (float z in new[] { 120.7f, 121.3f })
+            DeskPart(home, "TableLeg", new Vector3(x, 0.35f, z), new Vector3(0.06f, 0.7f, 0.06f), EscapePalette.Cabinet);
         var note = new GameObject("LeaveNote");
         note.transform.SetParent(home, false);
-        note.transform.position = new Vector3(-28f, 1f, 121f);
+        note.transform.localPosition = new Vector3(-28f, 1f, 120.3f);
         var noteCol = note.AddComponent<BoxCollider>();
         noteCol.isTrigger = true;
-        noteCol.size = new Vector3(2.5f, 2f, 2f);
+        noteCol.size = new Vector3(1.5f, 2f, 1.5f);
         note.AddComponent<LeaveNoteInteract>();
-
-        LevelBuildUtil.Make(PrimitiveType.Cube, home, "Sofa",
-            new Vector3(-32.5f, 0.55f, 116f), new Vector3(2.8f, 1.1f, 1.2f), Quaternion.identity,
-            EscapePalette.Cabinet, "BuildingB", true).AddComponent<CoverTag>().label = "沙发";
-
-        // 家长 + 冷紫光
-        CreateTeacher(home, "Parent", new Vector3(-25f, 0f, 118f), Quaternion.identity,
-            new[] { new Vector3(-25f, 0f, 114f), new Vector3(-25f, 0f, 124f), new Vector3(-31f, 0f, 119f) },
-            1.7f, 3.8f, ScrutinyAura.Role.Parent, 8.5f, 60f);
-
-        // 出家门回到城镇
+        DeskPart(home, "Sofa", new Vector3(-30.7f, 0.4f, 117f), new Vector3(2.2f, 0.8f, 0.9f), EscapePalette.Cabinet);
+        DeskPart(home, "SofaBack", new Vector3(-30.7f, 0.85f, 117.4f), new Vector3(2.2f, 0.6f, 0.15f), EscapePalette.Cabinet);
+        CreateTeacher(home, "Parent", new Vector3(-25.5f, 0f, 119f), Quaternion.identity,
+            new[] { new Vector3(-25.5f, 0f, 116f), new Vector3(-25.5f, 0f, 121f), new Vector3(-29f, 0f, 118f) },
+            0.8f, 2.6f, ScrutinyAura.Role.Parent, 6f, 60f);
         var back = new GameObject("HomeExit");
         back.transform.SetParent(home, false);
-        back.transform.position = new Vector3(-20.5f, 1f, 112f);
+        back.transform.localPosition = new Vector3(-24f, 1f, 115.2f);
         var backDest = new GameObject("HubReturnDest");
         backDest.transform.SetParent(home, false);
-        backDest.transform.position = new Vector3(-20f, 1.02f, 90f);
-        var bt = back.AddComponent<ZoneTeleporter>();
-        bt.destination = backDest.transform;
-        bt.prompt = "按 E 返回城镇";
-        var bc = back.AddComponent<BoxCollider>();
-        bc.isTrigger = true;
-        bc.size = new Vector3(2.5f, 2.5f, 2.5f);
-        LevelBuildUtil.Make(PrimitiveType.Cube, home, "HomeExitDoor",
-            new Vector3(-20.2f, 1.4f, 112f), new Vector3(0.25f, 2.6f, 1.6f), Quaternion.identity,
-            EscapePalette.Exit, "Glass", false, true, 0.45f);
-
-        MakeZone(home, "Zone_Home", new Vector3(-28f, 1f, 118f), new Vector3(14f, 3f, 16f), CampusFlowController.Zone.Home);
+        backDest.transform.localPosition = new Vector3(-20f, 0.92f, 90f);
+        var tele = back.AddComponent<ZoneTeleporter>();
+        tele.destination = backDest.transform;
+        tele.prompt = "按 E 返回城镇";
+        DeskPart(home, "HomeExitDoor", new Vector3(-23.72f, 1.1f, 115.2f), new Vector3(0.04f, 2.2f, 1.1f), EscapePalette.Exit, false);
+        AddCeiling(home, "HomeCeiling", new Vector3(-28f, 3.3f, 118f), new Vector3(9f, 0.2f, 9.2f));
+        foreach (float z in new[] { 115f, 118f, 121f }) AddRoomLight(home, new Vector3(-28f, 3.05f, z), 5f);
+        MakeZone(home, "Zone_Home", new Vector3(-28f, 1.5f, 118f), new Vector3(8.4f, 3f, 8.6f), CampusFlowController.Zone.Home);
     }
 
     static void TryPlaceThirdPartyDressing(Transform root)
     {
-        // 校门外摆一两栋 suburban 建筑 + 公路块（仅编辑器非 Play）
-        ThirdPartyModelUtil.TrySpawn(ThirdPartyModelUtil.SchoolBuilding, root,
-            new Vector3(6f, 0f, 55f), Quaternion.Euler(0f, -90f, 0f), Vector3.one * 1.0f);
-        ThirdPartyModelUtil.TrySpawn(ThirdPartyModelUtil.BuildingA, root,
-            new Vector3(18f, 0f, 88f), Quaternion.identity, Vector3.one * 1.2f);
-        ThirdPartyModelUtil.TrySpawn(ThirdPartyModelUtil.BuildingB, root,
-            new Vector3(28f, 0f, 100f), Quaternion.Euler(0f, 45f, 0f), Vector3.one * 1.1f);
-        ThirdPartyModelUtil.TrySpawn(ThirdPartyModelUtil.TreeSmall, root,
-            new Vector3(-2f, 0f, 70f), Quaternion.identity, Vector3.one);
-        ThirdPartyModelUtil.TrySpawn(ThirdPartyModelUtil.RoadStraight, root,
-            new Vector3(-8f, 0f, 68f), Quaternion.identity, Vector3.one * 2f);
-        ThirdPartyModelUtil.TrySpawn(ThirdPartyModelUtil.FurnitureBookcase, root,
-            new Vector3(10f, 0f, 12f), Quaternion.Euler(0f, -90f, 0f), Vector3.one);
-        // 整间教室 FBX 作装饰旁楼（避免与程序化考场重叠）
-        ThirdPartyModelUtil.TrySpawn(ThirdPartyModelUtil.Classroom, root,
-            new Vector3(18f, 0f, 8f), Quaternion.Euler(0f, -90f, 0f), Vector3.one);
+        // Buildings now use explicit metre-sized lots in CampusSitePlan. Imported
+        // dressing previously overlapped the placeholder houses and playable school.
     }
-
     // -------------------- Shared helpers --------------------
     static void MakeWall(Transform root, string name, Vector3 pos, Vector3 scale)
     {
@@ -509,53 +476,100 @@ public static class CampusWorldBuilder
 
     static void CreateDesk(Transform root, Vector3 pos, string name)
     {
-        GameObject model = ThirdPartyModelUtil.TrySpawn(ThirdPartyModelUtil.FurnitureDesk, root,
-            pos + new Vector3(0f, 0f, 0f), Quaternion.identity, Vector3.one);
-        if (model == null)
+        // 固定米制尺寸，编辑器与运行时均使用同一模型，避免 FBX 单位不一致。
+        var desk = new GameObject(name).transform;
+        desk.SetParent(root, false);
+        desk.localPosition = pos;
+        DeskPart(desk, "Top", new Vector3(0f, 0.735f, 0f), new Vector3(0.70f, 0.05f, 0.50f), EscapePalette.Desk);
+        DeskPart(desk, "Shelf", new Vector3(0f, 0.57f, 0f), new Vector3(0.60f, 0.04f, 0.40f), EscapePalette.Desk);
+        foreach (float x in new[] { -0.28f, 0.28f })
+            foreach (float z in new[] { -0.19f, 0.19f })
+                DeskPart(desk, "Leg", new Vector3(x, 0.35f, z), new Vector3(0.035f, 0.70f, 0.035f), EscapePalette.Cabinet);
+        DeskPart(desk, "ChairSeat", new Vector3(0f, 0.435f, -0.72f), new Vector3(0.40f, 0.04f, 0.40f), EscapePalette.Chair);
+        DeskPart(desk, "ChairBack", new Vector3(0f, 0.69f, -0.91f), new Vector3(0.40f, 0.35f, 0.035f), EscapePalette.Chair);
+        foreach (float x in new[] { -0.16f, 0.16f })
+            foreach (float z in new[] { -0.88f, -0.56f })
+                DeskPart(desk, "ChairLeg", new Vector3(x, 0.21f, z), new Vector3(0.03f, 0.42f, 0.03f), EscapePalette.Cabinet);
+        DeskPart(desk, "ExamPaper", new Vector3(0f, 0.764f, 0.02f), new Vector3(0.21f, 0.005f, 0.29f), Color.white, false);
+        desk.gameObject.AddComponent<CoverTag>().label = "课桌";
+    }
+
+    static void DeskPart(Transform root, string name, Vector3 pos, Vector3 size, Color color, bool solid = true)
+    {
+        LevelBuildUtil.Make(PrimitiveType.Cube, root, name, pos, size, Quaternion.identity,
+            color, "Campus_" + name, solid);
+    }
+
+    static void MakeSign(Transform root, string name, string label, Vector3 pos, Quaternion rotation)
+    {
+        var sign = new GameObject(name);
+        sign.transform.SetParent(root, false);
+        sign.transform.localPosition = pos;
+        sign.transform.localRotation = rotation;
+        var text = sign.AddComponent<TextMesh>();
+        text.text = label;
+        text.font = Resources.Load<Font>("UIFont");
+        text.fontSize = 48;
+        text.characterSize = 0.035f;
+        text.anchor = TextAnchor.MiddleCenter;
+        text.color = new Color(0.18f, 0.42f, 0.30f);
+        if (text.font != null) sign.GetComponent<MeshRenderer>().sharedMaterial = text.font.material;
+    }
+
+    static void AddCeiling(Transform root, string name, Vector3 position, Vector3 size)
+    {
+        DeskPart(root, name, position, size, new Color(0.9f, 0.9f, 0.86f));
+    }
+
+    static void AddRoomLight(Transform root, Vector3 position, float range)
+    {
+        DeskPart(root,"FluorescentHousing",position,new Vector3(1.2f,0.055f,0.25f),new Color(0.64f,0.66f,0.65f),false);
+        foreach (float z in new[] {-0.065f,0.065f})
+            LevelBuildUtil.Make(PrimitiveType.Cylinder,root,"FluorescentTube",position+new Vector3(0,-0.04f,z),
+                new Vector3(0.025f,0.54f,0.025f),Quaternion.Euler(0,0,90),new Color(0.9f,0.96f,1f),"TubeEmission",false,true,0.3f);
+        var fixture = new GameObject("InteriorLight");
+        fixture.transform.SetParent(root, false);
+        fixture.transform.localPosition = position - Vector3.up * 0.12f;
+        var light = fixture.AddComponent<Light>();
+        light.type = LightType.Point;
+        light.color = new Color(0.9f,0.95f,1f);
+        light.intensity = 0.8f;
+        light.range = range;
+        light.shadows = LightShadows.None;
+        if (position.x < -9f && position.z > 2f && position.z < 4f)
+        { light.shadows=LightShadows.Soft; light.shadowBias=0.025f; light.shadowNormalBias=0.12f; }
+    }
+
+    static void DressClassroom(Transform exam)
+    {
+        foreach (float z in new[] { -2.3f, 0.55f, 3.45f, 6.3f })
         {
-            var desk = LevelBuildUtil.Make(PrimitiveType.Cube, root, name,
-                pos + new Vector3(0f, 0.55f, 0f), new Vector3(1.5f, 0.7f, 0.7f), Quaternion.identity,
-                EscapePalette.Desk, "Crate", true);
-            desk.AddComponent<CoverTag>().label = "课桌";
-            LevelBuildUtil.Make(PrimitiveType.Cube, root, name + "_Chair",
-                pos + new Vector3(0f, 0.35f, -0.75f), new Vector3(0.55f, 0.7f, 0.55f), Quaternion.identity,
-                EscapePalette.Chair, "BuildingB", true);
+            DeskPart(exam, "WindowGlass", new Vector3(-3f, 1.85f, z), new Vector3(0.035f, 1.7f, 2.3f), new Color(0.60f, 0.78f, 0.84f), true);
+            foreach (float dz in new[] { -1.15f, 0f, 1.15f })
+                DeskPart(exam, "WindowMullion", new Vector3(-3.12f, 1.85f, z + dz), new Vector3(0.05f, 1.7f, 0.04f), EscapePalette.Cabinet, false);
+            foreach (float y in new[] { 1f, 2.7f })
+                DeskPart(exam, "WindowFrame", new Vector3(-3.12f, y, z), new Vector3(0.05f, 0.04f, 2.35f), EscapePalette.Cabinet, false);
         }
-        else
-        {
-            model.name = name;
-            model.AddComponent<CoverTag>().label = "课桌";
-            // 简单碰撞
-            if (model.GetComponentInChildren<Collider>() == null)
-            {
-                var box = model.AddComponent<BoxCollider>();
-                box.size = new Vector3(1.2f, 0.8f, 0.7f);
-                box.center = new Vector3(0f, 0.4f, 0f);
-            }
-            ThirdPartyModelUtil.TrySpawn(ThirdPartyModelUtil.FurnitureChairDesk, root,
-                pos + new Vector3(0f, 0f, -0.85f), Quaternion.identity, Vector3.one);
-        }
+        DeskPart(exam, "WallDado", new Vector3(-3.12f, 0.5f, 2f), new Vector3(0.035f, 1f, 11.8f), new Color(0.52f, 0.65f, 0.59f), false);
+        DeskPart(exam, "ChalkTray", new Vector3(-7.5f, 1.39f, 7.76f), new Vector3(4.1f, 0.04f, 0.13f), EscapePalette.Cabinet, false);
+        MakeSign(exam, "ExamRoomSign", "201 考场   保持安静", new Vector3(-7.5f, 3.05f, 7.75f), Quaternion.identity);
+        foreach (float x in new[] { -9.5f, -5.5f })
+            foreach (float z in new[] { -1f, 3f, 6.5f }) AddRoomLight(exam, new Vector3(x, 3.25f, z), 4.5f);
     }
 
     static void CreateCabinet(Transform root, Vector3 pos)
     {
-        GameObject model = ThirdPartyModelUtil.TrySpawn(ThirdPartyModelUtil.FurnitureCabinet, root,
-            pos + new Vector3(0f, -1f, 0f), Quaternion.identity, Vector3.one);
-        if (model == null)
+        var cabinet = new GameObject("Cabinet").transform;
+        cabinet.SetParent(root, false);
+        cabinet.localPosition = pos - Vector3.up;
+        DeskPart(cabinet, "CabinetBody", new Vector3(0f, 1f, 0f), new Vector3(1.1f, 2f, 0.7f), EscapePalette.Cabinet);
+        foreach (float x in new[] { -0.27f, 0.27f })
         {
-            var cab = LevelBuildUtil.Make(PrimitiveType.Cube, root, "Cabinet",
-                pos, new Vector3(1.1f, 2.0f, 0.7f), Quaternion.identity,
-                EscapePalette.Cabinet, "BuildingB", true);
-            cab.AddComponent<CoverTag>().label = "柜子";
+            DeskPart(cabinet, "CabinetDoor", new Vector3(x, 1f, -0.36f), new Vector3(0.52f, 1.9f, 0.025f), new Color(0.58f, 0.63f, 0.61f), false);
+            DeskPart(cabinet, "CabinetHandle", new Vector3(x * 0.3f, 1f, -0.39f), new Vector3(0.025f, 0.18f, 0.035f), Color.gray, false);
         }
-        else
-        {
-            model.AddComponent<CoverTag>().label = "柜子";
-            if (model.GetComponentInChildren<Collider>() == null)
-                model.AddComponent<BoxCollider>();
-        }
+        cabinet.gameObject.AddComponent<CoverTag>().label = "储物柜";
     }
-
     static GameObject CreateTeacher(Transform root, string name, Vector3 pos, Quaternion rot,
         Vector3[] route, float patrolSpeed, float chaseSpeed, ScrutinyAura.Role role,
         float viewDist, float viewAngle)
@@ -567,19 +581,23 @@ public static class CampusWorldBuilder
 
         Color body = role == ScrutinyAura.Role.Parent ? EscapePalette.Parent
             : (role == ScrutinyAura.Role.Patrol ? EscapePalette.Patrol : EscapePalette.Teacher);
-        LevelBuildUtil.Make(PrimitiveType.Capsule, go.transform, "Visual",
-            new Vector3(0f, 1f, 0f), new Vector3(0.85f, 1f, 0.85f), Quaternion.identity,
-            body, "CarBody", false);
-
+        DeskPart(go.transform, "Torso", new Vector3(0f, 1.18f, 0f), new Vector3(0.44f, 0.56f, 0.25f), body, false);
+        LevelBuildUtil.Make(PrimitiveType.Sphere, go.transform, "Head", new Vector3(0f, 1.61f, 0f),
+            new Vector3(0.26f, 0.28f, 0.25f), Quaternion.identity, new Color(0.77f, 0.60f, 0.46f), "NPCSkin", false);
+        foreach (float x in new[] { -0.115f, 0.115f })
+            DeskPart(go.transform, "Leg", new Vector3(x, 0.45f, 0f), new Vector3(0.17f, 0.9f, 0.20f), new Color(0.19f, 0.22f, 0.26f), false);
+        foreach (float x in new[] { -0.285f, 0.285f })
+            DeskPart(go.transform, "Arm", new Vector3(x, 1.12f, 0f), new Vector3(0.12f, 0.62f, 0.15f), body, false);
         var col = go.AddComponent<CapsuleCollider>();
-        col.center = new Vector3(0f, 1f, 0f);
-        col.height = 2f;
-        col.radius = 0.4f;
+        col.center = new Vector3(0f, 0.875f, 0f);
+        col.height = 1.75f;
+        col.radius = 0.27f;
 
         var cone = go.AddComponent<VisionConeDetector>();
-        cone.viewDistance = viewDist;
-        cone.viewAngle = viewAngle;
-        cone.eyeHeight = 1.55f;
+        cone.viewDistance = Mathf.Min(viewDist,6.5f);
+        cone.detectionDelay = 0.65f;
+        cone.viewAngle = Mathf.Min(viewAngle,52f);
+        cone.eyeHeight = 1.62f;
         cone.keepCheckingAfterSpot = role != ScrutinyAura.Role.Parent;
         cone.gizmoColor = role == ScrutinyAura.Role.Parent
             ? new Color(0.6f, 0.3f, 1f, 0.35f)
@@ -596,11 +614,16 @@ public static class CampusWorldBuilder
 
         var agent = go.AddComponent<TeacherAgent>();
         agent.waypoints = wps;
-        agent.patrolSpeed = patrolSpeed;
-        agent.chaseSpeed = chaseSpeed;
-        agent.randomPatrol = true;
-        agent.catchDistance = 1.35f;
+        agent.patrolSpeed = Mathf.Min(patrolSpeed,1.1f);
+        agent.chaseSpeed = Mathf.Min(chaseSpeed,3.3f);
+        agent.randomPatrol = false;
+        agent.waitAtPoint = 1.2f;
+        agent.loseSightReturnSeconds = 2.2f;
+        agent.catchDistance = 0.75f;
 
+        var badge=LevelBuildUtil.Make(PrimitiveType.Cube,go.transform,"WarningBadge",
+            new Vector3(0f,1.3f,0.145f),new Vector3(0.11f,0.055f,0.025f),Quaternion.identity,
+            new Color(1f,0.2f,0.04f),"WarningBadge",false,true,0.15f);
         var aura = go.AddComponent<ScrutinyAura>();
         aura.SetRole(role);
         return go;
@@ -625,6 +648,8 @@ public static class CampusWorldBuilder
         var follow = cam.GetComponent<ThirdPersonCamera>();
         motor.view = cam.transform;
         motor.allowCrouch = true;
+        follow.firstPersonOnFoot = true;
+        follow.firstPersonFov = 68f;
         follow.target = player.transform;
         follow.targetOffset = ThirdPersonCamera.OnFootOffset;
         follow.distance = ThirdPersonCamera.OnFootDistance;
@@ -715,6 +740,8 @@ public static class CampusWorldBuilder
                 zones[i].flow = flow;
         }
 
+        if (systems.GetComponent<CampusHUD>() == null)
+            systems.AddComponent<CampusHUD>();
         flow.BindTeachers();
         homeFlow.BindDetectors();
         PauseMenu.Ensure();

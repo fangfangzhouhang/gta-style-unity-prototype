@@ -61,6 +61,8 @@ public class StealthGameHUD : MonoBehaviour
 
     void OnGUI()
     {
+        if (UnityCompat.FindOne<CampusFlowController>() != null)
+            return;
         if (PauseMenu.Instance != null && PauseMenu.Instance.IsOpen)
             return;
         EnsureStyles();

@@ -16,6 +16,15 @@ public class ThirdPersonCamera : MonoBehaviour
     public float collisionRadius = 0.28f;
     public float baseFov = 62f;
     public float maxFov = 74f;
+    [Tooltip("步行使用第一人称眼高；驾驶仍跟随车辆。")]
+    public bool firstPersonOnFoot = true;
+    public float firstPersonFov = 68f;
+    public float eyeInset = 0.15f;
+
+    Transform hiddenBody;
+    Renderer[] bodyRenderers;
+    UnityEngine.Rendering.ShadowCastingMode[] bodyShadows;
+    public bool IsFirstPerson { get { return firstPersonOnFoot && target != null && target.GetComponent<ThirdPersonController>() != null; } }
 
     float yaw;
     float pitch = 18f;
@@ -72,7 +81,7 @@ public class ThirdPersonCamera : MonoBehaviour
 
         yaw += Input.GetAxis("Mouse X") * lookSensitivity;
         pitch -= Input.GetAxis("Mouse Y") * lookSensitivity;
-        pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
+        pitch = Mathf.Clamp(pitch, IsFirstPerson ? -85f : minPitch, IsFirstPerson ? 85f : maxPitch);
     }
 
     void LateUpdate()
@@ -82,6 +91,13 @@ public class ThirdPersonCamera : MonoBehaviour
 
         if (!aimInitialized)
             AimTowardMission();
+
+        SyncBodyVisibility();
+        if (IsFirstPerson)
+        {
+            ApplyFirstPersonPose();
+            return;
+        }
 
         if (!hasPose)
         {
@@ -114,6 +130,15 @@ public class ThirdPersonCamera : MonoBehaviour
         if (target == null)
             return;
 
+        if (!aimInitialized) AimTowardMission();
+        SyncBodyVisibility();
+        if (IsFirstPerson)
+        {
+            ApplyFirstPersonPose();
+            hasPose = true;
+            return;
+        }
+
         Vector3 pivot = target.position + targetOffset;
         float usedDistance = ResolveDistance(pivot, out Quaternion orbit);
         transform.position = pivot + orbit * new Vector3(0f, 0f, -usedDistance);
@@ -141,9 +166,49 @@ public class ThirdPersonCamera : MonoBehaviour
             look = Vector3.forward;
 
         yaw = Quaternion.LookRotation(look.normalized, Vector3.up).eulerAngles.y;
-        pitch = 18f;
+        pitch = IsFirstPerson ? 0f : 18f;
         aimInitialized = true;
     }
+
+    void ApplyFirstPersonPose()
+    {
+        var body = target.GetComponent<CharacterController>();
+        Vector3 eye = body != null
+            ? target.TransformPoint(body.center) + Vector3.up * (body.height * 0.5f - eyeInset)
+            : target.position + Vector3.up * 0.65f;
+        transform.SetPositionAndRotation(eye, Quaternion.Euler(pitch, yaw, 0f));
+        var cam = GetComponent<Camera>();
+        if (cam != null) { cam.nearClipPlane = 0.04f; cam.fieldOfView = firstPersonFov; }
+        hasPose = true;
+    }
+
+    void SyncBodyVisibility()
+    {
+        Transform wanted = IsFirstPerson ? target : null;
+        if (wanted == hiddenBody) return;
+        RestoreBody();
+        hiddenBody = wanted;
+        if (hiddenBody == null) return;
+        bodyRenderers = hiddenBody.GetComponentsInChildren<Renderer>();
+        bodyShadows = new UnityEngine.Rendering.ShadowCastingMode[bodyRenderers.Length];
+        for (int i = 0; i < bodyRenderers.Length; i++)
+        {
+            bodyShadows[i] = bodyRenderers[i].shadowCastingMode;
+            bodyRenderers[i].shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
+        }
+    }
+
+    void RestoreBody()
+    {
+        if (bodyRenderers != null)
+            for (int i = 0; i < bodyRenderers.Length; i++)
+                if (bodyRenderers[i] != null) bodyRenderers[i].shadowCastingMode = bodyShadows[i];
+        hiddenBody = null;
+        bodyRenderers = null;
+        bodyShadows = null;
+    }
+
+    void OnDisable() { RestoreBody(); }
 
     float ResolveDistance(Vector3 pivot, out Quaternion orbit)
     {

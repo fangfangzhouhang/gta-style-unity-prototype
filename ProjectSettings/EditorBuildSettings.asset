@@ -14,4 +14,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SchoolEscape.unity
     guid: d1000000000000000000000000000011
+  - enabled: 1
+    path: Assets/Scenes/TransitHub.unity
+    guid: d1000000000000000000000000000020
+  - enabled: 1
+    path: Assets/Scenes/TravelMissions.unity
+    guid: d1000000000000000000000000000021
   m_configObjects: {}

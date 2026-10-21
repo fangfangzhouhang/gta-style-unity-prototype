@@ -9,8 +9,10 @@
 | **v0.1 开世界** | 第三人称 WASD、F 上下车、开车至黄圈「任务完成」 | `OpenWorld` 场景 / 菜单 **OpenWorld → 生成占位场景** |
 | **v0.2 考场潜行** | 监考视野锥、蹲走、课桌/柜子掩体、被发现回检查点、逃出考场 | 菜单 **EscapeExam → 生成考场场景** → Play |
 | **v0.2 学校逃离** | 走廊、1–2 巡逻（复用视野组件）、校门「逃出学校」 | 考场成功自动进入，或 **EscapeExam → 生成学校场景** |
+| **v0.3 交通枢纽** | 综合站购票（E + 中文车次面板）/ 闸机检票 / 机场值机占位 | 学校成功自动进入，或 **EscapeExam → 生成交通枢纽场景** |
+| **v0.3 旅行任务** | ≥3 中国地标黄圈（西湖 / 长城 / 黄山）+ 中文完成反馈 | 枢纽检票后进入，或 **EscapeExam → 生成旅行任务场景** |
 
-交通枢纽、OSM 真地图、联机与精美美术等**尚未合入**。代理 / 开发者请从 **`Docs/00-任务交接.md`** 读起。重型工作默认不做，须先与仓库维护者确认。
+OSM 真地图、联机与精美美术等**尚未合入**。代理 / 开发者请从 **`Docs/00-任务交接.md`** 读起。重型工作默认不做，须先与仓库维护者确认。
 
 # 开放世界小原型
 
@@ -46,10 +48,20 @@
 3. **WASD** 移动，**Ctrl** 或 **C** 蹲走；用课桌 / 柜子挡住监考视线。
 4. 走进监考前方扇形且无遮挡会被发现，屏幕显示「被发现了」并回到出生点。
 5. 绕到左侧绿色出口 →「逃出考场」→ 自动进入学校走廊（需 Build Settings 含 `SchoolEscape`）。
-6. 学校关：避开紫色巡逻，走到蓝色校门 →「逃出学校」。
+6. 学校关：避开紫色巡逻，走到蓝色校门 →「逃出学校」→ 自动进入交通枢纽（需含 `TransitHub`）。
 
 也可单独：**EscapeExam → 生成学校场景** 后直接验收学校段。  
 开世界切片不变：仍用 **OpenWorld → 生成占位场景** / `OpenWorld.unity`。
+
+## v0.3 交通枢纽 / 旅行怎么玩
+
+1. 退出 Play。依次（或按需）执行：**EscapeExam → 生成交通枢纽场景**、**生成旅行任务场景**，并 **将场景写入 Build Settings**。
+2. 可从学校通关自动进入枢纽，或直接打开 `TransitHub` 点 Play。
+3. 靠近**橙色高铁窗口**（或右侧机场值机）按 **E** → 中文面板选「G-自由01」等 →「购票成功」。
+4. **无票**走近蓝色闸机会提示先购票；**有票**走进闸机 →「检票通过」→ 加载 `TravelMissions`。
+5. 旅行区走进三个黄圈（西湖断桥 / 长城烽火台 / 黄山迎客松）完成打卡，全部完成后显示通关反馈。
+
+**已知限制**：无真实列车/安检动画；车票为静态状态；无 OSM；旅行区为开阔占位而非真实城市。
 
 ## 怎么玩（验收）
 
@@ -93,6 +105,9 @@
 | `Assets/Scripts/Mission/MissionHUD.cs` | 屏幕提示，包括「任务完成」 |
 | `Assets/Scripts/World/PrototypeWorldBuilder.cs` | 生成占位街区 |
 | `Assets/Editor/PrototypeSceneMenu.cs` | 编辑器菜单 |
+| `Assets/Scripts/Transit/` | v0.3 购票 / 检票 / 枢纽生成 |
+| `Assets/Scripts/Travel/` | v0.3 旅行地标任务 |
+| `Assets/Editor/EscapeExamSceneMenu.cs` | EscapeExam 全流程场景菜单 |
 
 界面中文使用 `Assets/Resources/UIFont.ttf`（Droid Sans Fallback，Apache 2.0）。许可证在 `Assets/Fonts/LICENSE-DroidSansFallback.txt`。
 

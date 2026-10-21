@@ -16,4 +16,10 @@ public static class EscapePalette
     public static readonly Color Exit = new Color(0.2f, 0.75f, 0.35f, 1f);
     public static readonly Color Corridor = new Color(0.62f, 0.62f, 0.60f, 1f);
     public static readonly Color Gate = new Color(0.15f, 0.45f, 0.75f, 1f);
+    public static readonly Color HubFloor = new Color(0.68f, 0.70f, 0.72f, 1f);
+    public static readonly Color TicketWindow = new Color(0.92f, 0.55f, 0.18f, 1f);
+    public static readonly Color TicketScreen = new Color(0.2f, 0.75f, 0.85f, 1f);
+    public static readonly Color AirportDesk = new Color(0.35f, 0.55f, 0.72f, 1f);
+    public static readonly Color TravelGround = new Color(0.45f, 0.58f, 0.38f, 1f);
 }
+

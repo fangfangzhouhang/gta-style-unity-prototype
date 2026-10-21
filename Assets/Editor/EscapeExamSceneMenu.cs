@@ -16,6 +16,9 @@ public static class EscapeExamSceneMenu
     const string TransitScenePath = "Assets/Scenes/TransitHub.unity";
     const string TravelScenePath = "Assets/Scenes/TravelMissions.unity";
     const string OpenWorldScenePath = "Assets/Scenes/OpenWorld.unity";
+    const string NetLobbyScenePath = "Assets/Scenes/NetLobby.unity";
+    const string NetExamScenePath = "Assets/Scenes/NetExamHall.unity";
+    const string NetMeetupScenePath = "Assets/Scenes/NetMeetup.unity";
 
     [MenuItem("EscapeExam/生成考场场景")]
     public static void GenerateExamHall()
@@ -137,6 +140,65 @@ public static class EscapeExamSceneMenu
             "好");
     }
 
+
+    [MenuItem("EscapeExam/生成联机大厅/联机考场骨架")]
+    public static void GenerateNetcodeSkeleton()
+    {
+        if (!GuardEditMode())
+            return;
+        if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+            return;
+
+        EnsureSceneAssetWithBootstrap(NetLobbyScenePath, "b5000000000000000000000000000008");
+        EnsureSceneAssetWithBootstrap(NetExamScenePath, "b5000000000000000000000000000009");
+        EnsureSceneAssetWithBootstrap(NetMeetupScenePath, "b500000000000000000000000000000b");
+
+        var lobby = EditorSceneManager.OpenScene(NetLobbyScenePath, OpenSceneMode.Single);
+        // Clear and place lobby bootstrap
+        foreach (var root in lobby.GetRootGameObjects())
+            UnityEngine.Object.DestroyImmediate(root);
+        var lobbyGo = new GameObject("NetLobbyBootstrap");
+        lobbyGo.AddComponent<NetLobbyBootstrap>();
+        EditorSceneManager.MarkSceneDirty(lobby);
+        EditorSceneManager.SaveScene(lobby);
+
+        var exam = EditorSceneManager.OpenScene(NetExamScenePath, OpenSceneMode.Single);
+        foreach (var root in exam.GetRootGameObjects())
+            UnityEngine.Object.DestroyImmediate(root);
+        var examGo = new GameObject("NetExamHallBootstrap");
+        examGo.AddComponent<NetExamHallBootstrap>();
+        NetExamHallBuilder.Build();
+        EditorSceneManager.MarkSceneDirty(exam);
+        EditorSceneManager.SaveScene(exam);
+
+        var meetup = EditorSceneManager.OpenScene(NetMeetupScenePath, OpenSceneMode.Single);
+        foreach (var root in meetup.GetRootGameObjects())
+            UnityEngine.Object.DestroyImmediate(root);
+        var meetGo = new GameObject("NetMeetupBootstrap");
+        meetGo.AddComponent<NetMeetupBootstrap>();
+        NetMeetupBuilder.Build();
+        EditorSceneManager.MarkSceneDirty(meetup);
+        EditorSceneManager.SaveScene(meetup);
+
+        // Return to lobby for Host/Client UI
+        EditorSceneManager.OpenScene(NetLobbyScenePath, OpenSceneMode.Single);
+        EnsureNetworkPlayerPrefabAsset();
+        EnsureBuildSettings();
+        EditorUtility.DisplayDialog(
+            "EscapeExam",
+            "联机骨架已生成（NetLobby / NetExamHall / NetMeetup）。\n" +
+            "首次打开请等 Package Manager 解析 com.unity.netcode.gameobjects。\n" +
+            "本机测：Build 两份或编辑器 Play Host + 另一进程 Client（127.0.0.1:7777）。\n" +
+            "这是骨架，不是完整联机产品（无 Relay / 匹配 / 语音）。",
+            "好");
+    }
+
+    [MenuItem("EscapeExam/打开联机大厅")]
+    public static void OpenNetLobby() { OpenPath(NetLobbyScenePath); }
+
+    [MenuItem("EscapeExam/打开联机考场")]
+    public static void OpenNetExam() { OpenPath(NetExamScenePath); }
+
     [MenuItem("EscapeExam/打开考场场景")]
     public static void OpenExam() { OpenPath(ExamScenePath); }
 
@@ -161,8 +223,31 @@ public static class EscapeExamSceneMenu
         EnsureBuildSettings();
         EditorUtility.DisplayDialog(
             "EscapeExam",
-            "已确保 OpenWorld / ExamHall / SchoolEscape / HubTown / Home / TransitHub / TravelMissions 在 Build Settings 中。",
+            "已确保 OpenWorld / ExamHall / SchoolEscape / HubTown / Home / TransitHub / TravelMissions / NetLobby / NetExamHall / NetMeetup 在 Build Settings 中。",
             "好");
+    }
+
+
+    static void EnsureNetworkPlayerPrefabAsset()
+    {
+        const string prefabPath = "Assets/Resources/NetworkPlayer.prefab";
+        string dir = "Assets/Resources";
+        if (!AssetDatabase.IsValidFolder(dir))
+        {
+            // Resources usually exists; create if needed
+            if (!System.IO.Directory.Exists(dir))
+                System.IO.Directory.CreateDirectory(dir);
+            AssetDatabase.Refresh();
+        }
+
+        GameObject template = NetPlayerTemplateFactory.EnsureTemplate();
+        template.SetActive(true);
+        GameObject prefab = PrefabUtility.SaveAsPrefabAsset(template, prefabPath);
+        template.SetActive(false);
+        if (prefab != null)
+            Debug.Log("[EscapeExam] NetworkPlayer prefab → " + prefabPath);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
     }
 
     static bool GuardEditMode()
@@ -219,7 +304,10 @@ public static class EscapeExamSceneMenu
             HubTownScenePath,
             HomeScenePath,
             TransitScenePath,
-            TravelScenePath
+            TravelScenePath,
+            NetLobbyScenePath,
+            NetExamScenePath,
+            NetMeetupScenePath
         };
 
         var list = new List<EditorBuildSettingsScene>();

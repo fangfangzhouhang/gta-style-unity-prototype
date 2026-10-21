@@ -13,7 +13,7 @@
 | **v0.3 旅行任务** | ≥3 中国地标黄圈 + 中文完成反馈 | 枢纽检票后进入，或 **EscapeExam → 生成旅行任务场景** |
 | **v0.4 追赶·存档·旅行门槛** | 老师随机巡视追赶、抓住回座位学习、空格跳、Esc 暂停存读、逃出学校→现实城镇、地图、买手机、赚钱、回家留条后才能购票 | 菜单生成 **HubTown / Home**；主线：Exam→School→HubTown→Home→买手机/赚钱→Transit→Travel |
 
-OSM 真地图、联机与精美美术等**尚未合入**。代理 / 开发者请从 **`Docs/00-任务交接.md`** 读起。重型工作默认不做，须先与仓库维护者确认。
+OSM 真地图与精美美术等尚未合入；**v0.5 联机骨架**（Netcode Host/Client，非完整产品）已在分支可测。代理 / 开发者请从 **`Docs/00-任务交接.md`** 读起。重型工作默认不做，须先与仓库维护者确认。
 
 # 开放世界小原型
 
@@ -74,7 +74,36 @@ OSM 真地图、联机与精美美术等**尚未合入**。代理 / 开发者请
 5. 橙摊 **E** 买手机（花旅游资金）；黄圈任务赚钱；蓝门进枢纽（需已留条）。
 6. 枢纽：无手机窗口只提示「需要手机才能查看票价」；有手机显示票价并扣款购票 → 闸机 → 旅行打卡（也给钱）。
 
-**已知限制**：无真实列车动画；存档为 JSON/PlayerPrefs 简易槽；家长 AI 为发现即失败（带追赶压迫）；无 OSM / 联机。
+**已知限制**：无真实列车动画；存档为 JSON/PlayerPrefs 简易槽；家长 AI 为发现即失败（带追赶压迫）；无 OSM。联机见下方 v0.5 骨架。
+
+
+
+## v0.5 联机骨架（Host / Client · 非完整产品）
+
+> **这是骨架**：可测 Host/Client 流程、分考场 spawn、逃出后汇合提示。  
+> **不是**完整联机产品：无反作弊、无匹配服、无 Vivox 语音、无 Relay 付费（后期可选，见 Docs）。
+
+### 依赖
+
+- `Packages/manifest.json` 已加入 `com.unity.netcode.gameobjects` **1.12.0**（适配 Unity 2022.3）。
+- **首次打开工程**：等 Package Manager 解析完 NGO / Transport 再 Play。本仓库不提交 `Library`。
+
+### 怎么测（本机双开 / 局域网）
+
+1. 退出 Play。菜单 **EscapeExam → 生成联机大厅/联机考场骨架**，并确认 Build Settings 含 `NetLobby` / `NetExamHall` / `NetMeetup`。
+2. **方式 A · 编辑器 + 构建客户端**  
+   - 编辑器打开 `NetLobby`，Play → **创建主机（Host）**（默认 `127.0.0.1:7777`）。Host 会加载联机考场。  
+   - `File → Build and Run` 打一份 Windows/Mac 播放器，在播放器里打开联机大厅 → 地址填 Host 的局域网 IP（本机双开用 `127.0.0.1`）→ **加入（Client）**。
+3. **方式 B · 两台机 LAN**  
+   - Host 机器防火墙放行 UDP/TCP **7777**；Client 填 Host 局域网 IP。
+4. 每人被分到不同考场座位；走进**绿门** → 传送到黄色**汇合点**；第二人到达后显示「队友已汇合」。
+5. 单机主线不变：无 NetworkManager 会话时仍走 Exam→School→HubTown…；Esc 暂停可进「联机大厅」作为可选入口。
+
+### 限制
+
+- 老师 AI / 潜行不同步为权威战场（本地占位）；位置同步为最小 Owner 写 NetworkVariable。
+- 无 Relay：仅本地 / 局域网 Unity Transport。
+- 依赖未合入的 **v0.4** 机制时，请先合 PR #4 或将本 PR base 设为 v0.4 分支。
 
 ## 怎么玩（验收）
 
@@ -121,6 +150,7 @@ OSM 真地图、联机与精美美术等**尚未合入**。代理 / 开发者请
 | `Assets/Scripts/Transit/` | v0.3 购票 / 检票 / 枢纽生成 |
 | `Assets/Scripts/Travel/` | v0.3 旅行地标任务 |
 | `Assets/Editor/EscapeExamSceneMenu.cs` | EscapeExam 全流程场景菜单 |
+| `Assets/Scripts/Net/` | v0.5 联机骨架（Host/Client、分考场、汇合） |
 
 界面中文使用 `Assets/Resources/UIFont.ttf`（Droid Sans Fallback，Apache 2.0）。许可证在 `Assets/Fonts/LICENSE-DroidSansFallback.txt`。
 

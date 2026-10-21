@@ -90,7 +90,18 @@ public class SchoolFlowController : MonoBehaviour
             if (hud != null)
                 hud.showSuccessBanner = false;
             if (autoLoadHub)
+        {
+            if (OfflineFallback.ShouldUseMeetupInsteadOfHub())
+            {
+                // 联机会话：不进 HubTown，由 MeetupZone / EscapeNetProgress 处理汇合
+                if (hud != null)
+                {
+                    hud.successSubtitle = "联机模式：请前往汇合点与队友见面";
+                }
+            }
+            else
                 TryLoadHub();
+        }
         }
     }
 

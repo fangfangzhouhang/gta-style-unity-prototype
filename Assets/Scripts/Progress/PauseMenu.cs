@@ -24,8 +24,8 @@ public class PauseMenu : MonoBehaviour
 
     const string Glyphs =
         "暂停继续保存读取退出到标题退出游戏存档成功读取成功没有存档。" +
-        "资金手机留条地图请先保存再退出。Esc WASD 空格跳跃：" +
-        "，。0123456789";
+        "资金手机留条地图请先保存再退出。联机大厅骨架：" +
+        "Esc WASD 空格跳跃，。0123456789";
 
     public static PauseMenu Ensure()
     {
@@ -112,7 +112,7 @@ public class PauseMenu : MonoBehaviour
         EnsureStyles();
 
         float w = Mathf.Min(Screen.width * 0.42f, 420f);
-        float h = 360f;
+        float h = 410f;
         Rect panel = new Rect((Screen.width - w) * 0.5f, (Screen.height - h) * 0.5f, w, h);
         DrawPanel(panel, new Color(0.05f, 0.07f, 0.12f, 0.94f));
         GUI.Label(new Rect(panel.x, panel.y + 16f, panel.width, 40f), "暂停", title);
@@ -140,6 +140,16 @@ public class PauseMenu : MonoBehaviour
             }
             else
                 ShowStatus("没有存档");
+        }
+        if (MenuButton(panel, ref by, "联机大厅"))
+        {
+            Time.timeScale = 1f;
+            IsOpen = false;
+            const string netLobby = "NetLobby";
+            if (Application.CanStreamedLevelBeLoaded(netLobby))
+                SceneManager.LoadScene(netLobby);
+            else
+                ShowStatus("请先生成联机骨架并写入 Build Settings");
         }
         if (MenuButton(panel, ref by, "退出到标题"))
         {

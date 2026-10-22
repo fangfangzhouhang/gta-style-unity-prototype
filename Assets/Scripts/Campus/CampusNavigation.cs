@@ -24,6 +24,8 @@ public class CampusNavigation : MonoBehaviour
             markup.Add(new NavMeshBuildMarkup { root = actor.transform, ignoreFromBuild = true });
         foreach (var bike in root.GetComponentsInChildren<CampusMotorcycle>())
             markup.Add(new NavMeshBuildMarkup { root = bike.transform, ignoreFromBuild = true });
+        foreach (var item in root.GetComponentsInChildren<CampusEscapeObject>())
+            markup.Add(new NavMeshBuildMarkup { root = item.transform, ignoreFromBuild = true });
         NavMeshBuilder.CollectSources(root, ~0, NavMeshCollectGeometry.PhysicsColliders, 0, markup, sources);
         var settings = NavMesh.GetSettingsByID(0);
         settings.agentRadius = 0.28f;

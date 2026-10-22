@@ -1,0 +1,19 @@
+{
+  "referenceSchool": "杭州高级中学贡院校区 · 凤起路238号",
+  "note": "公开街道照片启发的游戏体块；道路方向、地块边界、楼高不是测绘复刻。+Z朝校外。",
+  "lots": [
+    {"id":"W01","use":"沿街商住","x":-53,"z":101,"width":32,"depth":14,"height":8,"roof":1},
+    {"id":"W02","use":"六层老住宅","x":-53,"z":139,"width":28,"depth":18,"height":18,"roof":1},
+    {"id":"W03","use":"社区住宅","x":-53,"z":170,"width":28,"depth":18,"height":18,"roof":1},
+    {"id":"W04","use":"背景商务楼","x":-53,"z":204,"width":32,"depth":22,"height":33,"roof":0},
+    {"id":"E01","use":"文具与餐饮街","x":30,"z":101,"width":28,"depth":14,"height":10,"roof":1},
+    {"id":"E02","use":"街角市场","x":68,"z":101,"width":26,"depth":14,"height":9,"roof":1},
+    {"id":"E03","use":"住宅组团","x":32,"z":128,"width":24,"depth":16,"height":18,"roof":0},
+    {"id":"E04","use":"住宅组团","x":68,"z":128,"width":24,"depth":16,"height":21,"roof":0},
+    {"id":"H01","use":"保留小住宅","x":28,"z":179,"width":12,"depth":10,"height":7,"roof":1},
+    {"id":"H02","use":"保留小住宅","x":56,"z":179,"width":12,"depth":10,"height":7,"roof":1},
+    {"id":"H03","use":"保留小住宅","x":82,"z":179,"width":12,"depth":10,"height":7,"roof":1},
+    {"id":"E08","use":"背景商办塔楼","x":49,"z":210,"width":40,"depth":20,"height":39,"roof":0},
+    {"id":"E09","use":"社区高层","x":84,"z":209,"width":18,"depth":20,"height":24,"roof":0}
+  ]
+}

@@ -19,7 +19,12 @@ public static class CampusSitePlan
         float east=Mathf.SmoothStep(0,1,Mathf.InverseLerp(80,128,x));
         float west=Mathf.SmoothStep(0,1,Mathf.InverseLerp(-72,-108,x));
         float north=Mathf.SmoothStep(0,1,Mathf.InverseLerp(-120,-158,z));
-        float south=Mathf.SmoothStep(0,1,Mathf.InverseLerp(211,238,z));
+        float south=Mathf.SmoothStep(0,1,Mathf.InverseLerp(232,238,z));
+        if(z>54 && z<225)
+        {
+            east=Mathf.SmoothStep(0,1,Mathf.InverseLerp(113,128,x));
+            west=Mathf.SmoothStep(0,1,Mathf.InverseLerp(-100,-108,x));
+        }
         return -.12f + Mathf.Max(east,west,north,south) *
             (1.7f + 1.1f*Mathf.Sin(x*.052f+z*.034f)*Mathf.Sin(z*.043f));
     }
@@ -50,10 +55,7 @@ public static class CampusSitePlan
         Box(site,"CorridorRedPlinth",new Vector3(-19.23f,.55f,24),new Vector3(.08f,1.1f,56),Brick,false);
         Box(site,"CorridorRoofTrim",new Vector3(-14,4.06f,42),new Vector3(10.2f,.10f,20.2f),Brick);
         Box(site,"UpperRoofTrim",new Vector3(-14.4f,7.67f,9),new Vector3(5.6f,.12f,26.4f),Brick);
-        Building(site,"TeachingEastWing",new Vector3(21,0,2),new Vector3(47,7.6f,12),"教学楼 · 二楼考场");
-        Building(site,"TeachingNorthWing",new Vector3(21,0,-20),new Vector3(47,11.4f,12),"教学楼");
-        // A solid ground floor directly below the playable exam, with real windows.
-        Building(site,"ExamGroundFloor",new Vector3(-7.5f,0,2),new Vector3(9,3.55f,12),"");
+        CampusTeachingBuilding.Build(root);
         Box(site,"ExamRoofCornice",new Vector3(-7.5f,7.76f,2),new Vector3(9.6f,.18f,12.6f),Brick);
         Box(site,"ExamRedSillBand",new Vector3(-2.86f,4.95f,2),new Vector3(.08f,.28f,12.2f),Brick,false);
         Building(site,"Library",new Vector3(62,0,-51),new Vector3(28,11.4f,18),"图书馆");
@@ -73,6 +75,8 @@ public static class CampusSitePlan
         Fence(site,new Vector3(-47,0,52),56,false);
         Fence(site,new Vector3(38,0,52),94,false);
         Box(site,"SchoolGateHeader",new Vector3(-14,4.15f,52.5f),new Vector3(7.4f,.8f,1.1f),Brick);
+        Box(site,"GateReturnLeft",new Vector3(-18.2f,1.8f,52.25f),new Vector3(1.6f,3.6f,.9f),Yellow);
+        Box(site,"GateReturnRight",new Vector3(-9.8f,1.8f,52.25f),new Vector3(1.6f,3.6f,.9f),Yellow);
         Sign(site,"校园 · 安全出口",new Vector3(-14,4.14f,53.08f),.27f);
         Building(site,"Gatehouse",new Vector3(-27,0,45),new Vector3(6,3.5f,6),"门卫室");
         // Front-road parking bay, clear of the escape trigger and tree trunks.
@@ -86,9 +90,7 @@ public static class CampusSitePlan
         for(int i=0;i<5;i++) CampusLandscape.Tree(site,new Vector3(45,0,-41-i*14),i%3,1);
         // Three individual houses, all on independent lots. No imported building
         // is layered over these shells; spacing is checked in the scene validator.
-        var homes=new GameObject("SeparatedTownHouses").transform; homes.SetParent(root,false);
-        for(int i=0;i<3;i++)
-            Building(homes,"TownHouse_"+i,new Vector3(30+i*22,0,91),new Vector3(12,6.8f,10),"",i%2==0);
+        HangzhouTownBlockout.Build(root);
     }
     static void Terrain(Transform parent)
     {
@@ -99,7 +101,7 @@ public static class CampusSitePlan
         int t=0;
         for(int z=0;z<nz-1;z++) for(int x=0;x<nx-1;x++)
         { int i=z*nx+x; triangles[t++]=i;triangles[t++]=i+nx;triangles[t++]=i+1;triangles[t++]=i+1;triangles[t++]=i+nx;triangles[t++]=i+nx+1; }
-        var mesh=new Mesh{name="CampusArt_UnifiedTerrain_v10b"}; mesh.vertices=v;mesh.uv=uv;mesh.triangles=triangles;mesh.RecalculateNormals();mesh.RecalculateBounds();
+        var mesh=new Mesh{name="CampusArt_UnifiedTerrain_v11"}; mesh.vertices=v;mesh.uv=uv;mesh.triangles=triangles;mesh.RecalculateNormals();mesh.RecalculateBounds();
         var go=new GameObject("TownGround",typeof(MeshFilter),typeof(MeshRenderer),typeof(MeshCollider));go.transform.SetParent(parent,false);
         go.GetComponent<MeshFilter>().sharedMesh=mesh;go.GetComponent<MeshCollider>().sharedMesh=mesh;
         var grass=new Material(CampusLandscape.Grass){name="CampusArt_TerrainGrass_v10b"};

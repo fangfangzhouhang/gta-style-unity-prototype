@@ -34,4 +34,5 @@ public class SchoolGateTrigger : MonoBehaviour
         if (flow != null)
             flow.NotifySchoolEscaped();
     }
+    void OnTriggerStay(Collider other){OnTriggerEnter(other);}
 }

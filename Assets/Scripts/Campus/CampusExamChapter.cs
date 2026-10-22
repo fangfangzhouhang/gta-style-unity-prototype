@@ -98,6 +98,8 @@ public class CampusExamChapter : MonoBehaviour
     void Update()
     {
         if(KeypadOpen && (flow==null || flow.IsBusy || Vector3.Distance(flow.player.position,cabinet.transform.position)>2.2f))CloseKeypad();
+        if(Time.timeScale==0 || (PauseMenu.Instance!=null && PauseMenu.Instance.IsOpen) || (flow!=null && flow.mapUi!=null && flow.mapUi.IsOpen))return;
+        if(KeypadOpen && (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)))SubmitCode(digits);
         if(Input.GetKeyDown(KeyCode.Backspace)){if(KeypadOpen)CloseKeypad();else subtitleUntil=0;}
     }
     public void ShowSubtitle(string text,float seconds){Say(text,seconds);}
@@ -112,7 +114,7 @@ public class CampusExamChapter : MonoBehaviour
         GUI.Box(new Rect(x,y,380,350),"");
         GUI.Label(new Rect(x+15,y+10,350,60),feedback,style);
         digits=GUI.TextField(new Rect(x+50,y+85,280,35),digits,3);
-        if(GUI.Button(new Rect(x+45,y+145,140,45),"确认密码"))SubmitCode(digits);
+        if(GUI.Button(new Rect(x+45,y+145,140,45),"确认密码 (Enter)"))SubmitCode(digits);
         if(GUI.Button(new Rect(x+195,y+145,140,45),"关闭"))CloseKeypad();
         GUI.Label(new Rect(x+15,y+205,350,125),(State.paper?"已读试卷：按 2、1、3 排读取。":"试卷：尚未调查")+"\n"+(State.chart?"已读座位表：1 排 1 席；2 排 4 席；3 排 6 席。":"座位表：尚未调查"),style);
     }

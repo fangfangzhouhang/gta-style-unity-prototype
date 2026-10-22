@@ -54,18 +54,7 @@ public class ThirdPersonCamera : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0) &&
-            (PauseMenu.Instance == null || !PauseMenu.Instance.IsOpen))
-        {
-            WorldMapUI map = UnityCompat.FindOne<WorldMapUI>();
-            if (map != null && map.IsOpen)
-                return;
-            TransitFlowController transit = UnityCompat.FindOne<TransitFlowController>();
-            if (transit != null && transit.TicketPanelOpen)
-                return;
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-        }
+        if (Input.GetMouseButtonDown(0)) TryCapturePointerOnClick();
 
         // Esc 由 PauseMenu 接管；无暂停菜单时仍解锁鼠标
         if (Input.GetKeyDown(KeyCode.Escape) && PauseMenu.Instance == null)
@@ -82,6 +71,21 @@ public class ThirdPersonCamera : MonoBehaviour
         yaw += Input.GetAxis("Mouse X") * lookSensitivity;
         pitch -= Input.GetAxis("Mouse Y") * lookSensitivity;
         pitch = Mathf.Clamp(pitch, IsFirstPerson ? -85f : minPitch, IsFirstPerson ? 85f : maxPitch);
+    }
+
+    // Shared by real mouse input and the regression check. Modal UI owns its clicks.
+    public bool TryCapturePointerOnClick()
+    {
+        if (PauseMenu.Instance != null && PauseMenu.Instance.IsOpen) return false;
+        var chapter = UnityCompat.FindOne<CampusExamChapter>();
+        if (chapter != null && chapter.KeypadOpen) return false;
+        var map = UnityCompat.FindOne<WorldMapUI>();
+        if (map != null && map.IsOpen) return false;
+        var transit = UnityCompat.FindOne<TransitFlowController>();
+        if (transit != null && transit.TicketPanelOpen) return false;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        return true;
     }
 
     void LateUpdate()

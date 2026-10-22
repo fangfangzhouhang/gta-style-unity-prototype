@@ -98,7 +98,18 @@ public static class CampusGameplayValidation
             var motor=runningFlow.player.GetComponent<ThirdPersonController>();motor.controlEnabled=true;
             string[] names={"ChapterPaper","ChapterSeatChart","ChapterCabinet","Chapter201SideDoor"};
             Require(director.TryUse(GameObject.Find(names[examNode]).GetComponent<CampusEscapeObject>()),"201 interaction failed node="+examNode);
-            if(examNode==2){var chapter=UnityEngine.Object.FindObjectOfType<CampusExamChapter>();Require(!chapter.SubmitCode("000"),"wrong code accepted");Require(chapter.SubmitCode("416"),"201 correct code rejected");}
+            if(examNode==2)
+            {
+                var chapter=UnityEngine.Object.FindObjectOfType<CampusExamChapter>();
+                var camera=UnityEngine.Object.FindObjectOfType<ThirdPersonCamera>();
+                Require(chapter.KeypadOpen && Cursor.lockState==CursorLockMode.None && Cursor.visible,"keypad did not release cursor");
+                Require(!camera.TryCapturePointerOnClick() && Cursor.lockState==CursorLockMode.None && Cursor.visible,"camera stole keypad click");
+                Require(!chapter.SubmitCode("000"),"wrong code accepted");
+                Require(chapter.KeypadOpen && !camera.TryCapturePointerOnClick(),"wrong code released modal pointer ownership");
+                Require(chapter.SubmitCode("416"),"201 correct code rejected");
+                Require(!chapter.KeypadOpen && camera.TryCapturePointerOnClick(),"camera control not restored after keypad closed");
+                Debug.Log("CAMPUS_KEYPAD_POINTER_PASS");
+            }
             Debug.Log("CAMPUS_201_NODE "+examNode);motor.controlEnabled=false;examNode++;return false;
         }
         if(UnityEngine.Object.FindObjectOfType<CampusCorridorChapter>()!=null)

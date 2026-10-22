@@ -41,12 +41,11 @@ public static class CampusWorldBuilder
         CampusExpansion.Build(root);
         root.gameObject.AddComponent<CampusNavigation>();
 
-        // 尝试摆放第三方模型装饰（编辑器生成时）
-        TryPlaceThirdPartyDressing(root);
+        // 教学楼和街区统一按米制地块生成。
         CampusSitePlan.Build(root);
 
         Vector3 spawn = new Vector3(-7.5f, ExamFloorHeight + 0.92f, -2.2f);
-        new GameObject("CampusLayout_v09").transform.SetParent(root, false);
+        new GameObject("CampusLayout_v11").transform.SetParent(root, false);
         GameObject player = LevelBuildUtil.CreatePlayer(root, spawn, true);
         player.GetComponent<ThirdPersonController>().ConfigureHumanScale();
         var avoidance=player.AddComponent<UnityEngine.AI.NavMeshObstacle>();
@@ -61,12 +60,17 @@ public static class CampusWorldBuilder
         var homeCp = MakeCheckpoint(root, "HomeCheckpoint", new Vector3(-28f, 0.92f, 115f));
 
         Wire(player, cam, examCp, corridorCp, hubCp, homeCp);
+        root.gameObject.AddComponent<CampusEscapeDirector>().BuildObjects();
         var groundCp = MakeCheckpoint(root,"GroundSchoolCheckpoint",new Vector3(-14.4f,0.92f,32.5f));
         var checkpointTrigger = new GameObject("GroundCheckpointTrigger");
         checkpointTrigger.transform.SetParent(root,false);
         checkpointTrigger.transform.localPosition = new Vector3(-14.4f,1.1f,33.5f);
         var checkpointBox=checkpointTrigger.AddComponent<BoxCollider>(); checkpointBox.isTrigger=true; checkpointBox.size=new Vector3(4f,2.2f,2.4f);
         checkpointTrigger.AddComponent<CampusCheckpoint>().checkpoint=groundCp;
+        var eastCp=MakeCheckpoint(root,"EastGroundCheckpoint",new Vector3(48,.92f,12.1f));
+        var eastTrigger=new GameObject("EastGroundCheckpointTrigger");eastTrigger.transform.SetParent(root,false);eastTrigger.transform.position=new Vector3(48,1,12.1f);
+        var eastBox=eastTrigger.AddComponent<BoxCollider>();eastBox.isTrigger=true;eastBox.size=new Vector3(2.8f,2,1.6f);
+        eastTrigger.AddComponent<CampusCheckpoint>().checkpoint=eastCp;
         if (!Application.isPlaying) LevelBuildUtil.BakeCampusMaterials();
     }
 
@@ -136,11 +140,6 @@ public static class CampusWorldBuilder
             new Vector3(-14f, FloorY, 24f), new Vector3(10f, 0.2f, 56f), Quaternion.identity,
             EscapePalette.Corridor, "Sidewalk", true);
 
-        // 衔接考场门外地板
-        LevelBuildUtil.Make(PrimitiveType.Cube, school, "LinkPad",
-            new Vector3(-14f, FloorY, -1.2f), new Vector3(8f, 0.2f, 6f), Quaternion.identity,
-            EscapePalette.Corridor, "Sidewalk", true);
-
         MakeWall(school, "CorrWallL", new Vector3(-19f, 1.9f, 24f), new Vector3(0.4f, 3.8f, 56f));
         // 右墙分段：楼梯口、储物间口
         MakeWall(school, "CorrWallR_A", new Vector3(-9f, 1.9f, 6f), new Vector3(0.4f, 3.8f, 18f));
@@ -186,8 +185,8 @@ public static class CampusWorldBuilder
         CreateTeacher(school, "Patrol_B", new Vector3(-15f, 0f, 36f), Quaternion.identity,
             new[] { new Vector3(-15f, 0f, 30f), new Vector3(-12.5f, 0f, 38f), new Vector3(-15f, 0f, 46f), new Vector3(-13f, 0f, 42f) },
             1.85f, 4.6f, ScrutinyAura.Role.Patrol, 9f, 58f);
-        CreateTeacher(school, "Patrol_F2", new Vector3(-14.4f, 4f, 13f), Quaternion.identity,
-            new[] { new Vector3(-14.4f, 4f, 6f), new Vector3(-14.4f, 4f, 19f) },
+        CreateTeacher(school, "Patrol_F2", new Vector3(-14.4f, 4f, 18f), Quaternion.identity,
+            new[] { new Vector3(-14.4f, 4f, 16f), new Vector3(-14.4f, 4f, 20f) },
             1.5f, 3.8f, ScrutinyAura.Role.Patrol, 7f, 55f);
 
         MakeZone(school, "Zone_School", new Vector3(-14f, 1f, 24f), new Vector3(12f, 4f, 54f), CampusFlowController.Zone.School);
@@ -306,11 +305,6 @@ public static class CampusWorldBuilder
         var hub = new GameObject("HubTownArea").transform;
         hub.SetParent(root, false);
 
-        // 大地面
-        LevelBuildUtil.Make(PrimitiveType.Cube, hub, "TownGround",
-            new Vector3(0f, FloorY, 125f), new Vector3(180f, 0.2f, 180f), Quaternion.identity,
-            EscapePalette.TravelGround, "Sidewalk", true);
-
         // 公路（程序化条带；编辑器可叠 Kenney road FBX）
         for (int i = 0; i < 26; i++)
         {
@@ -322,17 +316,6 @@ public static class CampusWorldBuilder
                 new Vector3(-8f, 0.08f, 62f + i * 6f), new Vector3(0.25f, 0.04f, 2.5f), Quaternion.identity,
                 new Color(0.92f, 0.85f, 0.25f, 1f), "LaneMark", false);
         }
-
-        // 占位楼
-        LevelBuildUtil.Make(PrimitiveType.Cube, hub, "BldgA",
-            new Vector3(10f, 3.5f, 80f), new Vector3(8f, 7f, 8f), Quaternion.identity,
-            EscapePalette.Wall, "BuildingA", true);
-        LevelBuildUtil.Make(PrimitiveType.Cube, hub, "BldgB",
-            new Vector3(22f, 2.8f, 95f), new Vector3(7f, 5.6f, 7f), Quaternion.identity,
-            EscapePalette.Cabinet, "BuildingB", true);
-        LevelBuildUtil.Make(PrimitiveType.Cube, hub, "BldgC",
-            new Vector3(-30f, 3.2f, 100f), new Vector3(9f, 6.4f, 9f), Quaternion.identity,
-            EscapePalette.Wall, "BuildingA", true);
 
         // 手机摊
         LevelBuildUtil.Make(PrimitiveType.Cube, hub, "PhoneStall",
@@ -462,11 +445,6 @@ public static class CampusWorldBuilder
         MakeZone(home, "Zone_Home", new Vector3(-28f, 1.5f, 118f), new Vector3(8.4f, 3f, 8.6f), CampusFlowController.Zone.Home);
     }
 
-    static void TryPlaceThirdPartyDressing(Transform root)
-    {
-        // Buildings now use explicit metre-sized lots in CampusSitePlan. Imported
-        // dressing previously overlapped the placeholder houses and playable school.
-    }
     // -------------------- Shared helpers --------------------
     static void MakeWall(Transform root, string name, Vector3 pos, Vector3 scale)
     {
@@ -514,6 +492,7 @@ public static class CampusWorldBuilder
         text.anchor = TextAnchor.MiddleCenter;
         text.color = new Color(0.18f, 0.42f, 0.30f);
         if (text.font != null) sign.GetComponent<MeshRenderer>().sharedMaterial = text.font.material;
+        sign.AddComponent<CampusWorldSign>();
     }
 
     static void AddCeiling(Transform root, string name, Vector3 position, Vector3 size)
@@ -570,7 +549,7 @@ public static class CampusWorldBuilder
         }
         cabinet.gameObject.AddComponent<CoverTag>().label = "储物柜";
     }
-    static GameObject CreateTeacher(Transform root, string name, Vector3 pos, Quaternion rot,
+    public static GameObject CreateTeacher(Transform root, string name, Vector3 pos, Quaternion rot,
         Vector3[] route, float patrolSpeed, float chaseSpeed, ScrutinyAura.Role role,
         float viewDist, float viewAngle)
     {

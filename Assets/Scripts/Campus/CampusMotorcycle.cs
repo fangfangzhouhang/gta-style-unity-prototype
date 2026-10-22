@@ -8,6 +8,8 @@ public class CampusMotorcycle : MonoBehaviour
     public ThirdPersonCamera cameraRig;
     public Transform visual, frontWheel, rearWheel;
     public float topSpeed=25f, acceleration=3.5f, brakeDeceleration=7f;
+    [Tooltip("1.30 = 30% more yaw at the same speed and steering input.")]
+    public float steeringMultiplier=1.30f;
     public bool IsRiding { get; private set; }
     public float SpeedKmh { get { return body==null?0:new Vector2(body.velocity.x,body.velocity.z).magnitude*3.6f; } }
     Rigidbody body;
@@ -57,13 +59,13 @@ public class CampusMotorcycle : MonoBehaviour
             Vector3 forward=Vector3.ProjectOnPlane(transform.forward,ground.normal).normalized;
             if(brake || throttle<-.01f)
             {flat=Vector3.MoveTowards(flat,Vector3.zero,brakeDeceleration*Time.fixedDeltaTime);body.velocity=new Vector3(flat.x,body.velocity.y,flat.z);}
-            else if(throttle>.01f)body.AddForce(forward*throttle*acceleration,ForceMode.Acceleration);
+            else if(throttle>.01f && flat.magnitude<topSpeed-.1f)body.AddForce(forward*throttle*acceleration,ForceMode.Acceleration);
             else body.AddForce(-flat.normalized*Mathf.Min(flat.magnitude/Time.fixedDeltaTime,.45f),ForceMode.Acceleration);
             body.AddForce(-transform.right*Vector3.Dot(body.velocity,transform.right)*10,ForceMode.Acceleration);
             if(IsRiding && flat.magnitude>.3f)
             {
                 float yawRate=Mathf.Min(65,Mathf.Rad2Deg*flat.magnitude/Mathf.Lerp(3,30,Mathf.Clamp01(flat.magnitude/topSpeed)));
-                body.MoveRotation(body.rotation*Quaternion.Euler(0,steer*yawRate*Time.fixedDeltaTime,0));
+                body.MoveRotation(body.rotation*Quaternion.Euler(0,steer*yawRate*steeringMultiplier*Time.fixedDeltaTime,0));
             }
             if(visual!=null)
             {float pitch=Vector3.SignedAngle(transform.forward,forward,transform.right);

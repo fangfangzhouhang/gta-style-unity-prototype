@@ -12,6 +12,7 @@ public class TeacherAgent : MonoBehaviour
     {
         Patrol,
         Chase,
+        Investigate,
         Hold
     }
 
@@ -38,6 +39,13 @@ public class TeacherAgent : MonoBehaviour
     Vector3 homePosition, lastKnownPosition;
     Quaternion homeRotation;
     float immunityUntil, repathAt;
+    Vector3 noisePosition;
+    float noiseUntil;
+    public bool InvestigateNoise(Vector3 origin,float radius)
+    {
+        if(paused || CurrentState==State.Chase || CurrentState==State.Hold || Mathf.Abs(origin.y-transform.position.y)>1.8f || Vector3.Distance(origin,transform.position)>radius)return false;
+        noisePosition=origin;noiseUntil=Time.time+6;CurrentState=State.Investigate;return true;
+    }
 
     void Start()
     {
@@ -78,7 +86,7 @@ public class TeacherAgent : MonoBehaviour
         }
         CurrentState = State.Patrol;
         if (waypoints != null && waypoints.Length > 0)
-            wpIndex = UnityEngine.Random.Range(0, waypoints.Length);
+            wpIndex = randomPatrol ? UnityEngine.Random.Range(0, waypoints.Length) : 0;
     }
 
     void OnDestroy()
@@ -136,6 +144,9 @@ public class TeacherAgent : MonoBehaviour
                 TickChase();
                 break;
             case State.Hold:
+                break;
+            case State.Investigate:
+                if(Time.time>=noiseUntil)ResetToPatrol();else MoveToward(noisePosition,patrolSpeed);
                 break;
         }
     }

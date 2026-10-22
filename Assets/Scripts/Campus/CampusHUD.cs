@@ -10,6 +10,7 @@ public class CampusHUD : MonoBehaviour
     LeaveNoteInteract note;
     BuyPhoneInteract phone;
     CampusMotorcycle motorcycle;
+    CampusEscapeDirector escape;
     ScenePortalInteract[] portals;
     GUIStyle title, body, prompt;
     Font font;
@@ -24,6 +25,7 @@ public class CampusHUD : MonoBehaviour
         note = UnityCompat.FindOne<LeaveNoteInteract>();
         phone = UnityCompat.FindOne<BuyPhoneInteract>();
         motorcycle = UnityCompat.FindOne<CampusMotorcycle>();
+        escape = UnityCompat.FindOne<CampusEscapeDirector>();
         font = Resources.Load<Font>("UIFont");
     }
 
@@ -52,6 +54,7 @@ public class CampusHUD : MonoBehaviour
         bool town = flow.CurrentZone == CampusFlowController.Zone.Hub;
         StealthGameHUD state = flow.hud;
         string objective = state.objective, detail = state.detail;
+        if(escape!=null && !flow.HasEscapedSchool){objective=escape.Objective;detail=escape.Detail;}
         if (town && hub != null && hub.hud != null)
         {
             objective = hub.hud.objective;
@@ -104,6 +107,7 @@ public class CampusHUD : MonoBehaviour
         if (motorcycle != null && motorcycle.IsRiding)
             return "摩托车  " + motorcycle.SpeedKmh.ToString("F0") + " km/h · 刹车减速至 9 km/h 以下，按 F 下车";
         if (motorcycle != null && motorcycle.CanMount) return "F 骑上摩托车 · W 油门 / 空格刹车";
+        if(escape!=null){string clue=escape.NearbyPrompt();if(clue.Length>0)return clue;}
         if (flow.CurrentZone == CampusFlowController.Zone.Home && note != null && !note.Done && note.PlayerInRange)
             return note.promptNear;
         if (flow.CurrentZone == CampusFlowController.Zone.Hub && phone != null && phone.PlayerInRange)

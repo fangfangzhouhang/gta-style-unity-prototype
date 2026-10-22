@@ -232,6 +232,8 @@ public class CampusFlowController : MonoBehaviour
 
     public void NotifySchoolEscaped()
     {
+        var escape=UnityCompat.FindOne<CampusEscapeDirector>();
+        if(escape!=null && !escape.GateOpen)return;
         if (HasEscapedSchool || IsBusy)
             return;
         HasEscapedSchool = true;
@@ -254,6 +256,7 @@ public class CampusFlowController : MonoBehaviour
 
     public void SetZone(Zone zone)
     {
+        if(zone==Zone.Hub && !HasEscapedSchool && UnityCompat.FindOne<CampusEscapeDirector>()!=null)return;
         if (zone == CurrentZone) return;
         if (zone == Zone.Hub)
         {

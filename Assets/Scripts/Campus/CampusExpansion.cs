@@ -10,13 +10,12 @@ public static class CampusExpansion
     {
         var park=new GameObject("ExpandedCampusPark").transform;
         park.SetParent(root,false);
-        Part(park,"WestGardenGround",new Vector3(-44,-0.1f,25),new Vector3(44,0.2f,90),new Color(0.30f,0.42f,0.24f));
         // 主干路两侧的人行道，绿化与主线移动区域分开。
         Part(park,"TownSidewalkL",new Vector3(-14,0.04f,165),new Vector3(4,0.08f,100),new Color(0.65f,0.64f,0.59f));
         Part(park,"TownSidewalkR",new Vector3(-2,0.04f,165),new Vector3(4,0.08f,100),new Color(0.65f,0.64f,0.59f));
-        Part(park,"GardenWalk",new Vector3(-41,0.02f,163),new Vector3(32,0.04f,4),new Color(0.67f,0.62f,0.51f));
-        Part(park,"GardenLink",new Vector3(-28,0.02f,145),new Vector3(4,0.04f,40),new Color(0.67f,0.62f,0.51f));
-        Part(park,"GardenLoop",new Vector3(-51,0.02f,178),new Vector3(4,0.04f,34),new Color(0.67f,0.62f,0.51f));
+        Part(park,"GardenWalk",new Vector3(-96,0.02f,163),new Vector3(18,0.04f,3),new Color(0.67f,0.62f,0.51f));
+        Part(park,"GardenLink",new Vector3(-96,0.02f,145),new Vector3(3,0.04f,40),new Color(0.67f,0.62f,0.51f));
+        Part(park,"GardenLoop",new Vector3(-96,0.02f,190),new Vector3(3,0.04f,45),new Color(0.67f,0.62f,0.51f));
         for (int i=0;i<13;i++)
         {
             float z=63+i*11;
@@ -25,7 +24,7 @@ public static class CampusExpansion
         }
         for (int i=0;i<8;i++)
         {
-            float x=-60+(i%4)*10;
+            float x=-103+(i%4)*4;
             float z=145+(i/4)*43;
             CampusLandscape.Tree(park,new Vector3(x,0,z),i%3,1.2f);
             Bed(park,new Vector3(x,0,z+5),400+i);
@@ -38,7 +37,6 @@ public static class CampusExpansion
         }
         // 可进入的街区道路与有窗、屋檐、入口尺度的楼体。
         Part(park,"NeighborhoodWalk",new Vector3(39,0.02f,158),new Vector3(78,0.04f,4),new Color(0.65f,0.64f,0.59f));
-        for (int i=0;i<5;i++) Building(park,new Vector3(17+i*14,0,180),6+(i%3)*3);
         for (int i=0;i<4;i++) Bench(park,new Vector3(12+i*16,0,155));
         Part(park,"WestGardenConnection",new Vector3(-26,0.02f,63),new Vector3(18,0.04f,4),new Color(0.65f,0.64f,0.59f));
     }
@@ -55,17 +53,5 @@ public static class CampusExpansion
         for (int i=0;i<3;i++) Part(parent,"BenchBack",position+new Vector3(0,0.72f+i*0.12f,0.3f),new Vector3(1.8f,0.09f,0.04f),new Color(0.45f,0.29f,0.15f));
         foreach (float x in new[] {-0.65f,0.65f})
             Part(parent,"BenchLeg",position+new Vector3(x,0.23f,0),new Vector3(0.08f,0.46f,0.55f),new Color(0.18f,0.2f,0.19f));
-    }
-    static void Building(Transform parent,Vector3 position,float height)
-    {
-        Part(parent,"NeighborhoodBuilding",position+Vector3.up*(height*0.5f),new Vector3(9,height,8),new Color(0.75f,0.72f,0.64f));
-        Part(parent,"RoofCornice",position+Vector3.up*(height+0.12f),new Vector3(9.4f,0.24f,8.4f),new Color(0.47f,0.49f,0.47f));
-        for (int floor=0;floor<height/3;floor++) for (int column=0;column<4;column++)
-        {
-            Vector3 p=position+new Vector3(-3.15f+column*2.1f,1.8f+floor*3,-4.04f);
-            Part(parent,"WindowSurround",p,new Vector3(1.35f,1.55f,0.12f),new Color(0.31f,0.34f,0.34f),false);
-            Part(parent,"FacadeGlass",p+Vector3.back*0.08f,new Vector3(1.18f,1.38f,0.025f),new Color(0.39f,0.52f,0.58f),false);
-        }
-        Part(parent,"BuildingEntrance",position+new Vector3(0,1.1f,-4.12f),new Vector3(1.1f,2.2f,0.08f),new Color(0.28f,0.25f,0.20f),false);
     }
 }

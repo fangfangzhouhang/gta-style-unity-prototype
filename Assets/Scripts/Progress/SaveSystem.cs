@@ -12,7 +12,7 @@ public static class SaveSystem
     {
         get {
 #if UNITY_EDITOR
-            return UnityEditor.SessionState.GetBool("CampusPlayValidation", false);
+            return UnityEditor.SessionState.GetBool("CampusPlayValidation", false) || UnityEditor.SessionState.GetBool("CampusLegacyValidation", false);
 #else
             return false;
 #endif

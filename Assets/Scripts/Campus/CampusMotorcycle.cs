@@ -23,7 +23,8 @@ public class CampusMotorcycle : MonoBehaviour
     {throttle=Mathf.Clamp(gas,-1,1);steer=Mathf.Clamp(turn,-1,1);brake=stop;}
     CampusFlowController flow;
     WorldMapUI map;
-    public bool CanMount { get { return !IsRiding && player!=null && Vector3.Distance(player.transform.position,transform.position+Vector3.up*.7f)<2.6f; } }
+    public bool RideUnlocked { get { var chapter=UnityCompat.FindOne<CampusDepartureChapter>();return chapter==null || chapter.State.departed; } }
+    public bool CanMount { get { return RideUnlocked && !IsRiding && player!=null && Vector3.Distance(player.transform.position,transform.position+Vector3.up*.7f)<2.6f; } }
     void Awake()
     {
         body=GetComponent<Rigidbody>();body.mass=220;body.drag=.04f;body.angularDrag=4;

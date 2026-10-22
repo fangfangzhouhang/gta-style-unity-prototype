@@ -34,6 +34,9 @@ public static class CampusSiteValidation
         var cc=flow.player.GetComponent<CharacterController>();
         var savedPosition=rigid.position;var savedRotation=rigid.rotation;
         cc.enabled=false;flow.player.position=savedPosition+Vector3.left*1.4f+Vector3.up*.9f;cc.enabled=true;Physics.SyncTransforms();
+        var departure=UnityEngine.Object.FindObjectOfType<CampusDepartureChapter>();
+        bool previousDeparture=departure!=null && departure.State.departed;
+        if(departure!=null){Require(!bike.TryMount(),"提前骑乘没有封锁");departure.State.departed=true;}
         Require(bike.TryMount(),"摩托车不能上车");
         Require(!cc.enabled && !flow.player.GetComponent<ThirdPersonController>().controlEnabled,"上车没有切换控制");
         var simulationMode=Physics.simulationMode;
@@ -84,6 +87,7 @@ public static class CampusSiteValidation
         {
             if(wall!=null)UnityEngine.Object.DestroyImmediate(wall);
             bike.UseExternalInput=false;Physics.simulationMode=simulationMode;
+            if(departure!=null)departure.State.departed=previousDeparture;
             rigid.position=savedPosition;rigid.rotation=savedRotation;rigid.velocity=Vector3.zero;rigid.angularVelocity=Vector3.zero;
         }
     }

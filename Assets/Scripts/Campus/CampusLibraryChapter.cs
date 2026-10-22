@@ -130,6 +130,7 @@ public class CampusLibraryChapter : MonoBehaviour
     public bool Use(CampusEscapeObject item)
     {
         var action=item.action;
+        if(action==CampusEscapeObject.Action.GateRelease && GetComponent<CampusDepartureChapter>()!=null)return false;
         if(action==CampusEscapeObject.Action.GateRelease){Say("庭院已开放。校门控制流程将在下一阶段接通。");return true;}
         if(action!=CampusEscapeObject.Action.UtilityDoor && action!=CampusEscapeObject.Action.PowerSwitch && (int)action<(int)CampusEscapeObject.Action.LibraryIndex)return false;
         if(!GetComponent<CampusCorridorChapter>().State.circuit){Say("先完成 203 设备室回路，才能调查三楼与后勤。");return true;}

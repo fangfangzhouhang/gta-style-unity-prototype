@@ -58,6 +58,7 @@ public static class CampusGameplayValidation
         CampusExamValidation.CheckRuntime(flow);
         if(UnityEngine.Object.FindObjectOfType<CampusCorridorChapter>()!=null)CampusCorridorValidation.CheckInitial(flow);
         if(UnityEngine.Object.FindObjectOfType<CampusLibraryChapter>()!=null)CampusLibraryValidation.CheckInitial(flow);
+        if(UnityEngine.Object.FindObjectOfType<CampusDepartureChapter>()!=null)CampusDepartureValidation.CheckInitial(flow);
         flow.SetZone(CampusFlowController.Zone.Exam);
         flow.activeCheckpoint=flow.examCheckpoint;
         SafeDiscoveryReset.TryRespawn(flow.player,flow.examCheckpoint);
@@ -76,7 +77,7 @@ public static class CampusGameplayValidation
         if(runningFlow==null) return false;
         Require(!runningFlow.IsBusy,"自动逃脱途中被抓住 node="+routeIndex+" at="+runningFlow.player.position);
         Require(Time.time-routeStarted<120f,"自动逃脱超时 node="+routeIndex+" at="+runningFlow.player.position);
-        if(runningFlow.HasEscapedSchool)
+        if(runningFlow.HasEscapedSchool && UnityEngine.Object.FindObjectOfType<CampusDepartureChapter>()==null)
         {
             var completedEscape=UnityEngine.Object.FindObjectOfType<CampusEscapeDirector>();
             Require(completedEscape.PlanRead && completedEscape.HasKey && completedEscape.UtilityOpen && completedEscape.PowerOff && completedEscape.GateOpen,"过关时谜题阶段缺失");
@@ -117,6 +118,7 @@ public static class CampusGameplayValidation
         {
             if(!CampusCorridorValidation.Advance(runningFlow,dt))return false;
             if(UnityEngine.Object.FindObjectOfType<CampusLibraryChapter>()!=null && !CampusLibraryValidation.Advance(runningFlow,dt))return false;
+            if(UnityEngine.Object.FindObjectOfType<CampusDepartureChapter>()!=null && !CampusDepartureValidation.Advance(runningFlow,dt))return false;
             File.AppendAllText("../CampusValidation/result.txt","\nPASS: staged chapter route, Seconds="+(Time.time-routeStarted).ToString("F2"));
             Debug.Log("CAMPUS_STAGED_CHAPTER_COMPLETE Seconds="+(Time.time-routeStarted).ToString("F2"));
             completed=true;runningFlow.player.GetComponent<ThirdPersonController>().controlEnabled=true;return true;

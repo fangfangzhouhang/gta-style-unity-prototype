@@ -60,6 +60,8 @@ public class CampusHUD : MonoBehaviour
             objective = hub.hud.objective;
             detail = hub.hud.detail;
         }
+        var departure=UnityCompat.FindOne<CampusDepartureChapter>();
+        if(departure!=null && departure.State.departed && !departure.State.completed){objective=departure.Objective;detail=departure.Detail;}
         Panel(new Rect(24, 22, 660, 112));
         GUI.Label(new Rect(42, 30, 624, 38), "目标  " + objective, title);
         GUI.Label(new Rect(42, 70, 624, 54), detail, body);

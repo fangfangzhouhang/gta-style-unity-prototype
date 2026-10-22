@@ -241,8 +241,9 @@ public class CampusFlowController : MonoBehaviour
     {
         var escape=UnityCompat.FindOne<CampusEscapeDirector>();
         if(escape!=null && !escape.GateOpen)return;
-        if (HasEscapedSchool || IsBusy)
-            return;
+        if (HasEscapedSchool || IsBusy)return;
+        var departure=UnityCompat.FindOne<CampusDepartureChapter>();
+        if(departure!=null && !departure.TryDepart())return;
         HasEscapedSchool = true;
         CurrentZone = Zone.Hub;
         activeCheckpoint = hubCheckpoint != null ? hubCheckpoint : activeCheckpoint;
@@ -259,6 +260,14 @@ public class CampusFlowController : MonoBehaviour
         RefreshHud();
         CancelInvoke("HideSuccess");
         Invoke("HideSuccess", 2.2f);
+    }
+
+    public void RestoreDeparture(bool departed)
+    {
+        HasEscapedSchool=departed;
+        if(departed){HasEscapedExam=true;CurrentZone=Zone.Hub;activeCheckpoint=hubCheckpoint;}
+        else if(CurrentZone==Zone.Hub){CurrentZone=Zone.School;activeCheckpoint=corridorCheckpoint;}
+        RefreshHud();
     }
 
     public void SetZone(Zone zone)
@@ -376,6 +385,8 @@ public class CampusFlowController : MonoBehaviour
     /// <summary>可选：远端 Transit 仍 LoadScene。</summary>
     public void TryLoadScene(string sceneName)
     {
+        var departure=UnityCompat.FindOne<CampusDepartureChapter>();
+        if(departure!=null && !departure.State.completed){ShowTip("尚未离校",departure.Detail);return;}
         if (string.IsNullOrEmpty(sceneName))
             return;
         if (!Application.CanStreamedLevelBeLoaded(sceneName))

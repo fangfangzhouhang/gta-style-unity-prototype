@@ -47,7 +47,10 @@ public static class CampusLibraryValidation
             SaveSystem.Save();GameProgress.Ensure().libraryChapter=new CampusLibraryState();c.Restore();
             Check(c.utilityDoor.GetComponent<Collider>().enabled && c.yardDoor.GetComponent<Collider>().enabled,"service reset locks failed");
             Check(SaveSystem.LoadAndApply(false) && c.State.emergency && !c.yardDoor.GetComponent<Collider>().enabled && !c.yardDoor.GetComponent<NavMeshObstacle>().enabled,"service saved state restore failed");
-            CampusExamValidation.CheckSaveRestore(flow);Check(c.State.manual && c.State.key && c.State.emergency,"capture lost library progress");
+            var prior=flow.player.position;
+            CampusExamValidation.CheckSaveRestore(flow);
+            var cc=flow.player.GetComponent<CharacterController>();cc.enabled=false;flow.player.position=prior;cc.enabled=true;flow.player.GetComponent<ThirdPersonController>().controlEnabled=false;
+            Check(c.State.manual && c.State.key && c.State.emergency,"capture lost library progress");
             File.AppendAllText("../CampusValidation/result.txt","\nPASS: real library index/book/archive puzzle; rear-gallery return loop; east descent; joint key/manual utility gate; emergency lights and teacher response; physical yard exit; save/load and capture persistence.");
             Debug.Log("CAMPUS_LIBRARY_SERVICE_RUN_PASS");done=true;return true;
         }

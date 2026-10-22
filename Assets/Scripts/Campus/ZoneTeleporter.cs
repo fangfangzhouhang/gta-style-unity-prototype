@@ -35,6 +35,8 @@ public class ZoneTeleporter : MonoBehaviour
         var corridor=UnityCompat.FindOne<CampusCorridorChapter>();
         var campus=UnityCompat.FindOne<CampusFlowController>();
         if(corridor!=null && campus!=null && !campus.HasEscapedSchool){PlayerInRange=false;return;}
+        var departure=UnityCompat.FindOne<CampusDepartureChapter>();
+        if(departure!=null && !departure.State.completed){PlayerInRange=false;return;}
         if (destination == null)
             return;
         if (player == null)

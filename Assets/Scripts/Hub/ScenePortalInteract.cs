@@ -35,6 +35,8 @@ public class ScenePortalInteract : MonoBehaviour
     {
         if (PauseMenu.Instance != null && PauseMenu.Instance.IsOpen)
             return;
+        var departure=UnityCompat.FindOne<CampusDepartureChapter>();
+        if(departure!=null && !departure.State.completed){PlayerInRange=false;return;}
         if (player == null)
         {
             ResolvePlayer();
@@ -55,6 +57,8 @@ public class ScenePortalInteract : MonoBehaviour
 
     void TryEnter()
     {
+        var departure=UnityCompat.FindOne<CampusDepartureChapter>();
+        if(departure!=null && !departure.State.completed){Tip("先骑车离开校门",departure.Detail);return;}
         GameProgress gp = GameProgress.Ensure();
         if (requireEscapedSchool && !gp.escapedSchool)
         {

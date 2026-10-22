@@ -90,6 +90,12 @@ public static class CampusSceneValidation
         Render(camera, "hangzhou-street", new Vector3(-56,1.75f,71), new Vector3(-81,4,80));
     }
 
+    public static void RenderDepartureGate()
+    {
+        var camera=Camera.main;var position=camera.transform.position;var rotation=camera.transform.rotation;
+        Render(camera,"departure-gate",new Vector3(-25,2.2f,61),new Vector3(-12,1.5f,51));
+        camera.transform.SetPositionAndRotation(position,rotation);
+    }
     public static void RenderServiceEmergency()
     {
         var camera=Camera.main;var at=camera.transform.position;var rotation=camera.transform.rotation;

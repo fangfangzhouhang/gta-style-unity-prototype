@@ -40,7 +40,7 @@ public static class CampusGameplayValidation
         body.Move(Vector3.right*8f);
         Require(flow.player.position.x<-3.15f,"角色穿过玻璃窗碰撞体");
         flow.SetZone(CampusFlowController.Zone.School);
-        flow.activeCheckpoint=GameObject.Find("GroundSchoolCheckpoint").transform;
+        flow.activeCheckpoint=GameObject.Find(UnityEngine.Object.FindObjectOfType<CampusLibraryChapter>()!=null?"EastGroundCheckpoint":"GroundSchoolCheckpoint").transform;
         Vector3 expected=flow.activeCheckpoint.position;
         body.enabled=false; flow.player.position=new Vector3(-14.4f,-10f,33f); body.enabled=true;
         flow.player.GetComponent<CampusSafety>().SendMessage("LateUpdate");
@@ -57,6 +57,7 @@ public static class CampusGameplayValidation
         CampusEscapeValidation.CheckRuntime(flow);
         CampusExamValidation.CheckRuntime(flow);
         if(UnityEngine.Object.FindObjectOfType<CampusCorridorChapter>()!=null)CampusCorridorValidation.CheckInitial(flow);
+        if(UnityEngine.Object.FindObjectOfType<CampusLibraryChapter>()!=null)CampusLibraryValidation.CheckInitial(flow);
         flow.SetZone(CampusFlowController.Zone.Exam);
         flow.activeCheckpoint=flow.examCheckpoint;
         SafeDiscoveryReset.TryRespawn(flow.player,flow.examCheckpoint);
@@ -115,8 +116,9 @@ public static class CampusGameplayValidation
         if(UnityEngine.Object.FindObjectOfType<CampusCorridorChapter>()!=null)
         {
             if(!CampusCorridorValidation.Advance(runningFlow,dt))return false;
-            File.AppendAllText("../CampusValidation/result.txt","\nPASS: stage A-C route, Seconds="+(Time.time-routeStarted).ToString("F2"));
-            Debug.Log("CAMPUS_STAGE2_COMPLETE Seconds="+(Time.time-routeStarted).ToString("F2"));
+            if(UnityEngine.Object.FindObjectOfType<CampusLibraryChapter>()!=null && !CampusLibraryValidation.Advance(runningFlow,dt))return false;
+            File.AppendAllText("../CampusValidation/result.txt","\nPASS: staged chapter route, Seconds="+(Time.time-routeStarted).ToString("F2"));
+            Debug.Log("CAMPUS_STAGED_CHAPTER_COMPLETE Seconds="+(Time.time-routeStarted).ToString("F2"));
             completed=true;runningFlow.player.GetComponent<ThirdPersonController>().controlEnabled=true;return true;
         }
         Vector3 delta=route[routeIndex]-runningFlow.player.position; delta.y=0;

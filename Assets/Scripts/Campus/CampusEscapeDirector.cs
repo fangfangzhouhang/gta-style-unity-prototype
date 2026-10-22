@@ -18,6 +18,7 @@ public class CampusEscapeDirector : MonoBehaviour
             var chapter=GetComponent<CampusExamChapter>();
             if(chapter!=null && !chapter.SideOpen)return chapter.Objective;
             var corridor=GetComponent<CampusCorridorChapter>();
+            if(corridor!=null && corridor.State.circuit && GetComponent<CampusLibraryChapter>()!=null)return GetComponent<CampusLibraryChapter>().Objective;
             if(corridor!=null)return corridor.Objective;
             if(!PlanRead)return "调查二楼考场的疏散示意图";
             if(!HasKey)return "去二楼 203 教室找维修钥匙";
@@ -26,7 +27,7 @@ public class CampusEscapeDirector : MonoBehaviour
             return "校门已开启，离开校园";
         }
     }
-    public string Detail { get { return GetComponent<CampusExamChapter>()!=null && !GetComponent<CampusExamChapter>().SideOpen?"后排试卷、座位表、密码柜均可按 E 调查；退格键跳过字幕":GetComponent<CampusCorridorChapter>()!=null?GetComponent<CampusCorridorChapter>().Detail:!PlanRead?"201 后排墙边按 E 查看；教室、外廊、楼梯均可探索":!HasKey?"从外廊进入 203；广播按钮能把附近老师引开":!PowerOff?"钥匙可开一楼配电间；东楼梯与西楼梯都能下楼":"已找到的线索会保留；被抓后可从检查点继续"; } }
+    public string Detail { get { return GetComponent<CampusExamChapter>()!=null && !GetComponent<CampusExamChapter>().SideOpen?"后排试卷、座位表、密码柜均可按 E 调查；退格键跳过字幕":GetComponent<CampusLibraryChapter>()!=null && GetComponent<CampusCorridorChapter>().State.circuit?GetComponent<CampusLibraryChapter>().Detail:GetComponent<CampusCorridorChapter>()!=null?GetComponent<CampusCorridorChapter>().Detail:!PlanRead?"201 后排墙边按 E 查看；教室、外廊、楼梯均可探索":!HasKey?"从外廊进入 203；广播按钮能把附近老师引开":!PowerOff?"钥匙可开一楼配电间；东楼梯与西楼梯都能下楼":"已找到的线索会保留；被抓后可从检查点继续"; } }
     void Start()
     {
         flow=UnityCompat.FindOne<CampusFlowController>();
@@ -78,11 +79,15 @@ public class CampusEscapeDirector : MonoBehaviour
         return best;
     }
     public string NearbyPrompt(){var item=Nearby();return item==null?"":"E · "+item.displayName;}
+    public void RestoreLibraryProgress(bool manual,bool key,bool utility,bool emergency)
+    {PlanRead=manual;HasKey=key;UtilityOpen=utility;PowerOff=emergency;}
     public bool TryUse(CampusEscapeObject item)
     {
         if(item==null || item!=Nearby())return false;
         var chapter=GetComponent<CampusExamChapter>();
         if(chapter!=null && chapter.Use(item))return true;
+        var library=GetComponent<CampusLibraryChapter>();
+        if(library!=null && library.Use(item))return true;
         var corridor=GetComponent<CampusCorridorChapter>();
         if(corridor!=null && corridor.Use(item))return true;
         bool done=false;

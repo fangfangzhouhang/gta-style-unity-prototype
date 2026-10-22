@@ -17,6 +17,7 @@ public class GameProgress : MonoBehaviour
 
     public CampusExamState examChapter = new CampusExamState();
     public CampusCorridorState corridorChapter = new CampusCorridorState();
+    public CampusLibraryState libraryChapter = new CampusLibraryState();
     public event System.Action SaveApplied;
     public string stage = StageExam;
     public int money;
@@ -116,6 +117,7 @@ public class GameProgress : MonoBehaviour
             return;
         examChapter = data.examChapter ?? new CampusExamState();
         corridorChapter = data.corridorChapter ?? new CampusCorridorState();
+        libraryChapter = data.libraryChapter ?? new CampusLibraryState();
         stage = data.stage ?? StageExam;
         money = data.money;
         hasPhone = data.hasPhone;
@@ -139,6 +141,7 @@ public class GameProgress : MonoBehaviour
         {
             examChapter = examChapter,
             corridorChapter = corridorChapter,
+            libraryChapter = libraryChapter,
             stage = stage,
             money = money,
             hasPhone = hasPhone,
@@ -161,6 +164,7 @@ public class SaveData
 {
     public CampusExamState examChapter;
     public CampusCorridorState corridorChapter;
+    public CampusLibraryState libraryChapter;
     public string stage;
     public int money;
     public bool hasPhone;

@@ -61,6 +61,8 @@ public static class CampusCorridorValidation
             Check(SaveSystem.LoadAndApply(false) && c.State.circuit && c.State.card && !c.eastGate.GetComponent<Collider>().enabled && !c.eastGate.GetComponent<NavMeshObstacle>().enabled,"corridor save restore failed");
             CampusExamValidation.CheckSaveRestore(flow);Check(c.State.card && c.State.circuit,"capture lost corridor progress");
             File.AppendAllText("../CampusValidation/result.txt","\nPASS: physical 201 -> repeatable NPC/notice -> access card -> 203 -> three switches -> east stairs -> third floor; ground remains locked; save/load and capture retain stages A-C.");
+            body.enabled=false;flow.player.position=before;body.enabled=true;Physics.SyncTransforms();
+            flow.player.GetComponent<ThirdPersonController>().controlEnabled=false;
             Debug.Log("CAMPUS_CORRIDOR_RUN_PASS");complete=true;return true;
         }
         Vector3 delta=route[index]-flow.player.position;delta.y=0;

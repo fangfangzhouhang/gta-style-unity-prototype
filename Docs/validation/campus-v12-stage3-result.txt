@@ -1,0 +1,13 @@
+PASS: spawn 2F; exit 2F; desk/chair metrics; continuous route and standing clearance; scene saved.
+2026-10-22T14:38:52.5155408Z
+PASS: enclosed roofs; human scale; first-person eyes 1.65/0.95m; crouch feet; blocked standing.
+PASS: actor NavMesh; 2F-to-gate path; swept player/window collision; falling recovery to ground checkpoint; speed/light/map/foliage balance.
+PASS: Play startup; 2F spawn; exam zone/stage/objective; unified HUD present.
+PASS: physical 201 -> repeatable NPC/notice -> access card -> 203 -> three switches -> east stairs -> third floor; ground remains locked; save/load and capture retain stages A-C.
+PASS: real library index/book/archive puzzle; rear-gallery return loop; east descent; joint key/manual utility gate; emergency lights and teacher response; physical yard exit; save/load and capture persistence.
+PASS: staged chapter route, Seconds=65.97
+CAMPUS_LIBRARY_SERVICE_RUN_PASS
+CAMPUS_STAGED_CHAPTER_COMPLETE Seconds=65.97
+Validated in isolated Unity 2022.3.49f1c1 project; scripts byte-match main.
+Three human playthroughs and physical mouse-click testing have not been performed.
+Stage 3 ends in courtyard; gate/motorcycle ending and full save migration remain pending.

@@ -15,6 +15,8 @@ public class CampusEscapeDirector : MonoBehaviour
     public string Objective
     {
         get {
+            var chapter=GetComponent<CampusExamChapter>();
+            if(chapter!=null && !chapter.SideOpen)return chapter.Objective;
             if(!PlanRead)return "调查二楼考场的疏散示意图";
             if(!HasKey)return "去二楼 203 教室找维修钥匙";
             if(!PowerOff)return "前往一楼配电间，关闭门禁警报";
@@ -22,14 +24,14 @@ public class CampusEscapeDirector : MonoBehaviour
             return "校门已开启，离开校园";
         }
     }
-    public string Detail { get { return !PlanRead?"201 后排墙边按 E 查看；教室、外廊、楼梯均可探索":!HasKey?"从外廊进入 203；广播按钮能把附近老师引开":!PowerOff?"钥匙可开一楼配电间；东楼梯与西楼梯都能下楼":"已找到的线索会保留；被抓后可从检查点继续"; } }
+    public string Detail { get { return GetComponent<CampusExamChapter>()!=null && !GetComponent<CampusExamChapter>().SideOpen?"后排试卷、座位表、密码柜均可按 E 调查；退格键跳过字幕":!PlanRead?"201 后排墙边按 E 查看；教室、外廊、楼梯均可探索":!HasKey?"从外廊进入 203；广播按钮能把附近老师引开":!PowerOff?"钥匙可开一楼配电间；东楼梯与西楼梯都能下楼":"已找到的线索会保留；被抓后可从检查点继续"; } }
     void Start()
     {
         flow=UnityCompat.FindOne<CampusFlowController>();
         var existing=transform.Find("EscapeObjectives");
         if(existing!=null){objects=existing.GetComponentsInChildren<CampusEscapeObject>(true);gateBarrier=existing.Find("LockedCampusGate");return;}
         var root=new GameObject("EscapeObjectives").transform;root.SetParent(transform,false);
-        Prop(root,"EvacuationPlan",CampusEscapeObject.Action.EvacuationPlan,new Vector3(-10.5f,5.15f,-2.9f),new Color(.9f,.85f,.57f),"疏散图");
+        Prop(root,"EvacuationPlan",CampusEscapeObject.Action.EvacuationPlan,new Vector3(-9.6f,5.15f,-2.9f),new Color(.9f,.85f,.57f),"疏散图");
         Prop(root,"MaintenanceKey",CampusEscapeObject.Action.MaintenanceKey,new Vector3(15,4.95f,3.9f),new Color(.95f,.75f,.12f),"维修钥匙");
         Prop(root,"PowerSwitch",CampusEscapeObject.Action.PowerSwitch,new Vector3(3,1.15f,3.3f),new Color(.28f,.55f,.64f),"配电开关");
         Prop(root,"GateRelease",CampusEscapeObject.Action.GateRelease,new Vector3(-10.6f,1.1f,50),new Color(.25f,.68f,.38f),"校门控制箱");
@@ -50,6 +52,7 @@ public class CampusEscapeDirector : MonoBehaviour
     {
         if(flow==null)flow=UnityCompat.FindOne<CampusFlowController>();
         if(flow==null || flow.IsBusy || Time.timeScale==0 || (PauseMenu.Instance!=null && PauseMenu.Instance.IsOpen) || (flow.mapUi!=null && flow.mapUi.IsOpen))return;
+        if(GetComponent<CampusExamChapter>()!=null && GetComponent<CampusExamChapter>().KeypadOpen)return;
         if(Input.GetKeyDown(KeyCode.E)){var item=Nearby();if(item!=null)TryUse(item);}
     }
     public CampusEscapeObject Nearby()
@@ -60,6 +63,8 @@ public class CampusEscapeDirector : MonoBehaviour
         foreach(var item in objects)
         {
             if(item==null || !item.gameObject.activeInHierarchy)continue;
+            var chapter=GetComponent<CampusExamChapter>();
+            if(chapter!=null && ((item.action==CampusEscapeObject.Action.ExamPaper && chapter.State.paper) || (item.action==CampusEscapeObject.Action.ExamChart && chapter.State.chart) || (item.action==CampusEscapeObject.Action.ExamCabinet && chapter.State.key) || (item.action==CampusEscapeObject.Action.ExamSideDoor && chapter.SideOpen)))continue;
             if((item.action==CampusEscapeObject.Action.EvacuationPlan && PlanRead) || (item.action==CampusEscapeObject.Action.MaintenanceKey && HasKey) || (item.action==CampusEscapeObject.Action.UtilityDoor && UtilityOpen) || (item.action==CampusEscapeObject.Action.PowerSwitch && PowerOff) || (item.action==CampusEscapeObject.Action.GateRelease && GateOpen))continue;
             float distance=Vector3.Distance(flow.player.position,item.transform.position);
             if(distance>=nearest)continue;
@@ -72,6 +77,8 @@ public class CampusEscapeDirector : MonoBehaviour
     public bool TryUse(CampusEscapeObject item)
     {
         if(item==null || item!=Nearby())return false;
+        var chapter=GetComponent<CampusExamChapter>();
+        if(chapter!=null && chapter.Use(item))return true;
         bool done=false;
         switch(item.action)
         {

@@ -30,6 +30,8 @@ public class ZoneTeleporter : MonoBehaviour
     {
         if (PauseMenu.Instance != null && PauseMenu.Instance.IsOpen)
             return;
+        var chapter=UnityCompat.FindOne<CampusExamChapter>();
+        if(chapter!=null && (!chapter.SideOpen || chapter.KeypadOpen)) {PlayerInRange=false;return;}
         if (destination == null)
             return;
         if (player == null)

@@ -8,11 +8,21 @@ using UnityEngine.SceneManagement;
 public static class SaveSystem
 {
     const string FileName = "escape_exam_save.json";
-    const string PrefsKey = "EscapeExam.SaveJson";
+    static bool ValidationMode
+    {
+        get {
+#if UNITY_EDITOR
+            return UnityEditor.SessionState.GetBool("CampusPlayValidation", false);
+#else
+            return false;
+#endif
+        }
+    }
+    static string PrefsKey { get { return ValidationMode?"EscapeExam.Validation.SaveJson":"EscapeExam.SaveJson"; } }
 
     public static string FilePath
     {
-        get { return Path.Combine(Application.persistentDataPath, FileName); }
+        get { return ValidationMode?Path.Combine(Application.temporaryCachePath,"campus_validation_save.json"):Path.Combine(Application.persistentDataPath, FileName); }
     }
 
     public static bool HasSave()

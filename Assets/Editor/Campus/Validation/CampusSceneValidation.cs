@@ -73,6 +73,7 @@ public static class CampusSceneValidation
         var camera = Camera.main;
         camera.GetComponent<ThirdPersonCamera>().enabled = false;
         Render(camera, "classroom", new Vector3(-10.6f, 5.65f, -2.8f), new Vector3(-7.4f, 5.3f, 4f));
+        Render(camera, "chapter201-clues", new Vector3(-7.5f,5.65f,.1f),new Vector3(-8.3f,5.1f,-3));
         Render(camera, "garden", new Vector3(-47f,1.65f,161f), new Vector3(-40f,2.2f,146f));
         Render(camera, "campus-wide", new Vector3(-72f,35f,129f), new Vector3(-5f,0f,154f));
         Render(camera, "stairs", new Vector3(-14.4f, 5.65f, 20.5f), new Vector3(-14.4f, 2.2f, 29f));
@@ -156,7 +157,8 @@ public static class CampusSceneValidation
             0.28f, ~0, QueryTriggerInteraction.Ignore))
         {
             if (obstacle.GetComponentInParent<ThirdPersonController>() != null ||
-                obstacle.GetComponentInParent<TeacherAgent>() != null) continue;
+                obstacle.GetComponentInParent<TeacherAgent>() != null ||
+                obstacle.name=="Chapter201SideDoor") continue;
             Require(false, "站立通路有障碍: " + feet + " object=" + obstacle.name);
         }
     }

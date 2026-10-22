@@ -211,6 +211,7 @@ public class CampusFlowController : MonoBehaviour
 
     public void NotifyExamEscaped()
     {
+        if (UnityCompat.FindOne<CampusExamChapter>()!=null && !UnityCompat.FindOne<CampusExamChapter>().SideOpen)return;
         if (HasEscapedExam || IsBusy)
             return;
         HasEscapedExam = true;

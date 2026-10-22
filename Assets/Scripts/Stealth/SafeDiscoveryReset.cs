@@ -28,6 +28,8 @@ public static class SafeDiscoveryReset
     {
         if (player == null)
             return false;
+        var motorcycle=player.GetComponentInParent<CampusMotorcycle>();
+        if(motorcycle!=null)motorcycle.ReleaseForRecovery();
         if (clearance < 0f)
             clearance = SafeClearance;
 
@@ -83,10 +85,8 @@ public static class SafeDiscoveryReset
             }
         }
 
-        // 最后手段：沿 +Z 再推远
-        Vector3 fallback = preferred + Vector3.forward * (clearance * 2.5f);
-        fallback.y = preferred.y;
-        return fallback;
+        // 封闭室内不能把玩家盲推到房间外或楼板之外。
+        return preferred;
     }
 
     public static bool IsClearOfThreats(Vector3 pos, float clearance)
@@ -98,6 +98,7 @@ public static class SafeDiscoveryReset
             if (agents[i] == null)
                 continue;
             Vector3 d = agents[i].transform.position - pos;
+            if (Mathf.Abs(d.y + 0.9f) > 2f) continue;
             d.y = 0f;
             if (d.sqrMagnitude < clr2)
                 return false;
@@ -107,9 +108,14 @@ public static class SafeDiscoveryReset
 
     static bool IsInsideSolid(Vector3 pos)
     {
-        // 脚点略抬高做胶囊重叠检测
-        Vector3 center = pos + Vector3.up * 1.0f;
-        return Physics.CheckCapsule(pos + Vector3.up * 0.2f, pos + Vector3.up * 1.6f, 0.35f, ~0, QueryTriggerInteraction.Ignore);
+        var player = UnityCompat.FindOne<ThirdPersonController>();
+        float height = player != null ? player.standingHeight : 1.8f;
+        float halfLine = height * 0.5f - 0.27f;
+        if (!Physics.Raycast(pos, Vector3.down, height * 0.5f + 0.3f, ~0, QueryTriggerInteraction.Ignore)) return true;
+        foreach (var obstacle in Physics.OverlapCapsule(pos - Vector3.up * halfLine,
+            pos + Vector3.up * halfLine, 0.27f, ~0, QueryTriggerInteraction.Ignore))
+            if (obstacle.GetComponentInParent<ThirdPersonController>() == null) return true;
+        return false;
     }
 
     public static void ResetAllThreats()

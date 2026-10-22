@@ -35,6 +35,11 @@ public class HomeFlowController : MonoBehaviour
         if (hud == null)
             hud = UnityCompat.FindOne<StealthGameHUD>();
         BindDetectors();
+        if (UnityCompat.FindOne<CampusFlowController>() != null)
+        {
+            NoteDone = GameProgress.Ensure().leftNote;
+            return;
+        }
         if (GameProgress.Ensure().leftNote)
         {
             NoteDone = true;
@@ -89,8 +94,9 @@ public class HomeFlowController : MonoBehaviour
             {
                 CampusFlowController campus = UnityCompat.FindOne<CampusFlowController>();
                 if (campus != null)
-                    campus.NotifyEnteredHub();
-                RefreshHudAfterNote();
+                    campus.ShowTip("纸条已留下", "从屋内出口返回城镇，准备旅费和手机");
+                else
+                    RefreshHudAfterNote();
             }
         }
     }

@@ -5,6 +5,30 @@ using UnityEngine;
 /// </summary>
 public static class ThirdPartyModelUtil
 {
+    public static GameObject TrySpawnBuilding(string assetPath, Transform parent, Vector3 position, Quaternion rotation, float height)
+    {
+        var go=TrySpawn(assetPath,parent,position,rotation,Vector3.one);
+        if(go==null) return null;
+        var renderers=go.GetComponentsInChildren<Renderer>();
+        if(renderers.Length==0) return go;
+        Bounds bounds=renderers[0].bounds;
+        foreach(var renderer in renderers) bounds.Encapsulate(renderer.bounds);
+        if(bounds.size.y>0.001f) go.transform.localScale*=height/bounds.size.y;
+        bounds=renderers[0].bounds;
+        foreach(var renderer in renderers) bounds.Encapsulate(renderer.bounds);
+        go.transform.position+=new Vector3(position.x-bounds.center.x,position.y-bounds.min.y,position.z-bounds.center.z);
+        bounds=renderers[0].bounds;
+        foreach(var renderer in renderers) bounds.Encapsulate(renderer.bounds);
+        if(go.GetComponentInChildren<Collider>()==null)
+        {
+            var proxy=new GameObject("BuildingCollision");
+            proxy.transform.position=bounds.center;
+            proxy.transform.SetParent(go.transform,true);
+            var collider=proxy.AddComponent<BoxCollider>();
+            collider.size=bounds.size;
+        }
+        return go;
+    }
     public const string FurnitureDesk = "Assets/Art/ThirdParty/Kenney/FurnitureKit/Models/desk.fbx";
     public const string FurnitureChairDesk = "Assets/Art/ThirdParty/Kenney/FurnitureKit/Models/chairDesk.fbx";
     public const string FurnitureBookcase = "Assets/Art/ThirdParty/Kenney/FurnitureKit/Models/bookcaseOpen.fbx";

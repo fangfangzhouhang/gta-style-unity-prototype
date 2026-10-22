@@ -21,6 +21,8 @@ public class VisionConeDetector : MonoBehaviour
 
     [Tooltip("被发现后是否继续检测。")]
     public bool keepCheckingAfterSpot = false;
+    public float detectionDelay = 0.55f;
+    float visibleFor;
 
     [Tooltip("可视化扇形（仅 Scene / Gizmo）。")]
     public bool drawGizmos = true;
@@ -46,11 +48,14 @@ public class VisionConeDetector : MonoBehaviour
         if (player == null)
             return;
 
-        if (!IsInCone(player.position))
+        if (SafeDiscoveryReset.IsInvulnerable || !CanSeePlayer(player))
+        {
+            visibleFor = 0f;
+            if (keepCheckingAfterSpot) HasSpotted = false;
             return;
-
-        if (IsOccluded(player))
-            return;
+        }
+        visibleFor += checkInterval;
+        if (visibleFor < detectionDelay) return;
 
         HasSpotted = true;
         if (OnPlayerSpotted != null)
@@ -60,6 +65,12 @@ public class VisionConeDetector : MonoBehaviour
     public void ResetSpot()
     {
         HasSpotted = false;
+        visibleFor = 0f;
+    }
+
+    public bool CanSeePlayer(Transform player)
+    {
+        return player != null && IsInCone(player.position) && !IsOccluded(player);
     }
 
     Transform ResolvePlayer()
@@ -120,8 +131,10 @@ public class VisionConeDetector : MonoBehaviour
     static Vector3 GetAimPoint(Transform player)
     {
         ThirdPersonController motor = player.GetComponent<ThirdPersonController>();
-        float y = motor != null && motor.IsCrouching ? 0.55f : 1.0f;
-        return player.position + Vector3.up * y;
+        var body = player.GetComponent<CharacterController>();
+        if (body != null)
+            return player.TransformPoint(body.center) + Vector3.up * (body.height * 0.5f - 0.2f);
+        return player.position;
     }
 
     void OnDrawGizmosSelected()

@@ -122,9 +122,9 @@ public class VehicleController : MonoBehaviour
             // 松油门只沿车头方向减速，侧滑交给下面的抓地。
             Vector3 v = body.velocity;
             Vector3 fwdVel = forward * Vector3.Dot(v, forward);
-            Vector3 lateral = v - new Vector3(0f, v.y, 0f) - fwdVel;
+            Vector3 lateralVelocity = v - new Vector3(0f, v.y, 0f) - fwdVel;
             fwdVel = Vector3.MoveTowards(fwdVel, Vector3.zero, coastAccel * Time.fixedDeltaTime);
-            body.velocity = new Vector3(fwdVel.x + lateral.x, v.y, fwdVel.z + lateral.z);
+            body.velocity = new Vector3(fwdVel.x + lateralVelocity.x, v.y, fwdVel.z + lateralVelocity.z);
         }
 
         // 速度上限只削掉沿车头方向的分量，碰撞产生的侧向速度留给抓地去收。

@@ -42,7 +42,7 @@ public class ZoneTeleporter : MonoBehaviour
         float dist = Vector3.Distance(
             new Vector3(player.position.x, 0f, player.position.z),
             new Vector3(transform.position.x, 0f, transform.position.z));
-        PlayerInRange = dist <= interactRadius;
+        PlayerInRange = dist <= interactRadius && Mathf.Abs(player.position.y - transform.position.y) < 1.6f;
         if (!PlayerInRange)
             return;
 
@@ -80,6 +80,10 @@ public class ZoneTeleporter : MonoBehaviour
 
         CampusFlowController campus = UnityCompat.FindOne<CampusFlowController>();
         if (campus != null)
+        {
+            if (!campus.HasEscapedExam && campus.CurrentZone == CampusFlowController.Zone.Exam)
+                campus.NotifyExamEscaped();
             campus.NotifySecretUsed(prompt);
+        }
     }
 }

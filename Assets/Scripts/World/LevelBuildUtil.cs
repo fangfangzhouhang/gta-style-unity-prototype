@@ -166,4 +166,26 @@ public static class LevelBuildUtil
         else
             Object.DestroyImmediate(obj);
     }
+    public static void BakeCampusMaterials()
+    {
+#if UNITY_EDITOR
+        const string directory = "Assets/Materials/Campus";
+        if (!UnityEditor.AssetDatabase.IsValidFolder(directory)) UnityEditor.AssetDatabase.CreateFolder("Assets/Materials", "Campus");
+        foreach (var tint in UnityEngine.Object.FindObjectsOfType<PrimitiveTint>())
+        {
+            // 按完整外观建立共享材质，保证编辑器与 Play 配色一致。
+            string key = ColorUtility.ToHtmlStringRGBA(tint.color) + "_" +
+                Mathf.RoundToInt(tint.smoothness * 1000) + (tint.emission ? "_glow" : "");
+            string path = directory + "/Campus_" + key + ".mat";
+            Material material = UnityEditor.AssetDatabase.LoadAssetAtPath<Material>(path);
+            if (material == null)
+            {
+                tint.Apply(Shader.Find("Standard"));
+                material = tint.GetComponent<Renderer>().sharedMaterial;
+                UnityEditor.AssetDatabase.CreateAsset(material, path);
+            }
+            tint.GetComponent<Renderer>().sharedMaterial = material;
+        }
+#endif
+    }
 }

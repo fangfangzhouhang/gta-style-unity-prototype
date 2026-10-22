@@ -32,7 +32,9 @@ public static class EscapeExamSceneMenu
 
         EnsureSceneAssetWithBootstrap(CampusWorldScenePath, "b6000000000000000000000000000006");
         var scene = EditorSceneManager.OpenScene(CampusWorldScenePath, OpenSceneMode.Single);
+        CampusAssetBaker.PrepareTextures();
         CampusWorldBuilder.Build();
+        CampusAssetBaker.Save(GameObject.Find("LevelRoot").transform);
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene);
         EnsureBuildSettings();

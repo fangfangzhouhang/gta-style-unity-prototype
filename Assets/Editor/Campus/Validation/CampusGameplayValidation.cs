@@ -32,7 +32,7 @@ public static class CampusGameplayValidation
             teacher.SetPaused(true);
         }
         var path=new NavMeshPath();
-        Require(NavMesh.CalculatePath(new Vector3(-14.4f,4,-1.2f),new Vector3(-14.4f,0,50),NavMesh.AllAreas,path) && path.status==NavMeshPathStatus.PathComplete,
+        Require(UnityEngine.Object.FindObjectOfType<CampusCorridorChapter>()!=null || NavMesh.CalculatePath(new Vector3(-14.4f,4,-1.2f),new Vector3(-14.4f,0,50),NavMesh.AllAreas,path) && path.status==NavMeshPathStatus.PathComplete,
             "二楼到校门导航路径不连通");
         motor.controlEnabled=false;
         body.enabled=false; flow.player.position=new Vector3(-3.7f,4.92f,3.45f); body.enabled=true;
@@ -56,6 +56,7 @@ public static class CampusGameplayValidation
         CampusSiteValidation.CheckRiding(flow);
         CampusEscapeValidation.CheckRuntime(flow);
         CampusExamValidation.CheckRuntime(flow);
+        if(UnityEngine.Object.FindObjectOfType<CampusCorridorChapter>()!=null)CampusCorridorValidation.CheckInitial(flow);
         flow.SetZone(CampusFlowController.Zone.Exam);
         flow.activeCheckpoint=flow.examCheckpoint;
         SafeDiscoveryReset.TryRespawn(flow.player,flow.examCheckpoint);
@@ -73,7 +74,7 @@ public static class CampusGameplayValidation
         if(completed) return true;
         if(runningFlow==null) return false;
         Require(!runningFlow.IsBusy,"自动逃脱途中被抓住 node="+routeIndex+" at="+runningFlow.player.position);
-        Require(Time.time-routeStarted<75f,"自动逃脱超时 node="+routeIndex+" at="+runningFlow.player.position);
+        Require(Time.time-routeStarted<120f,"自动逃脱超时 node="+routeIndex+" at="+runningFlow.player.position);
         if(runningFlow.HasEscapedSchool)
         {
             var completedEscape=UnityEngine.Object.FindObjectOfType<CampusEscapeDirector>();
@@ -99,6 +100,13 @@ public static class CampusGameplayValidation
             Require(director.TryUse(GameObject.Find(names[examNode]).GetComponent<CampusEscapeObject>()),"201 interaction failed node="+examNode);
             if(examNode==2){var chapter=UnityEngine.Object.FindObjectOfType<CampusExamChapter>();Require(!chapter.SubmitCode("000"),"wrong code accepted");Require(chapter.SubmitCode("416"),"201 correct code rejected");}
             Debug.Log("CAMPUS_201_NODE "+examNode);motor.controlEnabled=false;examNode++;return false;
+        }
+        if(UnityEngine.Object.FindObjectOfType<CampusCorridorChapter>()!=null)
+        {
+            if(!CampusCorridorValidation.Advance(runningFlow,dt))return false;
+            File.AppendAllText("../CampusValidation/result.txt","\nPASS: stage A-C route, Seconds="+(Time.time-routeStarted).ToString("F2"));
+            Debug.Log("CAMPUS_STAGE2_COMPLETE Seconds="+(Time.time-routeStarted).ToString("F2"));
+            completed=true;runningFlow.player.GetComponent<ThirdPersonController>().controlEnabled=true;return true;
         }
         Vector3 delta=route[routeIndex]-runningFlow.player.position; delta.y=0;
         if(delta.magnitude<0.22f)

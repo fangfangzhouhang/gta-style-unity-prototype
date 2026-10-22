@@ -211,10 +211,16 @@ public class CampusFlowController : MonoBehaviour
 
     public void NotifyExamEscaped()
     {
-        if (UnityCompat.FindOne<CampusExamChapter>()!=null && !UnityCompat.FindOne<CampusExamChapter>().SideOpen)return;
+        var examChapter=UnityCompat.FindOne<CampusExamChapter>();
+        if (examChapter!=null && (!examChapter.SideOpen || player==null || player.position.x> -12.25f))return;
         if (HasEscapedExam || IsBusy)
             return;
         HasEscapedExam = true;
+        if(examChapter!=null && !examChapter.State.corridorIntroduction)
+        {
+            examChapter.State.corridorIntroduction=true;
+            examChapter.ShowSubtitle("原来还有这么长一条走廊……出口到底在哪里？先问问走廊里的同学。",7);
+        }
         CurrentZone = Zone.School;
         activeCheckpoint = corridorCheckpoint != null ? corridorCheckpoint : activeCheckpoint;
         GameProgress.Ensure().stage = GameProgress.StageSchool;
@@ -223,7 +229,7 @@ public class CampusFlowController : MonoBehaviour
         {
             hud.showSuccessBanner = true;
             hud.successTitle = "逃出考场";
-            hud.successSubtitle = "继续沿走廊 / 楼梯 / 秘密通道前往校门（同地图，不跳转）";
+            hud.successSubtitle = UnityCompat.FindOne<CampusCorridorChapter>()!=null?"询问同学或查看公告，寻找 203 的备用通行卡":"继续沿走廊 / 楼梯 / 秘密通道前往校门（同地图，不跳转）";
             hud.showFailBanner = false;
         }
         RefreshHud();

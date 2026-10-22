@@ -17,6 +17,8 @@ public class CampusEscapeDirector : MonoBehaviour
         get {
             var chapter=GetComponent<CampusExamChapter>();
             if(chapter!=null && !chapter.SideOpen)return chapter.Objective;
+            var corridor=GetComponent<CampusCorridorChapter>();
+            if(corridor!=null)return corridor.Objective;
             if(!PlanRead)return "调查二楼考场的疏散示意图";
             if(!HasKey)return "去二楼 203 教室找维修钥匙";
             if(!PowerOff)return "前往一楼配电间，关闭门禁警报";
@@ -24,7 +26,7 @@ public class CampusEscapeDirector : MonoBehaviour
             return "校门已开启，离开校园";
         }
     }
-    public string Detail { get { return GetComponent<CampusExamChapter>()!=null && !GetComponent<CampusExamChapter>().SideOpen?"后排试卷、座位表、密码柜均可按 E 调查；退格键跳过字幕":!PlanRead?"201 后排墙边按 E 查看；教室、外廊、楼梯均可探索":!HasKey?"从外廊进入 203；广播按钮能把附近老师引开":!PowerOff?"钥匙可开一楼配电间；东楼梯与西楼梯都能下楼":"已找到的线索会保留；被抓后可从检查点继续"; } }
+    public string Detail { get { return GetComponent<CampusExamChapter>()!=null && !GetComponent<CampusExamChapter>().SideOpen?"后排试卷、座位表、密码柜均可按 E 调查；退格键跳过字幕":GetComponent<CampusCorridorChapter>()!=null?GetComponent<CampusCorridorChapter>().Detail:!PlanRead?"201 后排墙边按 E 查看；教室、外廊、楼梯均可探索":!HasKey?"从外廊进入 203；广播按钮能把附近老师引开":!PowerOff?"钥匙可开一楼配电间；东楼梯与西楼梯都能下楼":"已找到的线索会保留；被抓后可从检查点继续"; } }
     void Start()
     {
         flow=UnityCompat.FindOne<CampusFlowController>();
@@ -63,6 +65,8 @@ public class CampusEscapeDirector : MonoBehaviour
         foreach(var item in objects)
         {
             if(item==null || !item.gameObject.activeInHierarchy)continue;
+            var corridor=GetComponent<CampusCorridorChapter>();
+            if(corridor!=null && ((item.action==CampusEscapeObject.Action.AccessCard && corridor.State.card) || (item.action==CampusEscapeObject.Action.EquipmentDoor && corridor.State.roomOpen) || (item.action==CampusEscapeObject.Action.EastAccessGate && corridor.State.circuit)))continue;
             var chapter=GetComponent<CampusExamChapter>();
             if(chapter!=null && ((item.action==CampusEscapeObject.Action.ExamPaper && chapter.State.paper) || (item.action==CampusEscapeObject.Action.ExamChart && chapter.State.chart) || (item.action==CampusEscapeObject.Action.ExamCabinet && chapter.State.key) || (item.action==CampusEscapeObject.Action.ExamSideDoor && chapter.SideOpen)))continue;
             if((item.action==CampusEscapeObject.Action.EvacuationPlan && PlanRead) || (item.action==CampusEscapeObject.Action.MaintenanceKey && HasKey) || (item.action==CampusEscapeObject.Action.UtilityDoor && UtilityOpen) || (item.action==CampusEscapeObject.Action.PowerSwitch && PowerOff) || (item.action==CampusEscapeObject.Action.GateRelease && GateOpen))continue;
@@ -79,6 +83,8 @@ public class CampusEscapeDirector : MonoBehaviour
         if(item==null || item!=Nearby())return false;
         var chapter=GetComponent<CampusExamChapter>();
         if(chapter!=null && chapter.Use(item))return true;
+        var corridor=GetComponent<CampusCorridorChapter>();
+        if(corridor!=null && corridor.Use(item))return true;
         bool done=false;
         switch(item.action)
         {

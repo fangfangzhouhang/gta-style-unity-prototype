@@ -4,7 +4,7 @@ using UnityEngine.AI;
 [System.Serializable]
 public class CampusExamState
 {
-    public bool paper, chart, key, sideOpen, introduction, window;
+    public bool paper, chart, key, sideOpen, introduction, window, corridorIntroduction;
 }
 
 /// <summary>Stage A only. Input is dispatched by CampusEscapeDirector.</summary>
@@ -100,6 +100,7 @@ public class CampusExamChapter : MonoBehaviour
         if(KeypadOpen && (flow==null || flow.IsBusy || Vector3.Distance(flow.player.position,cabinet.transform.position)>2.2f))CloseKeypad();
         if(Input.GetKeyDown(KeyCode.Backspace)){if(KeypadOpen)CloseKeypad();else subtitleUntil=0;}
     }
+    public void ShowSubtitle(string text,float seconds){Say(text,seconds);}
     void Say(string text,float seconds){subtitle=text;subtitleUntil=Time.time+seconds;}
     void OnGUI()
     {

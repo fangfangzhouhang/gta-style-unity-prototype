@@ -26,6 +26,9 @@ public class CampusNavigation : MonoBehaviour
             markup.Add(new NavMeshBuildMarkup { root = bike.transform, ignoreFromBuild = true });
         foreach (var item in root.GetComponentsInChildren<CampusEscapeObject>())
             markup.Add(new NavMeshBuildMarkup { root = item.transform, ignoreFromBuild = true });
+        // Carving doors must block dynamically, never leave a permanent hole in the baked surface.
+        foreach (var obstacle in root.GetComponentsInChildren<NavMeshObstacle>())
+            if(obstacle.carving)markup.Add(new NavMeshBuildMarkup { root = obstacle.transform, ignoreFromBuild = true });
         NavMeshBuilder.CollectSources(root, ~0, NavMeshCollectGeometry.PhysicsColliders, 0, markup, sources);
         var settings = NavMesh.GetSettingsByID(0);
         settings.agentRadius = 0.28f;

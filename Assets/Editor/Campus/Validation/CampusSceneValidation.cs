@@ -73,6 +73,11 @@ public static class CampusSceneValidation
         var camera = Camera.main;
         camera.GetComponent<ThirdPersonCamera>().enabled = false;
         Render(camera, "classroom", new Vector3(-10.6f, 5.65f, -2.8f), new Vector3(-7.4f, 5.3f, 4f));
+        Render(camera, "chapter201-clues", new Vector3(-7.5f,5.65f,.1f),new Vector3(-8.3f,5.1f,-3));
+        Render(camera, "equipment203",new Vector3(15,5.65f,7),new Vector3(15,5,0));
+        Render(camera, "corridor-npcs",new Vector3(-10,5.65f,10),new Vector3(22,5.3f,10));
+        Render(camera, "library",new Vector3(27,9.65f,7),new Vector3(37,9.3f,-1));
+        Render(camera, "service-gallery",new Vector3(36,1.65f,11),new Vector3(2,1.3f,10));
         Render(camera, "garden", new Vector3(-47f,1.65f,161f), new Vector3(-40f,2.2f,146f));
         Render(camera, "campus-wide", new Vector3(-72f,35f,129f), new Vector3(-5f,0f,154f));
         Render(camera, "stairs", new Vector3(-14.4f, 5.65f, 20.5f), new Vector3(-14.4f, 2.2f, 29f));
@@ -83,6 +88,19 @@ public static class CampusSceneValidation
         Render(camera, "open-gallery", new Vector3(3,5.65f,10), new Vector3(37,5.4f,10));
         Render(camera, "hangzhou-town", new Vector3(-108,85,74), new Vector3(5,0,157));
         Render(camera, "hangzhou-street", new Vector3(-56,1.75f,71), new Vector3(-81,4,80));
+    }
+
+    public static void RenderDepartureGate()
+    {
+        var camera=Camera.main;var position=camera.transform.position;var rotation=camera.transform.rotation;
+        Render(camera,"departure-gate",new Vector3(-25,2.2f,61),new Vector3(-12,1.5f,51));
+        camera.transform.SetPositionAndRotation(position,rotation);
+    }
+    public static void RenderServiceEmergency()
+    {
+        var camera=Camera.main;var at=camera.transform.position;var rotation=camera.transform.rotation;
+        Render(camera,"service-emergency",new Vector3(25,1.65f,11.3f),new Vector3(3,1.3f,10));
+        camera.transform.SetPositionAndRotation(at,rotation);
     }
 
     static void Render(Camera camera, string name, Vector3 position, Vector3 target)
@@ -156,7 +174,8 @@ public static class CampusSceneValidation
             0.28f, ~0, QueryTriggerInteraction.Ignore))
         {
             if (obstacle.GetComponentInParent<ThirdPersonController>() != null ||
-                obstacle.GetComponentInParent<TeacherAgent>() != null) continue;
+                obstacle.GetComponentInParent<TeacherAgent>() != null ||
+                obstacle.name=="Chapter201SideDoor" || obstacle.GetComponent<CampusEscapeObject>()!=null) continue;
             Require(false, "站立通路有障碍: " + feet + " object=" + obstacle.name);
         }
     }

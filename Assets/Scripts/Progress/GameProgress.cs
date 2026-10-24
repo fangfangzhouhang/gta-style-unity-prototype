@@ -15,6 +15,11 @@ public class GameProgress : MonoBehaviour
 
     public static GameProgress Instance { get; private set; }
 
+    public CampusExamState examChapter = new CampusExamState();
+    public CampusCorridorState corridorChapter = new CampusCorridorState();
+    public CampusLibraryState libraryChapter = new CampusLibraryState();
+    public CampusDepartureState departureChapter = new CampusDepartureState();
+    public event System.Action SaveApplied;
     public string stage = StageExam;
     public int money;
     public bool hasPhone;
@@ -111,6 +116,10 @@ public class GameProgress : MonoBehaviour
     {
         if (data == null)
             return;
+        examChapter = data.examChapter ?? new CampusExamState();
+        corridorChapter = data.corridorChapter ?? new CampusCorridorState();
+        libraryChapter = data.libraryChapter ?? new CampusLibraryState();
+        departureChapter = data.departureChapter ?? new CampusDepartureState();
         stage = data.stage ?? StageExam;
         money = data.money;
         hasPhone = data.hasPhone;
@@ -124,6 +133,7 @@ public class GameProgress : MonoBehaviour
             TicketInventory.Grant(data.ticketName);
         else
             TicketInventory.Clear();
+        SaveApplied?.Invoke();
     }
 
     public SaveData ToSaveData()
@@ -131,6 +141,10 @@ public class GameProgress : MonoBehaviour
         string scene = SceneManager.GetActiveScene().name;
         return new SaveData
         {
+            examChapter = examChapter,
+            corridorChapter = corridorChapter,
+            libraryChapter = libraryChapter,
+            departureChapter = departureChapter,
             stage = stage,
             money = money,
             hasPhone = hasPhone,
@@ -151,6 +165,10 @@ public class GameProgress : MonoBehaviour
 [System.Serializable]
 public class SaveData
 {
+    public CampusExamState examChapter;
+    public CampusCorridorState corridorChapter;
+    public CampusLibraryState libraryChapter;
+    public CampusDepartureState departureChapter;
     public string stage;
     public int money;
     public bool hasPhone;

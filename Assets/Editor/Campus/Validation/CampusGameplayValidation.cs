@@ -9,6 +9,8 @@ public static class CampusGameplayValidation
     static int routeIndex;
     static float routeStarted, lastTime;
     static bool completed;
+    static int examNode;
+    static readonly Vector3[] examRoute={new Vector3(-8.6f,4,-2.2f),new Vector3(-6.6f,4,-2.8f),new Vector3(-10.8f,4,-2),new Vector3(-11,4,-1.2f)};
     static readonly Vector3[] route={new Vector3(-10.7f,4,-2.2f),new Vector3(-11,4,-1.2f),
         new Vector3(-15.7f,4,-1.2f),new Vector3(-15.7f,4,9),new Vector3(15,4,9),new Vector3(15,4,5.3f),
         new Vector3(15,4,9),new Vector3(23,4,9),new Vector3(45.4f,4,9),new Vector3(45.4f,4,-1),
@@ -30,7 +32,7 @@ public static class CampusGameplayValidation
             teacher.SetPaused(true);
         }
         var path=new NavMeshPath();
-        Require(NavMesh.CalculatePath(new Vector3(-14.4f,4,-1.2f),new Vector3(-14.4f,0,50),NavMesh.AllAreas,path) && path.status==NavMeshPathStatus.PathComplete,
+        Require(UnityEngine.Object.FindObjectOfType<CampusCorridorChapter>()!=null || NavMesh.CalculatePath(new Vector3(-14.4f,4,-1.2f),new Vector3(-14.4f,0,50),NavMesh.AllAreas,path) && path.status==NavMeshPathStatus.PathComplete,
             "二楼到校门导航路径不连通");
         motor.controlEnabled=false;
         body.enabled=false; flow.player.position=new Vector3(-3.7f,4.92f,3.45f); body.enabled=true;
@@ -38,7 +40,7 @@ public static class CampusGameplayValidation
         body.Move(Vector3.right*8f);
         Require(flow.player.position.x<-3.15f,"角色穿过玻璃窗碰撞体");
         flow.SetZone(CampusFlowController.Zone.School);
-        flow.activeCheckpoint=GameObject.Find("GroundSchoolCheckpoint").transform;
+        flow.activeCheckpoint=GameObject.Find(UnityEngine.Object.FindObjectOfType<CampusLibraryChapter>()!=null?"EastGroundCheckpoint":"GroundSchoolCheckpoint").transform;
         Vector3 expected=flow.activeCheckpoint.position;
         body.enabled=false; flow.player.position=new Vector3(-14.4f,-10f,33f); body.enabled=true;
         flow.player.GetComponent<CampusSafety>().SendMessage("LateUpdate");
@@ -53,6 +55,10 @@ public static class CampusGameplayValidation
         }
         CampusSiteValidation.CheckRiding(flow);
         CampusEscapeValidation.CheckRuntime(flow);
+        CampusExamValidation.CheckRuntime(flow);
+        if(UnityEngine.Object.FindObjectOfType<CampusCorridorChapter>()!=null)CampusCorridorValidation.CheckInitial(flow);
+        if(UnityEngine.Object.FindObjectOfType<CampusLibraryChapter>()!=null)CampusLibraryValidation.CheckInitial(flow);
+        if(UnityEngine.Object.FindObjectOfType<CampusDepartureChapter>()!=null)CampusDepartureValidation.CheckInitial(flow);
         flow.SetZone(CampusFlowController.Zone.Exam);
         flow.activeCheckpoint=flow.examCheckpoint;
         SafeDiscoveryReset.TryRespawn(flow.player,flow.examCheckpoint);
@@ -70,11 +76,12 @@ public static class CampusGameplayValidation
         if(completed) return true;
         if(runningFlow==null) return false;
         Require(!runningFlow.IsBusy,"自动逃脱途中被抓住 node="+routeIndex+" at="+runningFlow.player.position);
-        Require(Time.time-routeStarted<75f,"自动逃脱超时 node="+routeIndex+" at="+runningFlow.player.position);
-        if(runningFlow.HasEscapedSchool)
+        Require(Time.time-routeStarted<120f,"自动逃脱超时 node="+routeIndex+" at="+runningFlow.player.position);
+        if(runningFlow.HasEscapedSchool && UnityEngine.Object.FindObjectOfType<CampusDepartureChapter>()==null)
         {
             var completedEscape=UnityEngine.Object.FindObjectOfType<CampusEscapeDirector>();
             Require(completedEscape.PlanRead && completedEscape.HasKey && completedEscape.UtilityOpen && completedEscape.PowerOff && completedEscape.GateOpen,"过关时谜题阶段缺失");
+            CampusExamValidation.CheckSaveRestore(runningFlow);
             completed=true;
             runningFlow.player.GetComponent<ThirdPersonController>().controlEnabled=true;
             File.AppendAllText("../CampusValidation/result.txt","\nPASS: live CharacterController route with plan, key, utility door, power and gate interactions; east stairs and patrols; escape without capture. Seconds="+(Time.time-routeStarted).ToString("F2"));
@@ -85,6 +92,37 @@ public static class CampusGameplayValidation
         float dt=Mathf.Min(Time.time-lastTime,0.05f);
         lastTime=Time.time;
         if(dt<=0) return false;
+        if(examNode<examRoute.Length)
+        {
+            Vector3 move=examRoute[examNode]-runningFlow.player.position;move.y=0;
+            if(move.magnitude>.15f){runningFlow.player.GetComponent<CharacterController>().Move(move.normalized*Mathf.Min(move.magnitude,6.2f*dt)+Vector3.down*.35f);return false;}
+            var director=UnityEngine.Object.FindObjectOfType<CampusEscapeDirector>();
+            var motor=runningFlow.player.GetComponent<ThirdPersonController>();motor.controlEnabled=true;
+            string[] names={"ChapterPaper","ChapterSeatChart","ChapterCabinet","Chapter201SideDoor"};
+            Require(director.TryUse(GameObject.Find(names[examNode]).GetComponent<CampusEscapeObject>()),"201 interaction failed node="+examNode);
+            if(examNode==2)
+            {
+                var chapter=UnityEngine.Object.FindObjectOfType<CampusExamChapter>();
+                var camera=UnityEngine.Object.FindObjectOfType<ThirdPersonCamera>();
+                Require(chapter.KeypadOpen && Cursor.lockState==CursorLockMode.None && Cursor.visible,"keypad did not release cursor");
+                Require(!camera.TryCapturePointerOnClick() && Cursor.lockState==CursorLockMode.None && Cursor.visible,"camera stole keypad click");
+                Require(!chapter.SubmitCode("000"),"wrong code accepted");
+                Require(chapter.KeypadOpen && !camera.TryCapturePointerOnClick(),"wrong code released modal pointer ownership");
+                Require(chapter.SubmitCode("416"),"201 correct code rejected");
+                Require(!chapter.KeypadOpen && camera.TryCapturePointerOnClick(),"camera control not restored after keypad closed");
+                Debug.Log("CAMPUS_KEYPAD_POINTER_PASS");
+            }
+            Debug.Log("CAMPUS_201_NODE "+examNode);motor.controlEnabled=false;examNode++;return false;
+        }
+        if(UnityEngine.Object.FindObjectOfType<CampusCorridorChapter>()!=null)
+        {
+            if(!CampusCorridorValidation.Advance(runningFlow,dt))return false;
+            if(UnityEngine.Object.FindObjectOfType<CampusLibraryChapter>()!=null && !CampusLibraryValidation.Advance(runningFlow,dt))return false;
+            if(UnityEngine.Object.FindObjectOfType<CampusDepartureChapter>()!=null && !CampusDepartureValidation.Advance(runningFlow,dt))return false;
+            File.AppendAllText("../CampusValidation/result.txt","\nPASS: staged chapter route, Seconds="+(Time.time-routeStarted).ToString("F2"));
+            Debug.Log("CAMPUS_STAGED_CHAPTER_COMPLETE Seconds="+(Time.time-routeStarted).ToString("F2"));
+            completed=true;runningFlow.player.GetComponent<ThirdPersonController>().controlEnabled=true;return true;
+        }
         Vector3 delta=route[routeIndex]-runningFlow.player.position; delta.y=0;
         if(delta.magnitude<0.22f)
         {

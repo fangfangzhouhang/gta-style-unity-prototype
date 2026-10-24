@@ -46,8 +46,11 @@ public static class CampusEscapeValidation
         }
         SafeDiscoveryReset.TryRespawn(flow.player,flow.examCheckpoint);
         var path=new NavMeshPath();
+        if(UnityEngine.Object.FindObjectOfType<CampusCorridorChapter>()==null)
+        {
         Require(NavMesh.CalculatePath(new Vector3(15,4,10),new Vector3(15,8,10),NavMesh.AllAreas,path) && path.status==NavMeshPathStatus.PathComplete,"二楼至三楼导航不连通");
         Require(NavMesh.CalculatePath(new Vector3(15,4,10),new Vector3(48,0,11),NavMesh.AllAreas,path) && path.status==NavMeshPathStatus.PathComplete,"东楼梯上下楼不连通");
+        }
         var teacher=GameObject.Find("Patrol_Gallery").GetComponent<TeacherAgent>();teacher.SetPaused(false);
         Require(teacher.InvestigateNoise(new Vector3(23,5,10),22) && teacher.CurrentState==TeacherAgent.State.Investigate,"老师不调查声源");
         teacher.ReturnHome();teacher.SetPaused(true);Debug.Log("CAMPUS_ESCAPE_PUZZLE_NAV_PASS");

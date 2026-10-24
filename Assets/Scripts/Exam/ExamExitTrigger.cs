@@ -16,6 +16,12 @@ public class ExamExitTrigger : MonoBehaviour
             flow = UnityCompat.FindOne<ExamFlowController>();
     }
 
+    void OnTriggerStay(Collider other)
+    {
+        // A locked door may have overlapped this trigger before it was opened.
+        if(campusFlow!=null)OnTriggerEnter(other);
+    }
+
     void OnTriggerEnter(Collider other)
     {
         if (other == null)

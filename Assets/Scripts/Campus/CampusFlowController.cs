@@ -211,9 +211,16 @@ public class CampusFlowController : MonoBehaviour
 
     public void NotifyExamEscaped()
     {
+        var examChapter=UnityCompat.FindOne<CampusExamChapter>();
+        if (examChapter!=null && (!examChapter.SideOpen || player==null || player.position.x> -12.25f))return;
         if (HasEscapedExam || IsBusy)
             return;
         HasEscapedExam = true;
+        if(examChapter!=null && !examChapter.State.corridorIntroduction)
+        {
+            examChapter.State.corridorIntroduction=true;
+            examChapter.ShowSubtitle("原来还有这么长一条走廊……出口到底在哪里？先问问走廊里的同学。",7);
+        }
         CurrentZone = Zone.School;
         activeCheckpoint = corridorCheckpoint != null ? corridorCheckpoint : activeCheckpoint;
         GameProgress.Ensure().stage = GameProgress.StageSchool;
@@ -222,7 +229,7 @@ public class CampusFlowController : MonoBehaviour
         {
             hud.showSuccessBanner = true;
             hud.successTitle = "逃出考场";
-            hud.successSubtitle = "继续沿走廊 / 楼梯 / 秘密通道前往校门（同地图，不跳转）";
+            hud.successSubtitle = UnityCompat.FindOne<CampusCorridorChapter>()!=null?"询问同学或查看公告，寻找 203 的备用通行卡":"继续沿走廊 / 楼梯 / 秘密通道前往校门（同地图，不跳转）";
             hud.showFailBanner = false;
         }
         RefreshHud();
@@ -234,8 +241,9 @@ public class CampusFlowController : MonoBehaviour
     {
         var escape=UnityCompat.FindOne<CampusEscapeDirector>();
         if(escape!=null && !escape.GateOpen)return;
-        if (HasEscapedSchool || IsBusy)
-            return;
+        if (HasEscapedSchool || IsBusy)return;
+        var departure=UnityCompat.FindOne<CampusDepartureChapter>();
+        if(departure!=null && !departure.TryDepart())return;
         HasEscapedSchool = true;
         CurrentZone = Zone.Hub;
         activeCheckpoint = hubCheckpoint != null ? hubCheckpoint : activeCheckpoint;
@@ -252,6 +260,14 @@ public class CampusFlowController : MonoBehaviour
         RefreshHud();
         CancelInvoke("HideSuccess");
         Invoke("HideSuccess", 2.2f);
+    }
+
+    public void RestoreDeparture(bool departed)
+    {
+        HasEscapedSchool=departed;
+        if(departed){HasEscapedExam=true;CurrentZone=Zone.Hub;activeCheckpoint=hubCheckpoint;}
+        else if(CurrentZone==Zone.Hub){CurrentZone=Zone.School;activeCheckpoint=corridorCheckpoint;}
+        RefreshHud();
     }
 
     public void SetZone(Zone zone)
@@ -369,6 +385,8 @@ public class CampusFlowController : MonoBehaviour
     /// <summary>可选：远端 Transit 仍 LoadScene。</summary>
     public void TryLoadScene(string sceneName)
     {
+        var departure=UnityCompat.FindOne<CampusDepartureChapter>();
+        if(departure!=null && !departure.State.completed){ShowTip("尚未离校",departure.Detail);return;}
         if (string.IsNullOrEmpty(sceneName))
             return;
         if (!Application.CanStreamedLevelBeLoaded(sceneName))

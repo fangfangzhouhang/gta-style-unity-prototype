@@ -59,9 +59,9 @@ public static class CampusTeachingBuilding
         EastStairs(building);
         // These are small physical signs, depth-tested by CampusWorldSign.
         Label(building,"201 考场",new Vector3(-7.5f,6.75f,8.2f));
-        Label(building,"二楼 · 203 维修钥匙",new Vector3(15,6.75f,8.2f));
-        CampusWorldBuilder.CreateTeacher(building,"Patrol_Gallery",new Vector3(29,4,10),Quaternion.Euler(0,90,0),
-            new[]{new Vector3(25,4,10),new Vector3(39,4,10),new Vector3(39,4,-6)},1.1f,3.2f,ScrutinyAura.Role.Patrol,7,55);
+        Label(building,"二楼 · 203 设备室",new Vector3(15,6.75f,8.2f));
+        CampusWorldBuilder.CreateTeacher(building,"Patrol_Gallery",new Vector3(33,4,10),Quaternion.Euler(0,90,0),
+            new[]{new Vector3(32,4,10),new Vector3(39,4,10),new Vector3(39,4,-6)},1.1f,3.2f,ScrutinyAura.Role.Patrol,7,55);
     }
     static void Gallery(Transform p,string name,float y,float z)
     {

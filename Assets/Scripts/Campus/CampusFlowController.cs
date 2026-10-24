@@ -219,7 +219,7 @@ public class CampusFlowController : MonoBehaviour
         if(examChapter!=null && !examChapter.State.corridorIntroduction)
         {
             examChapter.State.corridorIntroduction=true;
-            examChapter.ShowSubtitle("原来还有这么长一条走廊……出口到底在哪里？先问问走廊里的同学。",7);
+            examChapter.ShowEvent("corridor",CampusVoice.Inner,"原来还有这么长一条走廊……出口到底在哪里？先问问走廊里的同学。",7);
         }
         CurrentZone = Zone.School;
         activeCheckpoint = corridorCheckpoint != null ? corridorCheckpoint : activeCheckpoint;
@@ -260,6 +260,13 @@ public class CampusFlowController : MonoBehaviour
         RefreshHud();
         CancelInvoke("HideSuccess");
         Invoke("HideSuccess", 2.2f);
+    }
+
+    public void RestoreChapterSession(Zone zone,Transform checkpoint)
+    {
+        failing=studying=false;HasEscapedExam=GameProgress.Ensure().examChapter.corridorIntroduction || zone!=Zone.Exam;HasEscapedSchool=GameProgress.Ensure().departureChapter.departed;
+        CurrentZone=zone;activeCheckpoint=checkpoint;GameProgress.Ensure().stage=zone==Zone.Home?GameProgress.StageHome:zone==Zone.Hub?GameProgress.StageHub:zone==Zone.School?GameProgress.StageSchool:GameProgress.StageExam;
+        PauseThreats(false);RefreshHud();
     }
 
     public void RestoreDeparture(bool departed)

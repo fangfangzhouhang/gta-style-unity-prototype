@@ -28,6 +28,7 @@ public class ZoneTeleporter : MonoBehaviour
 
     void Update()
     {
+        if(CampusJournal.Opened)return;
         if (PauseMenu.Instance != null && PauseMenu.Instance.IsOpen)
             return;
         var chapter=UnityCompat.FindOne<CampusExamChapter>();

@@ -30,6 +30,7 @@ public class TicketWindowInteract : MonoBehaviour
 
     void Update()
     {
+        if(CampusJournal.Opened)return;
         if (flow != null && flow.IsBusy)
             return;
 

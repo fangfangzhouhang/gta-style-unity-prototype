@@ -1,0 +1,109 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+[System.Serializable]
+public class CampusJournalState { public List<string> visited=new List<string>(); }
+
+/// <summary>Discovered facts only; optional, explicitly requested hints. Pauses simulation while open.</summary>
+public class CampusJournal : MonoBehaviour
+{
+    public static bool Opened { get; private set; }
+    public static int EscapeFrame { get; private set; } = -1;
+    public bool IsOpen { get { return Opened; } }
+    CampusFlowController flow;
+    ThirdPersonController motor;
+    bool priorControl,priorVisible;
+    CursorLockMode priorCursor;
+    float priorScale;
+    int hintLevel;
+    string hint="",hintStage="";
+    Vector2 scroll;
+    public string StageKey {
+        get {var g=GameProgress.Ensure();return !g.examChapter.sideOpen?"201":!g.corridorChapter.card?"card":!g.corridorChapter.roomOpen?"203":!g.corridorChapter.circuit?"circuit":!g.libraryChapter.manual?"archive":!g.libraryChapter.utilityOpen?"utility":!g.libraryChapter.emergency?"power":!g.departureChapter.gateOpen?"gate":!g.departureChapter.departed?"leave":!g.departureChapter.completed?"bike":"town";}
+    }
+    public string Objective { get {if(flow!=null && GameProgress.Ensure().departureChapter.completed){if(flow.CurrentZone==CampusFlowController.Zone.Home)return flow.hud.objective;if(flow.CurrentZone==CampusFlowController.Zone.Hub && flow.hubHud!=null)return flow.hubHud.objective;}return GetComponent<CampusEscapeDirector>().Objective;} }
+    public string Detail { get {if(flow!=null && GameProgress.Ensure().departureChapter.completed){if(flow.CurrentZone==CampusFlowController.Zone.Home)return flow.hud.detail;if(flow.CurrentZone==CampusFlowController.Zone.Hub && flow.hubHud!=null)return flow.hubHud.detail;}return GetComponent<CampusEscapeDirector>().Detail;} }
+    public string Facts {
+        get {
+            var g=GameProgress.Ensure();var e=g.examChapter;var c=g.corridorChapter;var l=g.libraryChapter;var lines=new List<string>();
+            if(e.paper)lines.Add("试卷：按 2、1、3 排读取座位数。");
+            if(e.chart)lines.Add("座位表：1 排 1 席；2 排 4 席；3 排 6 席。");
+            if(e.window)lines.Add("窗户封闭，无法从窗口离开。");
+            if(c.notice || c.conversation)lines.Add("203 是维修设备室，备用通行卡在门旁储物柜。");
+            if(c.record)lines.Add("维修记录：照明开、警报关、门禁供电开，再到控制台确认。");
+            if(l.indexRead)lines.Add("档案索引：按现行检修手册的书号归档。");
+            if(l.recordRead)lines.Add("旧记录：024 已废止；142 是食堂设备；教学楼现行手册编号 086。");
+            if(l.manual)lines.Add("紧急说明：配电间需同时持有说明与维修钥匙。");
+            if(l.emergency)lines.Add("应急模式：灯光切换，庭院通道开放，附近老师会调查。");
+            if(g.departureChapter.departed)lines.Add("已走出校门，摩托车可骑乘。");
+            return lines.Count==0?"尚未发现线索。靠近可调查物件按 E。":string.Join("\n",lines);
+        }
+    }
+    public string Items { get {var g=GameProgress.Ensure();var items=new List<string>();if(g.examChapter.key)items.Add("201 侧门钥匙");if(g.corridorChapter.card)items.Add("203 通行卡");if(g.libraryChapter.manual)items.Add("紧急门禁说明");if(g.libraryChapter.key)items.Add("维修钥匙");return items.Count==0?"尚无关键道具":string.Join(" / ",items); } }
+    public string Areas {
+        get {var g=GameProgress.Ensure();string[] ids={"201","corridor","203","library","service","yard","outside","town"};string[] names={"201 考场","二楼走廊","203 设备室","三楼图书馆","一楼配电间","庭院","校门外","城镇道路"};var lines=new List<string>();
+        bool[] unlocked={true,g.examChapter.sideOpen,g.corridorChapter.roomOpen,g.corridorChapter.circuit,g.libraryChapter.utilityOpen,g.libraryChapter.emergency,g.departureChapter.gateOpen,g.departureChapter.completed};
+        for(int i=0;i<ids.Length;i++)lines.Add(names[i]+"："+(g.journal.visited.Contains(ids[i])?"已到访":unlocked[i]?"已开放，未到访":"尚未开放"));return string.Join("\n",lines);}
+    }
+    void Start(){flow=UnityCompat.FindOne<CampusFlowController>();motor=flow.player.GetComponent<ThirdPersonController>();}
+    public bool Open()
+    {
+        if(Opened || flow==null || flow.IsBusy || Time.timeScale==0 || (PauseMenu.Instance!=null && PauseMenu.Instance.IsOpen) || (flow.mapUi!=null && flow.mapUi.IsOpen) || GetComponent<CampusExamChapter>().KeypadOpen)return false;
+        var bike=UnityCompat.FindOne<CampusMotorcycle>();if(bike!=null && bike.IsRiding)return false;
+        priorControl=motor.controlEnabled;priorScale=Time.timeScale;priorCursor=Cursor.lockState;priorVisible=Cursor.visible;
+        Opened=true;motor.controlEnabled=false;Time.timeScale=0;Cursor.lockState=CursorLockMode.None;Cursor.visible=true;return true;
+    }
+    public static void ConsumeEscape(){EscapeFrame=Time.frameCount;}
+    public bool HandleEscape(){if(!Opened)return false;ConsumeEscape();Close();return true;}
+    public void Close()
+    {
+        if(!Opened)return;Opened=false;Time.timeScale=priorScale;Cursor.lockState=priorCursor;Cursor.visible=priorVisible;if(motor!=null)motor.controlEnabled=priorControl;
+    }
+    void OnDisable(){Close();}
+    public string RequestHint()
+    {
+        if(hintStage!=StageKey){hintStage=StageKey;hintLevel=0;}
+        hintLevel=Mathf.Min(3,hintLevel+1);string[] clues;
+        switch(StageKey)
+        {
+            case "201":clues=new[]{"调查教室后排，观察与柜锁有关的信息。","试卷和座位表要一起看；钥匙在密码柜里。", "先读后排试卷、再读座位表，按试卷排号顺序取数；若已有钥匙，去西侧门按 E。"};break;
+            case "card":clues=new[]{"门外还有同学和公告可以调查。","问林同学或读二楼公告，留意 203 门旁。","到 203 门旁储物柜按 E 取通行卡。"};break;
+            case "203":clues=new[]{"通行卡可以开启新的房间。","前往二楼 203 门锁。","对 203 门锁按 E 刷卡进入设备室。"};break;
+            case "circuit":clues=new[]{"设备室里有解释开关用途的记录。","看工作台维修记录，再检查三路墙面开关。","若未读维修记录，先读再设置；记录写明照明开、警报关、门禁供电开，最后在控制台按 E。"};break;
+            case "archive":clues=new[]{"三楼的新空间藏着下楼所需的资料。","进入图书馆，对照入口索引与阅览桌旧记录。","先调查索引及桌上记录，按现行手册书号选择档案柜；编号保留在已发现线索中。"};break;
+            case "utility":clues=new[]{"紧急说明和钥匙一起指向后勤区域。","从已解锁的东西楼梯下到一楼 102。","持紧急说明与维修钥匙，在 102 配电间门口按 E。"};break;
+            case "power":clues=new[]{"后勤房间里有疏散设备。","检查配电间内部开关。","进入配电间，对配电开关按 E，启动紧急模式。"};break;
+            case "gate":clues=new[]{"庭院已经开放，出口在校门方向。","从庭院西侧通口进入校门前廊。","通过庭院西侧的中段通口，沿前廊到校门内侧控制箱按 E。"};break;
+            case "leave":clues=new[]{"出口已经打开。","走向校门外侧。","穿过已开启的校门，实际走到门外。"};break;
+            case "bike":clues=new[]{"离开校园还需要一段旅程。","校门外左侧停着摩托车，主路通往城镇。","按 F 上车，W 加速，转入公路向城镇指示方向驶离。"};break;
+            default:clues=new[]{"先安排离家后的事情。","回家留条，买手机，前往交通枢纽。","用 M 查看地图；回家在桌边按 E 留条，再到路边买手机及购票。"};break;
+        }
+        hint="第 "+hintLevel+" 级提示："+clues[hintLevel-1];return hint;
+    }
+    public void TrackAreas()
+    {
+        if(flow==null || flow.player==null)return;var p=flow.player.position;var g=GameProgress.Ensure();string id=null;
+        if(p.y>4 && p.y<6.5f && p.x> -12 && p.x< -3 && p.z> -4 && p.z<8)id="201";
+        else if(p.y>4 && p.y<6.5f && g.examChapter.sideOpen){id="corridor";if(g.corridorChapter.roomOpen && p.x>10 && p.x<20 && p.z> -4 && p.z<8)id="203";}
+        else if(p.y>8 && p.y<10.5f && p.x>22 && p.x<44 && p.z> -4 && p.z<8 && g.corridorChapter.circuit)id="library";
+        else if(p.y<3 && g.libraryChapter.utilityOpen && p.x> -2 && p.x<8 && p.z> -4 && p.z<8)id="service";
+        else if(g.departureChapter.departed && p.z>54)id=g.departureChapter.completed?"town":"outside";
+        else if(g.libraryChapter.emergency && p.y<3 && p.z>14 && p.z<52)id="yard";
+        if(id!=null && !g.journal.visited.Contains(id))g.journal.visited.Add(id);
+    }
+    void Update(){if(Input.GetKeyDown(KeyCode.Tab)){if(Opened)Close();else Open();}if(Opened && Input.GetKeyDown(KeyCode.Escape)){HandleEscape();}if(!Opened)TrackAreas();if(hintStage!=StageKey){hint="";hintLevel=0;}}
+    void OnGUI()
+    {
+        if(!Opened)return;
+        float scale=Mathf.Min(Screen.width/1280f,Screen.height/720f);var matrix=GUI.matrix;GUI.matrix=Matrix4x4.Scale(Vector3.one*scale);GUI.depth=-50;
+        float width=Screen.width/scale,height=Screen.height/scale;Rect panel=new Rect((width-1040)/2,28,1040,height-56);var color=GUI.color;GUI.color=new Color(.055f,.075f,.09f,.97f);GUI.DrawTexture(panel,Texture2D.whiteTexture);GUI.color=color;GUI.Box(panel,"");
+        var style=new GUIStyle(GUI.skin.label){font=Resources.Load<Font>("UIFont"),fontSize=19,wordWrap=true};var button=new GUIStyle(GUI.skin.button){font=style.font,fontSize=18};
+        GUI.Label(new Rect(panel.x+24,42,830,34),"线索手账 · Tab / Esc 关闭",style);
+        if(GUI.Button(new Rect(panel.x+874,40,140,36),"关闭",button))Close();
+        string[] sections={"当前目标\n"+Objective+"\n"+Detail,"已发现线索\n"+Facts,"关键道具\n"+Items,"区域\n"+Areas};
+        float contentHeight=20;foreach(var section in sections)contentHeight+=style.CalcHeight(new GUIContent(section),938)+24;
+        scroll=GUI.BeginScrollView(new Rect(panel.x+22,88,996,height-260),scroll,new Rect(0,0,962,contentHeight));
+        float y=8;foreach(var section in sections){float h=style.CalcHeight(new GUIContent(section),938);GUI.Label(new Rect(8,y,938,h),section,style);y+=h+24;}GUI.EndScrollView();
+        if(GUI.Button(new Rect(panel.x+24,height-150,290,40),"请求下一级提示（最多三级）",button))RequestHint();GUI.Label(new Rect(panel.x+24,height-102,990,62),hint.Length>0?hint:"提示仅在主动请求后显示，不会自动揭示答案。",style);GUI.matrix=matrix;GUI.depth=0;
+    }
+}

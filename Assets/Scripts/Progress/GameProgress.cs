@@ -19,6 +19,9 @@ public class GameProgress : MonoBehaviour
     public CampusCorridorState corridorChapter = new CampusCorridorState();
     public CampusLibraryState libraryChapter = new CampusLibraryState();
     public CampusDepartureState departureChapter = new CampusDepartureState();
+    public CampusJournalState journal = new CampusJournalState();
+    public CampusNarrativeState narrative = new CampusNarrativeState();
+    [System.NonSerialized] public SaveData pendingCampusRestore;
     public event System.Action SaveApplied;
     public string stage = StageExam;
     public int money;
@@ -116,6 +119,8 @@ public class GameProgress : MonoBehaviour
     {
         if (data == null)
             return;
+        CampusSaveMigration.Upgrade(data);
+        journal=data.journal; narrative=data.narrative;
         examChapter = data.examChapter ?? new CampusExamState();
         corridorChapter = data.corridorChapter ?? new CampusCorridorState();
         libraryChapter = data.libraryChapter ?? new CampusLibraryState();
@@ -139,8 +144,9 @@ public class GameProgress : MonoBehaviour
     public SaveData ToSaveData()
     {
         string scene = SceneManager.GetActiveScene().name;
-        return new SaveData
+        var data = new SaveData
         {
+            version = 2, journal=journal, narrative=narrative,
             examChapter = examChapter,
             corridorChapter = corridorChapter,
             libraryChapter = libraryChapter,
@@ -159,12 +165,20 @@ public class GameProgress : MonoBehaviour
             hasTicket = TicketInventory.HasTicket,
             ticketName = TicketInventory.TicketName
         };
+        CampusSaveRestore.Capture(data);
+        return data;
     }
 }
 
 [System.Serializable]
 public class SaveData
 {
+    public int version;
+    public CampusJournalState journal;
+    public CampusNarrativeState narrative;
+    public string checkpointId;
+    public bool hasPlayerPose;
+    public float playerX,playerY,playerZ,playerYaw;
     public CampusExamState examChapter;
     public CampusCorridorState corridorChapter;
     public CampusLibraryState libraryChapter;

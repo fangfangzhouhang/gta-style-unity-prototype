@@ -69,14 +69,14 @@ public class CampusDepartureChapter : MonoBehaviour
         if(!Prerequisites){subtitles.ShowSubtitle("疏散权限不足：先完成 201、203、图书馆和配电间的关键机关。",8);return true;}
         if(State.gateOpen)return true;
         State.gateOpen=true;ApplyGate();slideUntil=Time.time+.8f;
-        subtitles.ShowSubtitle("广播：紧急门禁核验通过，校门开启。出口就在前面。",6);SaveSystem.Save();return true;
+        subtitles.ShowEvent("gate",CampusVoice.Broadcast,"广播：紧急门禁核验通过，校门开启。出口就在前面。",6);SaveSystem.Save();return true;
     }
     public bool TryDepart()
     {
         if(!State.gateOpen || !Prerequisites || flow==null || flow.player==null)return false;
         var at=flow.player.position;
         if(!State.departed && (at.z<54 || at.z>57 || at.x< -16.3f || at.x> -11.7f || at.y<0 || at.y>2))return false;
-        if(!State.departed){State.departed=true;subtitles.ShowSubtitle("我真的出来了。先骑上门外的摩托车，沿公路离开这里。",7);}
+        if(!State.departed){State.departed=true;subtitles.ShowEvent("departure",CampusVoice.Inner,"我真的出来了。先骑上门外的摩托车，沿公路离开这里。",7);}
         return true;
     }
     void Update()
@@ -89,7 +89,7 @@ public class CampusDepartureChapter : MonoBehaviour
         if(at.z<80 || at.z>100 || at.x< -12 || at.x> -4)return;
         State.completed=true;GameProgress.Ensure().SetCheckpoint(new Vector3(-14,.92f,81));
         flow.ShowTip("第一章 · 逃离考场 完成","校园已在身后。城市与旅行任务已开启。");
-        subtitles.ShowSubtitle("路终于在我自己脚下了。先回家留张纸条，再决定去哪里。",7);
+        subtitles.ShowEvent("complete",CampusVoice.Inner,"路终于在我自己脚下了。先回家留张纸条，再决定去哪里。",7);
         SaveSystem.Save();Debug.Log("CAMPUS_DEPARTURE_COMPLETE");
     }
 }

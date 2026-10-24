@@ -38,7 +38,7 @@ public class CampusHUD : MonoBehaviour
 
     void OnGUI()
     {
-        if (flow == null || flow.hud == null ||
+        if (CampusJournal.Opened || flow == null || flow.hud == null ||
             (PauseMenu.Instance != null && PauseMenu.Instance.IsOpen) || (map != null && map.IsOpen)) return;
         if (title == null)
         {
@@ -99,7 +99,7 @@ public class CampusHUD : MonoBehaviour
         Panel(new Rect(24, height - 62, width - 48, 42));
         GUI.Label(new Rect(42, height - 60, width - 84, 38),
             motorcycle!=null && motorcycle.IsRiding ? "W/S 油门/减速   A/D 转向   空格 刹车   F 低速下车   M 地图   Esc 暂停" :
-            "WASD 移动   Shift 奔跑   空格 跳跃   Ctrl/C 蹲走   E 交互   F 骑车   M 地图   Esc 暂停", body);
+            "WASD 移动   Shift 奔跑   空格 跳跃   Ctrl/C 蹲走   E 交互   Tab 手账   F 骑车   M 地图   Esc 暂停", body);
         GUI.matrix = previous;
     }
 

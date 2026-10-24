@@ -68,6 +68,9 @@ public class PauseMenu : MonoBehaviour
 
     bool CanOpen()
     {
+        if(CampusJournal.Opened || CampusJournal.EscapeFrame==Time.frameCount)return false;
+        var chapter=UnityCompat.FindOne<CampusExamChapter>();if(chapter!=null && chapter.KeypadOpen)return false;
+        var map=UnityCompat.FindOne<WorldMapUI>();if(map!=null && map.IsOpen)return false;
         // 购票面板打开时 Esc 由 Transit 处理
         TransitFlowController transit = UnityCompat.FindOne<TransitFlowController>();
         if (transit != null && transit.TicketPanelOpen)
@@ -77,6 +80,7 @@ public class PauseMenu : MonoBehaviour
 
     public void Open()
     {
+        if(IsOpen || !CanOpen())return;
         IsOpen = true;
         wasCursorLocked = Cursor.lockState == CursorLockMode.Locked;
         Cursor.lockState = CursorLockMode.None;
@@ -141,27 +145,11 @@ public class PauseMenu : MonoBehaviour
             else
                 ShowStatus("没有存档");
         }
-        if (MenuButton(panel, ref by, "联机大厅"))
-        {
-            Time.timeScale = 1f;
-            IsOpen = false;
-            const string netLobby = "NetLobby";
-            if (Application.CanStreamedLevelBeLoaded(netLobby))
-                SceneManager.LoadScene(netLobby);
-            else
-                ShowStatus("请先生成联机骨架并写入 Build Settings");
-        }
+        if (MenuButton(panel, ref by, "联机大厅"))TrySwitchMode("NetLobby");
         if (MenuButton(panel, ref by, "退出到标题"))
         {
-            Time.timeScale = 1f;
-            IsOpen = false;
-            string scene = titleSceneName;
-            if (!Application.CanStreamedLevelBeLoaded(scene))
-                scene = "OpenWorld";
-            if (Application.CanStreamedLevelBeLoaded(scene))
-                SceneManager.LoadScene(scene);
-            else
-                ShowStatus("标题场景未写入 Build Settings");
+            string scene=Application.CanStreamedLevelBeLoaded(titleSceneName)?titleSceneName:"OpenWorld";
+            TrySwitchMode(scene);
         }
         if (MenuButton(panel, ref by, "退出游戏"))
         {
@@ -175,6 +163,14 @@ public class PauseMenu : MonoBehaviour
 
         if (!string.IsNullOrEmpty(statusLine) && Time.unscaledTime < statusUntil)
             GUI.Label(new Rect(panel.x, panel.y + h - 36f, panel.width, 28f), statusLine, body);
+    }
+
+    public bool CanChangeMode { get {var chapter=UnityCompat.FindOne<CampusDepartureChapter>();return chapter==null || chapter.State.completed;} }
+    public bool TrySwitchMode(string scene)
+    {
+        if(!CanChangeMode){ShowStatus("请完成章节后再切换模式。");return false;}
+        if(!Application.CanStreamedLevelBeLoaded(scene)){ShowStatus("场景未在 Build Settings，请先生成。");return false;}
+        Time.timeScale=1;IsOpen=false;SceneManager.LoadScene(scene);return true;
     }
 
     bool MenuButton(Rect panel, ref float y, string label)

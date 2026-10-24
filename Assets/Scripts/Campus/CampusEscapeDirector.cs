@@ -86,7 +86,7 @@ public class CampusEscapeDirector : MonoBehaviour
     {PlanRead=manual;HasKey=key;UtilityOpen=utility;PowerOff=emergency;}
     public bool TryUse(CampusEscapeObject item)
     {
-        if(item==null || item!=Nearby())return false;
+        if(CampusJournal.Opened || item==null || item!=Nearby())return false;
         var chapter=GetComponent<CampusExamChapter>();
         if(chapter!=null && chapter.Use(item))return true;
         var departure=GetComponent<CampusDepartureChapter>();

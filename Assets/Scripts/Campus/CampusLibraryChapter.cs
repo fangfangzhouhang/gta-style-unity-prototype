@@ -142,7 +142,7 @@ public class CampusLibraryChapter : MonoBehaviour
             case CampusEscapeObject.Action.LibraryArchive:
                 if(State.manual){Say("紧急说明和维修钥匙已经收好，可以随时回看索引。");break;}
                 if(!State.indexRead || !State.recordRead){Say("先对照书目索引和阅览桌的旧检修记录，确认档案归属。");break;}
-                State.manual=State.key=State.downOpen=true;Restore();Say("找到紧急说明与维修钥匙。东西下楼通道和图书馆回访捷径已开放；一楼 102 配电间需要同时出示说明和钥匙。");break;
+                State.manual=State.key=State.downOpen=true;Restore();subtitles.ShowEvent("archive",CampusVoice.Feedback,"找到紧急说明与维修钥匙。东西下楼通道和图书馆回访捷径已开放；一楼 102 配电间需要同时出示说明和钥匙。");break;
             case CampusEscapeObject.Action.LibraryStairLock:Say(State.downOpen?"下楼通道已开放。":"下楼门禁需要图书馆的紧急说明。");break;
             case CampusEscapeObject.Action.LibraryShortcut:Say(State.manual?"后廊与 303 回访通道已开放，可绕回前廊。":"先找到现行门禁档案。");break;
             case CampusEscapeObject.Action.UtilityDoor:
@@ -152,7 +152,7 @@ public class CampusLibraryChapter : MonoBehaviour
                 if(!State.utilityOpen || !State.manual || !State.key){Say("先完成图书馆档案调查并打开配电间。");break;}
                 if(State.emergency){Say("紧急模式已经启用，不会再次关闭已开放的通路。");break;}
                 State.emergency=true;Restore();foreach(var teacher in UnityCompat.FindAll<TeacherAgent>())teacher.InvestigateNoise(item.transform.position,22);
-                Say("广播：紧急疏散模式已启动。应急照明开启，庭院前门与西侧通道解除封锁。附近老师正在调查。");break;
+                subtitles.ShowEvent("emergency",CampusVoice.Broadcast,"广播：紧急疏散模式已启动。应急照明开启，庭院前门与西侧通道解除封锁。附近老师正在调查。");break;
             case CampusEscapeObject.Action.ServiceExit:Say(State.emergency?"庭院通道已开放。":"庭院门尚未解锁，请在配电间启动紧急模式。");break;
             case CampusEscapeObject.Action.LibraryBarrier:Say(item.displayName);break;
             default:return false;

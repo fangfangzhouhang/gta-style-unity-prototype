@@ -145,7 +145,7 @@ public class CampusCorridorChapter : MonoBehaviour
                 State.card=true;item.displayName="储物柜：通行卡已取走";Say("获得 203 通行卡。对准 203 门锁按 E 刷卡。");break;
             case CampusEscapeObject.Action.EquipmentDoor:
                 if(!State.card){Say("203 门锁需要通行卡。查看公告栏或问问同学。");break;}
-                State.roomOpen=true;Restore();Say("通行卡验证通过。203 设备室已开放。");break;
+                State.roomOpen=true;Restore();exam.ShowEvent("room203",CampusVoice.Feedback,"通行卡验证通过。203 设备室已开放。");break;
             case CampusEscapeObject.Action.EquipmentRecord:
                 if(!State.roomOpen){Say("先解锁 203。");break;}State.record=true;Say("维修记录：照明开启、警报关闭、门禁供电开启；完成后到后方控制台确认。下楼通道另需三楼紧急说明。");break;
             case CampusEscapeObject.Action.LightingCircuit:if(CanSwitch())State.lighting=!State.lighting;Restore();break;
@@ -155,7 +155,7 @@ public class CampusCorridorChapter : MonoBehaviour
                 if(State.circuit){Say("回路稳定，东楼梯已开放。");break;}
                 if(!State.roomOpen || !State.record){Say("先阅读设备室的维修记录。");break;}
                 if(!State.lighting || State.alarm || !State.doorPower){Say("回路校验失败：请核对照明、警报与门禁供电三个开关。");break;}
-                State.circuit=true;Restore();eastGate.GetComponent<Renderer>().enabled=true;animationUntil=Time.time+.8f;AudioSource.PlayClipAtPoint(mechanismSound,item.transform.position,.5f);Say("门禁供电恢复。东楼梯锁舌已释放，可以前往三楼。");break;
+                State.circuit=true;Restore();eastGate.GetComponent<Renderer>().enabled=true;animationUntil=Time.time+.8f;AudioSource.PlayClipAtPoint(mechanismSound,item.transform.position,.5f);exam.ShowEvent("circuit",CampusVoice.Feedback,"门禁供电恢复。东楼梯锁舌已释放，可以前往三楼。");break;
             case CampusEscapeObject.Action.EastAccessGate:Say(State.circuit?"东楼梯已开放，沿右侧上楼。":"东楼梯未供电，请在 203 完成检修。");break;
             case CampusEscapeObject.Action.CorridorBarrier:Say(item.displayName);break;
             default:return false;
@@ -169,5 +169,5 @@ public class CampusCorridorChapter : MonoBehaviour
         if(Time.time>=animationUntil){eastGate.GetComponent<Renderer>().enabled=false;animationUntil=0;}
     }
     bool CanSwitch(){if(!State.roomOpen || State.circuit){Say("当前回路已锁定，不能切换。");return false;}Say("开关已切换。按维修记录设置三路，再到控制台确认。");return true;}
-    void Say(string text){if(exam!=null)exam.ShowSubtitle(text,8);}
+    void Say(string text){var narration=GetComponent<CampusNarrative>();if(narration!=null)narration.Emit(null,text.Contains("同学：")?CampusVoice.NPC:CampusVoice.Feedback,text,8,false);else if(exam!=null)exam.ShowSubtitle(text,8);}
 }

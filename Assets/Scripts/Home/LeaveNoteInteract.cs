@@ -33,6 +33,7 @@ public class LeaveNoteInteract : MonoBehaviour
 
     void Update()
     {
+        if(CampusJournal.Opened)return;
         if (Done || (PauseMenu.Instance != null && PauseMenu.Instance.IsOpen))
             return;
         if (flow != null && flow.IsBusy)

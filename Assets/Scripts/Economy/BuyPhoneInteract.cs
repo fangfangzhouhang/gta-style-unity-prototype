@@ -27,6 +27,7 @@ public class BuyPhoneInteract : MonoBehaviour
 
     void Update()
     {
+        if(CampusJournal.Opened)return;
         if (PauseMenu.Instance != null && PauseMenu.Instance.IsOpen)
             return;
 

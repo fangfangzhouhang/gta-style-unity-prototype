@@ -12,7 +12,7 @@ public static class SaveSystem
     {
         get {
 #if UNITY_EDITOR
-            return UnityEditor.SessionState.GetBool("CampusPlayValidation", false) || UnityEditor.SessionState.GetBool("CampusLegacyValidation", false);
+            return UnityEditor.SessionState.GetBool("CampusPlayValidation", false) || UnityEditor.SessionState.GetBool("CampusLegacyValidation", false) || UnityEditor.SessionState.GetBool("CampusStage5Validation", false);
 #else
             return false;
 #endif
@@ -56,8 +56,12 @@ public static class SaveSystem
         if (data == null)
             return false;
 
+        if(loadScene && !string.IsNullOrEmpty(data.sceneName) && !Application.CanStreamedLevelBeLoaded(data.sceneName)){Debug.LogWarning("存档场景未在 Build Settings："+data.sceneName);return false;}
+        var journal=UnityCompat.FindOne<CampusJournal>();if(journal!=null)journal.Close();
+        if(PauseMenu.Instance!=null && PauseMenu.Instance.IsOpen)PauseMenu.Instance.Close();
         GameProgress progress = GameProgress.Ensure();
         progress.ApplyFromSave(data);
+        progress.pendingCampusRestore=loadScene && data.sceneName=="CampusWorld"?data:null;
 
         if (loadScene && !string.IsNullOrEmpty(data.sceneName))
         {

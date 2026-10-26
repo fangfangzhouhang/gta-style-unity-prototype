@@ -53,7 +53,7 @@ public class CampusExamChapter : MonoBehaviour
         GameProgress.Ensure().SaveApplied+=Restore;
         cabinet=GameObject.Find("ChapterCabinet").GetComponent<CampusEscapeObject>();
         Restore();
-        if(!State.introduction){State.introduction=true;Say("主角：怎么还没有下课？这个钟，好像一直没动过。\n广播：考试尚未结束，请留在座位附近。",10);if(voice!=null && introductionAudio!=null)voice.PlayOneShot(introductionAudio);}
+        if(!State.introduction){State.introduction=true;ShowEvent("intro",CampusVoice.Inner,"主角：怎么还没有下课？这个钟，好像一直没动过。\n广播：考试尚未结束，请留在座位附近。",10);if(voice!=null && introductionAudio!=null)voice.PlayOneShot(introductionAudio);}
     }
     void OnDestroy(){if(GameProgress.Instance!=null)GameProgress.Instance.SaveApplied-=Restore;}
     public void Restore()
@@ -75,9 +75,9 @@ public class CampusExamChapter : MonoBehaviour
                 KeypadOpen=true;digits="";feedback="输入三位密码";SetControl(false);break;
             case CampusEscapeObject.Action.ExamSideDoor:
                 if(!State.key){Say("侧门锁着。钥匙可能在后排密码柜里。",4);break;}
-                State.sideOpen=true;Restore();Say("终于有办法了。但门外似乎还有人。",5);break;
+                State.sideOpen=true;Restore();ShowEvent("side",CampusVoice.Inner,"终于有办法了。但门外似乎还有人。",5);break;
             case CampusEscapeObject.Action.ExamFrontDoor:Say("前门已从外侧锁闭，请寻找教室侧门钥匙。",4);break;
-            case CampusEscapeObject.Action.ExamWindow:State.window=true;Say("明明能看到外面，却没有一扇窗能打开。",5);break;
+            case CampusEscapeObject.Action.ExamWindow:State.window=true;ShowEvent("window",CampusVoice.Inner,"明明能看到外面，却没有一扇窗能打开。",5);break;
             default:return false;
         }
         return true;
@@ -86,7 +86,7 @@ public class CampusExamChapter : MonoBehaviour
     {
         if(!KeypadOpen || flow==null || flow.IsBusy || cabinet==null || Vector3.Distance(flow.player.position,cabinet.transform.position)>2.2f)return false;
         if(code!="416"){feedback="密码不对。再核对排号与座位数。";return false;}
-        State.key=true;CloseKeypad();Say("柜门打开了。获得：201 侧门钥匙。",5);return true;
+        State.key=true;CloseKeypad();ShowEvent("key",CampusVoice.Feedback,"柜门打开了。获得：201 侧门钥匙。",5);return true;
     }
     void SetControl(bool enabled)
     {
@@ -99,16 +99,18 @@ public class CampusExamChapter : MonoBehaviour
     {
         if(KeypadOpen && (flow==null || flow.IsBusy || Vector3.Distance(flow.player.position,cabinet.transform.position)>2.2f))CloseKeypad();
         if(Time.timeScale==0 || (PauseMenu.Instance!=null && PauseMenu.Instance.IsOpen) || (flow!=null && flow.mapUi!=null && flow.mapUi.IsOpen))return;
+        if(KeypadOpen && Input.GetKeyDown(KeyCode.Escape)){CampusJournal.ConsumeEscape();CloseKeypad();return;}
         if(KeypadOpen && (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)))SubmitCode(digits);
         if(Input.GetKeyDown(KeyCode.Backspace)){if(KeypadOpen)CloseKeypad();else subtitleUntil=0;}
     }
     public void ShowSubtitle(string text,float seconds){Say(text,seconds);}
-    void Say(string text,float seconds){subtitle=text;subtitleUntil=Time.time+seconds;}
+    public void ShowEvent(string id,CampusVoice channel,string text,float seconds=7){var narration=GetComponent<CampusNarrative>();if(narration!=null)narration.Emit(id,channel,text,seconds);else Say(text,seconds);}
+    void Say(string text,float seconds){var narration=GetComponent<CampusNarrative>();if(narration!=null)narration.Emit(null,CampusVoice.Feedback,text,seconds,false);else{subtitle=text;subtitleUntil=Time.time+seconds;}}
     void OnGUI()
     {
-        if(PauseMenu.Instance!=null && PauseMenu.Instance.IsOpen)return;
+        if(CampusJournal.Opened || (PauseMenu.Instance!=null && PauseMenu.Instance.IsOpen))return;
         var style=new GUIStyle(GUI.skin.label){font=Resources.Load<Font>("UIFont"),fontSize=20,wordWrap=true,alignment=TextAnchor.MiddleCenter};
-        if(Time.time<subtitleUntil){GUI.Box(new Rect(30,Screen.height-220,Screen.width-60,110),"");GUI.Label(new Rect(45,Screen.height-215,Screen.width-90,100),subtitle+"\n退格键跳过",style);}
+        if(GetComponent<CampusNarrative>()==null && Time.time<subtitleUntil){GUI.Box(new Rect(30,Screen.height-220,Screen.width-60,110),"");GUI.Label(new Rect(45,Screen.height-215,Screen.width-90,100),subtitle+"\n退格键跳过",style);}
         if(!KeypadOpen)return;
         float x=Screen.width/2-190,y=Screen.height/2-130;
         GUI.Box(new Rect(x,y,380,350),"");

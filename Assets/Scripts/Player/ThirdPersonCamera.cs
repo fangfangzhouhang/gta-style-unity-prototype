@@ -76,6 +76,7 @@ public class ThirdPersonCamera : MonoBehaviour
     // Shared by real mouse input and the regression check. Modal UI owns its clicks.
     public bool TryCapturePointerOnClick()
     {
+        if (CampusJournal.Opened) return false;
         if (PauseMenu.Instance != null && PauseMenu.Instance.IsOpen) return false;
         var chapter = UnityCompat.FindOne<CampusExamChapter>();
         if (chapter != null && chapter.KeypadOpen) return false;
@@ -128,6 +129,8 @@ public class ThirdPersonCamera : MonoBehaviour
         if (snap)
             hasPose = false;
     }
+
+    public void RestoreLook(float heading){yaw=heading;pitch=0;aimInitialized=true;Snap();}
 
     public void Snap()
     {

@@ -54,6 +54,8 @@ public class WorldMapUI : MonoBehaviour
 
     public void Open()
     {
+        if(CampusJournal.Opened || (PauseMenu.Instance!=null && PauseMenu.Instance.IsOpen))return;
+        var chapter=UnityCompat.FindOne<CampusExamChapter>();if(chapter!=null && chapter.KeypadOpen)return;
         if (!GameProgress.Ensure().mapUnlocked)
             return;
         IsOpen = true;
@@ -79,6 +81,7 @@ public class WorldMapUI : MonoBehaviour
     {
         if (!IsOpen)
             return;
+        if(Input.GetKeyDown(KeyCode.Escape))CampusJournal.ConsumeEscape();
         if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.M))
             Close();
     }

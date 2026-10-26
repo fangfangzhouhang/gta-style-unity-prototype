@@ -65,6 +65,9 @@ public static class CampusWorldBuilder
         CampusCorridorChapter.Build(root);
         CampusLibraryChapter.Build(root);
         CampusDepartureChapter.Build(root);
+        root.gameObject.AddComponent<CampusNarrative>();
+        root.gameObject.AddComponent<CampusJournal>();
+        root.gameObject.AddComponent<CampusSaveRestore>();
         // Rear investigation area stays outside the side proctor's sight range.
         GameObject.Find("ExamTeacher_Side").GetComponent<VisionConeDetector>().viewDistance=4.5f;
         var groundCp = MakeCheckpoint(root,"GroundSchoolCheckpoint",new Vector3(-14.4f,0.92f,32.5f));

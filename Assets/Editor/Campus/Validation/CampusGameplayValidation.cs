@@ -104,6 +104,7 @@ public static class CampusGameplayValidation
             {
                 var chapter=UnityEngine.Object.FindObjectOfType<CampusExamChapter>();
                 var camera=UnityEngine.Object.FindObjectOfType<ThirdPersonCamera>();
+                Require(UnityEngine.Object.FindObjectOfType<CampusJournal>()==null || !UnityEngine.Object.FindObjectOfType<CampusJournal>().Open(),"journal opened over keypad");
                 Require(chapter.KeypadOpen && Cursor.lockState==CursorLockMode.None && Cursor.visible,"keypad did not release cursor");
                 Require(!camera.TryCapturePointerOnClick() && Cursor.lockState==CursorLockMode.None && Cursor.visible,"camera stole keypad click");
                 Require(!chapter.SubmitCode("000"),"wrong code accepted");

@@ -1,67 +1,77 @@
-[gd_scene load_steps=25 format=3]
+[gd_scene load_steps=28 format=3]
 
 [ext_resource type="Script" path="res://scripts/actors/teacher.gd" id="e1"]
 
 [sub_resource type="CapsuleShape3D" id="r1"]
-radius = 0.27
-height = 1.8
+radius = 0.28
+height = 2.05
 
 [sub_resource type="StandardMaterial3D" id="r2"]
-albedo_color = Color(0.21, 0.27, 0.28, 1)
-roughness = 0.8
-metallic = 0
+albedo_color = Color(0.34, 0.42, 0.48, 1)
+roughness = 0.72
+metallic = 0.05
 
 [sub_resource type="StandardMaterial3D" id="r3"]
-albedo_color = Color(0.12, 0.16, 0.18, 1)
-roughness = 0.8
+albedo_color = Color(0.22, 0.26, 0.3, 1)
+roughness = 0.85
 metallic = 0
 
 [sub_resource type="StandardMaterial3D" id="r4"]
-albedo_color = Color(0.57, 0.43, 0.32, 1)
-roughness = 0.8
-metallic = 0
+albedo_color = Color(0.86, 0.82, 0.78, 1)
+roughness = 0.35
+metallic = 0.02
 
 [sub_resource type="StandardMaterial3D" id="r5"]
-albedo_color = Color(0.12, 0.1, 0.09, 1)
-roughness = 0.8
+albedo_color = Color(0.1, 0.09, 0.09, 1)
+roughness = 0.9
 metallic = 0
 
 [sub_resource type="StandardMaterial3D" id="r6"]
-albedo_color = Color(0.07, 0.08, 0.08, 1)
-roughness = 0.8
+albedo_color = Color(0.06, 0.07, 0.08, 1)
+roughness = 0.7
 metallic = 0
 
 [sub_resource type="StandardMaterial3D" id="r7"]
-albedo_color = Color(0.75, 0.7, 0.57, 1)
-roughness = 0.8
+albedo_color = Color(0.78, 0.72, 0.58, 1)
+roughness = 0.75
+metallic = 0
+
+[sub_resource type="StandardMaterial3D" id="r24"]
+albedo_color = Color(0.55, 0.12, 0.12, 1)
+roughness = 0.55
+metallic = 0
+
+[sub_resource type="StandardMaterial3D" id="r25"]
+albedo_color = Color(0.12, 0.1, 0.1, 1)
+roughness = 0.4
 metallic = 0
 
 [sub_resource type="BoxMesh" id="r8"]
-size = Vector3(0.46, 0.57, 0.26)
+size = Vector3(0.52, 0.95, 0.3)
 material = SubResource("r2")
 
 [sub_resource type="BoxMesh" id="r9"]
-size = Vector3(0.26, 0.08, 0.24)
+size = Vector3(0.28, 0.08, 0.24)
 material = SubResource("r7")
 
 [sub_resource type="BoxMesh" id="r10"]
-size = Vector3(0.16, 0.72, 0.19)
+size = Vector3(0.17, 0.82, 0.2)
 material = SubResource("r3")
 
 [sub_resource type="BoxMesh" id="r11"]
-size = Vector3(0.18, 0.14, 0.32)
+size = Vector3(0.19, 0.14, 0.34)
 material = SubResource("r6")
 
 [sub_resource type="BoxMesh" id="r12"]
-size = Vector3(0.16, 0.72, 0.19)
+size = Vector3(0.17, 0.82, 0.2)
 material = SubResource("r3")
 
 [sub_resource type="BoxMesh" id="r13"]
-size = Vector3(0.18, 0.14, 0.32)
+size = Vector3(0.19, 0.14, 0.34)
 material = SubResource("r6")
 
 [sub_resource type="BoxMesh" id="r14"]
-size = Vector3(0.14, 0.5, 0.17)
+size = Vector3(0.16, 0.72, 0.18)
 material = SubResource("r2")
 
 [sub_resource type="BoxMesh" id="r15"]
@@ -69,7 +79,7 @@ size = Vector3(0.12, 0.16, 0.13)
 material = SubResource("r4")
 
 [sub_resource type="BoxMesh" id="r16"]
-size = Vector3(0.14, 0.5, 0.17)
+size = Vector3(0.16, 0.72, 0.18)
 material = SubResource("r2")
 
 [sub_resource type="BoxMesh" id="r17"]
@@ -77,31 +87,39 @@ size = Vector3(0.12, 0.16, 0.13)
 material = SubResource("r4")
 
 [sub_resource type="SphereMesh" id="r18"]
-radius = 0.145
-height = 0.34
+radius = 0.155
+height = 0.36
 radial_segments = 16
 rings = 8
 material = SubResource("r4")
 
 [sub_resource type="BoxMesh" id="r19"]
-size = Vector3(0.27, 0.1, 0.24)
+size = Vector3(0.28, 0.08, 0.24)
 material = SubResource("r5")
 
 [sub_resource type="BoxMesh" id="r20"]
-size = Vector3(0.06, 0.08, 0.06)
+size = Vector3(0.055, 0.07, 0.055)
 material = SubResource("r4")
 
 [sub_resource type="BoxMesh" id="r21"]
-size = Vector3(0.045, 0.018, 0.018)
-material = SubResource("r6")
+size = Vector3(0.05, 0.016, 0.016)
+material = SubResource("r25")
 
 [sub_resource type="BoxMesh" id="r22"]
-size = Vector3(0.045, 0.018, 0.018)
-material = SubResource("r6")
+size = Vector3(0.05, 0.016, 0.016)
+material = SubResource("r25")
 
 [sub_resource type="BoxMesh" id="r23"]
 size = Vector3(0.28, 0.36, 0.035)
 material = SubResource("r7")
+
+[sub_resource type="BoxMesh" id="r26"]
+size = Vector3(0.09, 0.012, 0.02)
+material = SubResource("r25")
+
+[sub_resource type="BoxMesh" id="r27"]
+size = Vector3(0.025, 0.18, 0.025)
+material = SubResource("r24")
 
 [node name="Teacher" type="CharacterBody3D"]
 script = ExtResource("e1")
@@ -111,93 +129,124 @@ floor_snap_length = 0.2
 patrol_points = PackedVector3Array(-1.7,0.02,4.2, 2.7,0.02,4.2, 2.7,0.02,-3.1, -1.7,0.02,-3.1)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-position = Vector3(0, 0.9, 0)
+position = Vector3(0, 1.025, 0)
 shape = SubResource("r1")
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
-radius = 0.29
-height = 1.8
+radius = 0.3
+height = 2.05
 path_desired_distance = 0.25
 target_desired_distance = 0.3
 
 [node name="Visual" type="Node3D" parent="."]
 
-
-[node name="Torso" type="MeshInstance3D" parent="Visual"]
-position = Vector3(0, 1.18, 0)
+[node name="Coat" type="MeshInstance3D" parent="Visual"]
+position = Vector3(0, 1.28, 0)
 mesh = SubResource("r8")
 
 [node name="Collar" type="MeshInstance3D" parent="Visual"]
-position = Vector3(0, 1.47, -0.06)
+position = Vector3(0, 1.72, -0.06)
 mesh = SubResource("r9")
 
 [node name="LeftLeg" type="Node3D" parent="Visual"]
-position = Vector3(-0.12, 0.84, 0)
+position = Vector3(-0.13, 0.9, 0)
 
 [node name="Trousers" type="MeshInstance3D" parent="Visual/LeftLeg"]
-position = Vector3(0, -0.36, 0)
+position = Vector3(0, -0.4, 0)
 mesh = SubResource("r10")
 
 [node name="Shoe" type="MeshInstance3D" parent="Visual/LeftLeg"]
-position = Vector3(0, -0.76, -0.06)
+position = Vector3(0, -0.84, -0.07)
 mesh = SubResource("r11")
 
 [node name="RightLeg" type="Node3D" parent="Visual"]
-position = Vector3(0.12, 0.84, 0)
+position = Vector3(0.13, 0.9, 0)
 
 [node name="Trousers" type="MeshInstance3D" parent="Visual/RightLeg"]
-position = Vector3(0, -0.36, 0)
+position = Vector3(0, -0.4, 0)
 mesh = SubResource("r12")
 
 [node name="Shoe" type="MeshInstance3D" parent="Visual/RightLeg"]
-position = Vector3(0, -0.76, -0.06)
+position = Vector3(0, -0.84, -0.07)
 mesh = SubResource("r13")
 
 [node name="LeftArm" type="Node3D" parent="Visual"]
-position = Vector3(-0.31, 1.43, 0)
+position = Vector3(-0.36, 1.68, 0)
 
 [node name="Sleeve" type="MeshInstance3D" parent="Visual/LeftArm"]
-position = Vector3(0, -0.24, 0)
+position = Vector3(0, -0.32, 0)
 mesh = SubResource("r14")
 
 [node name="Hand" type="MeshInstance3D" parent="Visual/LeftArm"]
-position = Vector3(0, -0.54, 0)
+position = Vector3(0, -0.72, 0)
 mesh = SubResource("r15")
 
 [node name="RightArm" type="Node3D" parent="Visual"]
-position = Vector3(0.31, 1.43, 0)
+position = Vector3(0.36, 1.68, 0)
 
 [node name="Sleeve" type="MeshInstance3D" parent="Visual/RightArm"]
-position = Vector3(0, -0.24, 0)
+position = Vector3(0, -0.32, 0)
 mesh = SubResource("r16")
 
 [node name="Hand" type="MeshInstance3D" parent="Visual/RightArm"]
-position = Vector3(0, -0.54, 0)
+position = Vector3(0, -0.72, 0)
 mesh = SubResource("r17")
 
+[node name="RedPen" type="MeshInstance3D" parent="Visual/RightArm"]
+position = Vector3(0.02, -0.78, -0.08)
+mesh = SubResource("r27")
+
 [node name="Head" type="Node3D" parent="Visual"]
-position = Vector3(0, 1.64, 0)
+position = Vector3(0, 1.92, 0)
 
 [node name="Face" type="MeshInstance3D" parent="Visual/Head"]
 position = Vector3(0, 0, 0)
 mesh = SubResource("r18")
 
 [node name="Hair" type="MeshInstance3D" parent="Visual/Head"]
-position = Vector3(0, 0.12, 0.01)
+position = Vector3(0, 0.14, 0.02)
 mesh = SubResource("r19")
 
 [node name="Nose" type="MeshInstance3D" parent="Visual/Head"]
-position = Vector3(0, -0.015, -0.14)
+position = Vector3(0, -0.02, -0.15)
 mesh = SubResource("r20")
 
-[node name="Eye-0_065" type="MeshInstance3D" parent="Visual/Head"]
-position = Vector3(-0.065, 0.025, -0.136)
+[node name="EyeL" type="MeshInstance3D" parent="Visual/Head"]
+position = Vector3(-0.06, 0.03, -0.145)
 mesh = SubResource("r21")
 
-[node name="Eye0_065" type="MeshInstance3D" parent="Visual/Head"]
-position = Vector3(0.065, 0.025, -0.136)
+[node name="EyeR" type="MeshInstance3D" parent="Visual/Head"]
+position = Vector3(0.06, 0.03, -0.145)
 mesh = SubResource("r22")
 
+[node name="Smile" type="MeshInstance3D" parent="Visual/Head"]
+position = Vector3(0, -0.07, -0.145)
+mesh = SubResource("r26")
+
 [node name="PaperFolder" type="MeshInstance3D" parent="Visual/RightArm"]
-position = Vector3(0, -0.4, -0.14)
+position = Vector3(0, -0.48, -0.14)
 mesh = SubResource("r23")
+
+[node name="AlertIcon" type="Label3D" parent="."]
+position = Vector3(0, 2.35, 0)
+text = ""
+font_size = 64
+pixel_size = 0.01
+modulate = Color(0.95, 0.85, 0.35, 1)
+outline_size = 8
+outline_modulate = Color(0.05, 0.05, 0.05, 0.85)
+billboard = 1
+no_depth_test = true
+shaded = false
+
+[node name="SuspicionBar" type="Label3D" parent="."]
+position = Vector3(0, 2.18, 0)
+text = ""
+font_size = 28
+pixel_size = 0.008
+modulate = Color(0.9, 0.75, 0.35, 0.9)
+outline_size = 4
+outline_modulate = Color(0.05, 0.05, 0.05, 0.7)
+billboard = 1
+no_depth_test = true
+shaded = false

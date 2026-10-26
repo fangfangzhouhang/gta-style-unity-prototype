@@ -12,6 +12,8 @@ func reset_panel() -> void:
 	zone = int(Game.progress.get("broadcast_zone", 0))
 	stopped = Game.progress.get("loop_stopped", false)
 	cooldown = 0
+	if is_instance_valid(Ambience):
+		Ambience.set_loop_quiet(stopped)
 	update_labels()
 
 func _process(delta: float) -> void:
@@ -31,7 +33,12 @@ func operate(action: String) -> void:
 			Game.progress.loop_stopped = stopped
 			if stopped:
 				$LoopAudio.stop()
+				if is_instance_valid(Ambience):
+					Ambience.set_loop_quiet(true)
 				Game.discover("loop", "循环键被固定在重播。停止它，广播终于安静了。")
+			else:
+				if is_instance_valid(Ambience):
+					Ambience.set_loop_quiet(false)
 		"mode":
 			output_mode = 1 - output_mode
 			Game.progress.broadcast_mode = output_mode

@@ -71,6 +71,7 @@ func emit_sound(point: Vector3, kind: String, reach: float, caption: String, sou
 	add_child(sound)
 	sound.global_position = path.get("audio_origin", point)
 	sound.stream = CLIPS.get(kind, CLIPS.door)
+	sound.bus = "SFX"
 	sound.unit_size = 5
 	sound.max_distance = 45
 	sound.volume_db = clampf(-float(path.cost) * 0.55 - (5.0 if path.muffled else 0.0), -28, -2)

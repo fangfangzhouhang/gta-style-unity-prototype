@@ -48,10 +48,11 @@ func reset_teacher() -> void:
 	velocity = Vector3.ZERO
 	last_position = global_position
 	repath = 0
+	_update_alert_ui()
 
 func can_see_player() -> bool:
 	if not is_instance_valid(Game.player): return false
-	var eye := global_position + Vector3.UP * 1.65
+	var eye := global_position + Vector3.UP * 1.9
 	var target_point: Vector3 = Game.player.global_position + Vector3.UP * (0.83 if Game.player.crouched else 1.36)
 	var offset := target_point - eye
 	if offset.length() > sight_range: return false
@@ -91,6 +92,7 @@ func change_state(next: String) -> void:
 	elif next == "search":
 		search_index = 0
 		Game.acoustics.emit_sound(global_position, "teacher_step", 10, "脚步放慢，开始寻找", "teacher")
+	_update_alert_ui()
 
 func _physics_process(delta: float) -> void:
 	if Game.mode != "game" or frozen: return
@@ -195,6 +197,31 @@ func _physics_process(delta: float) -> void:
 	$Visual/LeftArm.rotation.x = -$Visual/LeftLeg.rotation.x * 0.8
 	$Visual/RightArm.rotation.x = $Visual/LeftLeg.rotation.x * 0.6
 	$Visual/Head.rotation.y = sin(state_time * 1.6) * 0.3 if state in ["search", "investigate"] and speed == 0 else 0
+	_update_alert_ui()
+
+func _update_alert_ui() -> void:
+	var icon: Label3D = $AlertIcon
+	var bar: Label3D = $SuspicionBar
+	if state == "chase":
+		icon.text = "!"
+		icon.modulate = Color(0.95, 0.25, 0.22, 1)
+		bar.text = ""
+	elif state == "suspicious" or suspicion > 0.08:
+		icon.text = "?"
+		icon.modulate = Color(0.95, 0.85, 0.35, 1)
+		var filled := int(clampf(suspicion, 0.0, 1.0) * 8.0)
+		var marks := ""
+		for i in range(8):
+			marks += "█" if i < filled else "░"
+		bar.text = marks
+		bar.modulate = Color(0.9, 0.75, 0.35, 0.95).lerp(Color(0.95, 0.35, 0.25, 0.95), suspicion)
+	elif state == "investigate":
+		icon.text = "?"
+		icon.modulate = Color(0.85, 0.8, 0.55, 0.85)
+		bar.text = ""
+	else:
+		icon.text = ""
+		bar.text = ""
 
 func _flat_distance(point: Vector3) -> float:
 	return Vector2(global_position.x - point.x, global_position.z - point.z).length()

@@ -9,6 +9,7 @@ config/custom_user_dir_name="EscapeExamGodot"
 
 [autoload]
 Game="*res://scripts/systems/game.gd"
+Ambience="*res://scripts/systems/ambience.gd"
 
 [display]
 window/size/viewport_width=1280
@@ -40,3 +41,6 @@ common/physics_ticks_per_second=60
 3d_physics/layer_5="Doors"
 3d_physics/layer_6="Glass"
 3d_physics/layer_7="BakeOnly"
+
+[audio]
+buses/default_bus_layout="res://default_bus_layout.tres"

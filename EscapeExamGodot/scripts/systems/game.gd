@@ -99,6 +99,8 @@ func start_new() -> void:
 	elapsed = 0
 	playing = true
 	world.reset_world()
+	if is_instance_valid(Ambience):
+		Ambience.reset_audio_state()
 	set_mode("game")
 	ui.toast("广播又说：离结束还有一分钟。\n试卷已经写完。门外的脚步还没有离开。", 7.0)
 	save_progress()
@@ -111,6 +113,8 @@ func caught(reason: String) -> void:
 	if mode != "game" or not playing: return
 	caught_count += 1
 	trace("caught", {"reason": reason, "checkpoint": checkpoint, "gate": gate.stage})
+	if is_instance_valid(Ambience):
+		Ambience.play_catch_sting()
 	set_mode("recover")
 	ui.show_recovery("被请回了座位。\n" + reason + "\n已打开的近路和卷栅档位保留。")
 	await get_tree().create_timer(1.1, true).timeout
@@ -180,6 +184,8 @@ func load_progress() -> bool:
 	elapsed = float(data.get("elapsed", 0))
 	playing = true
 	world.reset_world()
+	if is_instance_valid(Ambience):
+		Ambience.reset_audio_state()
 	timer.owned = data.get("timer_owned", false)
 	timer.reset_timer()
 	set_mode("game")

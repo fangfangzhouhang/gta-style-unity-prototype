@@ -33,10 +33,12 @@ func operate(action: String) -> void:
 			Game.progress.loop_stopped = stopped
 			if stopped:
 				$LoopAudio.stop()
+				# Mute/duck hook: Ambience fades rain/hum beds then stops (true quiet).
 				if is_instance_valid(Ambience):
 					Ambience.set_loop_quiet(true)
 				Game.discover("loop", "循环键被固定在重播。停止它，广播终于安静了。")
 			else:
+				# Restore ambient beds when loop resumes.
 				if is_instance_valid(Ambience):
 					Ambience.set_loop_quiet(false)
 		"mode":

@@ -1,0 +1,73 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://scripts/props/exam_timer.gd" id="e1"]
+
+[ext_resource type="Font" path="res://resources/chinese_font.tres" id="e2"]
+
+[sub_resource type="StandardMaterial3D" id="r1"]
+albedo_color = Color(0.62, 0.43, 0.19, 1)
+roughness = 0.4
+metallic = 0.35
+
+[sub_resource type="StandardMaterial3D" id="r2"]
+albedo_color = Color(0.89, 0.84, 0.68, 1)
+roughness = 0.8
+metallic = 0
+
+[sub_resource type="StandardMaterial3D" id="r3"]
+albedo_color = Color(0.12, 0.16, 0.16, 1)
+roughness = 0.8
+metallic = 0
+
+[sub_resource type="BoxMesh" id="r4"]
+size = Vector3(0.19, 0.15, 0.1)
+material = SubResource("r1")
+
+[sub_resource type="BoxMesh" id="r5"]
+size = Vector3(0.16, 0.11, 0.012)
+material = SubResource("r2")
+
+[sub_resource type="CylinderMesh" id="r6"]
+top_radius = 0.025
+bottom_radius = 0.025
+height = 0.035
+radial_segments = 12
+material = SubResource("r1")
+
+[sub_resource type="BoxShape3D" id="r7"]
+size = Vector3(0.27, 0.25, 0.24)
+
+[node name="ExamTimer" type="Node3D"]
+script = ExtResource("e1")
+
+[node name="Case" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.04, 0)
+mesh = SubResource("r4")
+
+[node name="Face" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.045, 0.055)
+mesh = SubResource("r5")
+
+[node name="Winder" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.14, 0)
+mesh = SubResource("r6")
+
+[node name="Display" type="Label3D" parent="."]
+position = Vector3(0, 0.04, 0.065)
+rotation = Vector3(0, 0, 0)
+text = "03"
+font = ExtResource("e2")
+font_size = 30
+pixel_size = 0.0019
+modulate = Color(0.12, 0.16, 0.16, 1)
+outline_size = 0
+shaded = false
+no_depth_test = false
+
+[node name="Target" type="StaticBody3D" parent="."]
+collision_layer = 8
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Target"]
+position = Vector3(0, 0.04, 0)
+shape = SubResource("r7")

@@ -1,0 +1,434 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/hud.gd" id="e1"]
+
+[ext_resource type="Font" path="res://resources/chinese_font.tres" id="e2"]
+
+[sub_resource type="StyleBoxFlat" id="r1"]
+bg_color = Color(0.06, 0.085, 0.09, 0.97)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.35, 0.39, 0.35, 0.8)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_left = 8
+corner_radius_bottom_right = 8
+
+[sub_resource type="StyleBoxFlat" id="r2"]
+bg_color = Color(0.16, 0.22, 0.21, 1)
+content_margin_left = 16.0
+content_margin_right = 16.0
+content_margin_top = 12.0
+content_margin_bottom = 12.0
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_left = 4
+corner_radius_bottom_right = 4
+
+[sub_resource type="StyleBoxFlat" id="r3"]
+bg_color = Color(0.32, 0.38, 0.29, 1)
+content_margin_left = 16.0
+content_margin_right = 16.0
+content_margin_top = 12.0
+content_margin_bottom = 12.0
+
+[sub_resource type="Theme" id="r4"]
+default_font = ExtResource("e2")
+default_font_size = 18
+Button/styles/normal = SubResource("r2")
+Button/styles/hover = SubResource("r3")
+Button/styles/pressed = SubResource("r3")
+Button/styles/focus = SubResource("r3")
+Label/colors/font_color = Color(0.87, 0.88, 0.81, 1)
+
+[node name="HUD" type="CanvasLayer"]
+script = ExtResource("e1")
+layer = 10
+
+[node name="Chapter" type="Label" parent="."]
+offset_left = 30
+offset_top = 24
+offset_right = 430
+offset_bottom = 62
+theme = SubResource("r4")
+text = "最后一遍铃  /  试走版"
+theme_override_font_sizes/font_size = 17
+
+[node name="Crosshair" type="Label" parent="."]
+offset_left = 630
+offset_top = 385
+offset_right = 650
+offset_bottom = 407
+theme = SubResource("r4")
+text = "·"
+theme_override_font_sizes/font_size = 26
+horizontal_alignment = 1
+
+[node name="Prompt" type="Label" parent="."]
+offset_left = 280
+offset_top = 505
+offset_right = 1000
+offset_bottom = 555
+theme = SubResource("r4")
+text = ""
+theme_override_font_sizes/font_size = 19
+horizontal_alignment = 1
+
+[node name="Inventory" type="Label" parent="."]
+offset_left = 30
+offset_top = 718
+offset_right = 930
+offset_bottom = 746
+theme = SubResource("r4")
+text = ""
+theme_override_font_sizes/font_size = 17
+
+[node name="Help" type="Label" parent="."]
+offset_left = 30
+offset_top = 754
+offset_right = 1030
+offset_bottom = 778
+theme = SubResource("r4")
+text = "Shift 跑  ·  Ctrl 蹲  ·  Tab 手册  ·  Esc 暂停  ·  F8 截图"
+theme_override_font_sizes/font_size = 15
+modulate = Color(0.7, 0.75, 0.7, 0.8)
+
+[node name="Toast" type="Label" parent="."]
+offset_left = 260
+offset_top = 610
+offset_right = 1020
+offset_bottom = 688
+theme = SubResource("r4")
+text = ""
+theme_override_font_sizes/font_size = 19
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="Sound" type="Label" parent="."]
+offset_left = 340
+offset_top = 86
+offset_right = 940
+offset_bottom = 118
+theme = SubResource("r4")
+text = ""
+theme_override_font_sizes/font_size = 17
+horizontal_alignment = 1
+
+[node name="Menu" type="Panel" parent="."]
+offset_left = 70
+offset_top = 104
+offset_right = 520
+offset_bottom = 689
+theme = SubResource("r4")
+visible = false
+theme_override_styles/panel = SubResource("r1")
+
+[node name="Box" type="Control" parent="Menu"]
+
+
+[node name="Title" type="Label" parent="Menu/Box"]
+offset_left = 32
+offset_top = 30
+offset_right = 412
+offset_bottom = 94
+theme = SubResource("r4")
+text = "逃离考场"
+theme_override_font_sizes/font_size = 40
+
+[node name="Subtitle" type="Label" parent="Menu/Box"]
+offset_left = 34
+offset_top = 105
+offset_right = 414
+offset_bottom = 185
+theme = SubResource("r4")
+text = ""
+theme_override_font_sizes/font_size = 19
+
+[node name="Resume" type="Button" parent="Menu/Box"]
+offset_left = 32
+offset_top = 200
+offset_right = 418
+offset_bottom = 246
+theme = SubResource("r4")
+text = "继续"
+
+[node name="New" type="Button" parent="Menu/Box"]
+offset_left = 32
+offset_top = 257
+offset_right = 418
+offset_bottom = 303
+theme = SubResource("r4")
+text = "开始新的试走"
+
+[node name="Journal" type="Button" parent="Menu/Box"]
+offset_left = 32
+offset_top = 314
+offset_right = 418
+offset_bottom = 360
+theme = SubResource("r4")
+text = "已发现的事实"
+
+[node name="Settings" type="Button" parent="Menu/Box"]
+offset_left = 32
+offset_top = 371
+offset_right = 418
+offset_bottom = 417
+theme = SubResource("r4")
+text = "声音与操作"
+
+[node name="Quit" type="Button" parent="Menu/Box"]
+offset_left = 32
+offset_top = 428
+offset_right = 418
+offset_bottom = 474
+theme = SubResource("r4")
+text = "保存并退出"
+
+[node name="Footer" type="Label" parent="Menu/Box"]
+offset_left = 34
+offset_top = 502
+offset_right = 414
+offset_bottom = 566
+theme = SubResource("r4")
+text = ""
+theme_override_font_sizes/font_size = 14
+
+[node name="Reading" type="Panel" parent="."]
+offset_left = 270
+offset_top = 95
+offset_right = 1010
+offset_bottom = 705
+theme = SubResource("r4")
+visible = false
+theme_override_styles/panel = SubResource("r1")
+
+[node name="Box" type="Control" parent="Reading"]
+
+
+[node name="Title" type="Label" parent="Reading/Box"]
+offset_left = 30
+offset_top = 25
+offset_right = 710
+offset_bottom = 70
+theme = SubResource("r4")
+text = ""
+theme_override_font_sizes/font_size = 29
+
+[node name="Body" type="RichTextLabel" parent="Reading/Box"]
+offset_left = 30
+offset_top = 90
+offset_right = 710
+offset_bottom = 490
+theme = SubResource("r4")
+text = ""
+scroll_active = true
+theme_override_font_sizes/normal_font_size = 20
+
+[node name="Hint" type="Button" parent="Reading/Box"]
+offset_left = 30
+offset_top = 535
+offset_right = 320
+offset_bottom = 581
+theme = SubResource("r4")
+text = "主动请求下一层提示"
+
+[node name="Close" type="Button" parent="Reading/Box"]
+offset_left = 500
+offset_top = 535
+offset_right = 710
+offset_bottom = 581
+theme = SubResource("r4")
+text = "合上  /  Esc"
+
+[node name="Settings" type="Panel" parent="."]
+offset_left = 350
+offset_top = 120
+offset_right = 930
+offset_bottom = 680
+theme = SubResource("r4")
+visible = false
+theme_override_styles/panel = SubResource("r1")
+
+[node name="Box" type="Control" parent="Settings"]
+
+
+[node name="Title" type="Label" parent="Settings/Box"]
+offset_left = 30
+offset_top = 25
+offset_right = 530
+offset_bottom = 70
+theme = SubResource("r4")
+text = "声音与操作"
+theme_override_font_sizes/font_size = 29
+
+[node name="SensitivityLabel" type="Label" parent="Settings/Box"]
+offset_left = 30
+offset_top = 100
+offset_right = 530
+offset_bottom = 126
+theme = SubResource("r4")
+text = "鼠标灵敏度"
+theme_override_font_sizes/font_size = 18
+
+[node name="Sensitivity" type="HSlider" parent="Settings/Box"]
+offset_left = 30
+offset_top = 140
+offset_right = 530
+offset_bottom = 164
+theme = SubResource("r4")
+min_value = 6
+max_value = 50
+step = 1
+
+[node name="FovLabel" type="Label" parent="Settings/Box"]
+offset_left = 30
+offset_top = 200
+offset_right = 530
+offset_bottom = 226
+theme = SubResource("r4")
+text = "视野角度"
+theme_override_font_sizes/font_size = 18
+
+[node name="Fov" type="HSlider" parent="Settings/Box"]
+offset_left = 30
+offset_top = 240
+offset_right = 530
+offset_bottom = 264
+theme = SubResource("r4")
+min_value = 65
+max_value = 95
+step = 1
+
+[node name="VolumeLabel" type="Label" parent="Settings/Box"]
+offset_left = 30
+offset_top = 300
+offset_right = 530
+offset_bottom = 326
+theme = SubResource("r4")
+text = "主音量"
+theme_override_font_sizes/font_size = 18
+
+[node name="Volume" type="HSlider" parent="Settings/Box"]
+offset_left = 30
+offset_top = 340
+offset_right = 530
+offset_bottom = 364
+theme = SubResource("r4")
+min_value = -30
+max_value = 0
+step = 1
+
+[node name="Captions" type="CheckButton" parent="Settings/Box"]
+offset_left = 30
+offset_top = 413
+offset_right = 530
+offset_bottom = 453
+theme = SubResource("r4")
+text = "显示可听声音的文字提示"
+
+[node name="Close" type="Button" parent="Settings/Box"]
+offset_left = 30
+offset_top = 485
+offset_right = 530
+offset_bottom = 531
+theme = SubResource("r4")
+text = "保存并返回"
+
+[node name="Recovery" type="Panel" parent="."]
+offset_left = 0
+offset_top = 0
+offset_right = 1280
+offset_bottom = 800
+theme = SubResource("r4")
+visible = false
+theme_override_styles/panel = SubResource("r1")
+
+[node name="Label" type="Label" parent="Recovery"]
+offset_left = 240
+offset_top = 300
+offset_right = 1040
+offset_bottom = 500
+theme = SubResource("r4")
+text = ""
+theme_override_font_sizes/font_size = 25
+horizontal_alignment = 1
+
+[node name="Ending" type="Panel" parent="."]
+offset_left = 240
+offset_top = 150
+offset_right = 1040
+offset_bottom = 650
+theme = SubResource("r4")
+visible = false
+theme_override_styles/panel = SubResource("r1")
+
+[node name="Box" type="Control" parent="Ending"]
+
+
+[node name="Title" type="Label" parent="Ending/Box"]
+offset_left = 30
+offset_top = 30
+offset_right = 770
+offset_bottom = 100
+theme = SubResource("r4")
+text = "考试结束了。"
+theme_override_font_sizes/font_size = 38
+horizontal_alignment = 1
+
+[node name="Body" type="Label" parent="Ending/Box"]
+offset_left = 40
+offset_top = 115
+offset_right = 760
+offset_bottom = 390
+theme = SubResource("r4")
+text = ""
+theme_override_font_sizes/font_size = 21
+horizontal_alignment = 1
+
+[node name="TitleButton" type="Button" parent="Ending/Box"]
+offset_left = 230
+offset_top = 420
+offset_right = 570
+offset_bottom = 468
+theme = SubResource("r4")
+text = "回到标题"
+
+[node name="Confirm" type="Panel" parent="."]
+offset_left = 410
+offset_top = 270
+offset_right = 870
+offset_bottom = 525
+theme = SubResource("r4")
+visible = false
+theme_override_styles/panel = SubResource("r1")
+
+[node name="Box" type="Control" parent="Confirm"]
+
+
+[node name="Text" type="Label" parent="Confirm/Box"]
+offset_left = 25
+offset_top = 25
+offset_right = 435
+offset_bottom = 125
+theme = SubResource("r4")
+text = "开始新的一次试走？\n这会替换本章的当前进度。"
+theme_override_font_sizes/font_size = 21
+horizontal_alignment = 1
+
+[node name="Yes" type="Button" parent="Confirm/Box"]
+offset_left = 25
+offset_top = 170
+offset_right = 220
+offset_bottom = 218
+theme = SubResource("r4")
+text = "开始新进度"
+
+[node name="No" type="Button" parent="Confirm/Box"]
+offset_left = 240
+offset_top = 170
+offset_right = 435
+offset_bottom = 218
+theme = SubResource("r4")
+text = "保留并返回"

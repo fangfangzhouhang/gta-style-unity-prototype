@@ -1,0 +1,158 @@
+[gd_scene load_steps=18 format=3]
+
+[ext_resource type="Shader" path="res://assets/surface.gdshader" id="e1"]
+
+[sub_resource type="ShaderMaterial" id="r1"]
+shader = ExtResource("e1")
+shader_parameter/base_color = Color(0.45, 0.29, 0.16, 1)
+shader_parameter/surface_kind = 2
+
+[sub_resource type="StandardMaterial3D" id="r2"]
+albedo_color = Color(0.16, 0.23, 0.22, 1)
+roughness = 0.48
+metallic = 0.3
+
+[sub_resource type="BoxMesh" id="r3"]
+size = Vector3(0.68, 0.045, 0.48)
+material = SubResource("r1")
+
+[sub_resource type="BoxMesh" id="r4"]
+size = Vector3(0.59, 0.13, 0.41)
+material = SubResource("r2")
+
+[sub_resource type="CylinderMesh" id="r5"]
+top_radius = 0.018
+bottom_radius = 0.018
+height = 0.62
+radial_segments = 12
+material = SubResource("r2")
+
+[sub_resource type="CylinderMesh" id="r6"]
+top_radius = 0.018
+bottom_radius = 0.018
+height = 0.62
+radial_segments = 12
+material = SubResource("r2")
+
+[sub_resource type="CylinderMesh" id="r7"]
+top_radius = 0.018
+bottom_radius = 0.018
+height = 0.62
+radial_segments = 12
+material = SubResource("r2")
+
+[sub_resource type="CylinderMesh" id="r8"]
+top_radius = 0.018
+bottom_radius = 0.018
+height = 0.62
+radial_segments = 12
+material = SubResource("r2")
+
+[sub_resource type="BoxShape3D" id="r9"]
+size = Vector3(0.68, 0.76, 0.48)
+
+[sub_resource type="BoxMesh" id="r10"]
+size = Vector3(0.37, 0.04, 0.37)
+material = SubResource("r1")
+
+[sub_resource type="BoxMesh" id="r11"]
+size = Vector3(0.39, 0.3, 0.035)
+material = SubResource("r1")
+
+[sub_resource type="CylinderMesh" id="r12"]
+top_radius = 0.016
+bottom_radius = 0.016
+height = 0.44
+radial_segments = 12
+material = SubResource("r2")
+
+[sub_resource type="CylinderMesh" id="r13"]
+top_radius = 0.016
+bottom_radius = 0.016
+height = 0.44
+radial_segments = 12
+material = SubResource("r2")
+
+[sub_resource type="CylinderMesh" id="r14"]
+top_radius = 0.016
+bottom_radius = 0.016
+height = 0.44
+radial_segments = 12
+material = SubResource("r2")
+
+[sub_resource type="CylinderMesh" id="r15"]
+top_radius = 0.016
+bottom_radius = 0.016
+height = 0.44
+radial_segments = 12
+material = SubResource("r2")
+
+[sub_resource type="BoxShape3D" id="r16"]
+size = Vector3(0.4, 0.88, 0.4)
+
+[node name="Desk" type="Node3D"]
+
+
+[node name="Top" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.74, 0)
+mesh = SubResource("r3")
+
+[node name="Storage" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.64, 0)
+mesh = SubResource("r4")
+
+[node name="Leg-0.27-0.17" type="MeshInstance3D" parent="."]
+position = Vector3(-0.27, 0.31, -0.17)
+mesh = SubResource("r5")
+
+[node name="Leg-0.270.17" type="MeshInstance3D" parent="."]
+position = Vector3(-0.27, 0.31, 0.17)
+mesh = SubResource("r6")
+
+[node name="Leg0.27-0.17" type="MeshInstance3D" parent="."]
+position = Vector3(0.27, 0.31, -0.17)
+mesh = SubResource("r7")
+
+[node name="Leg0.270.17" type="MeshInstance3D" parent="."]
+position = Vector3(0.27, 0.31, 0.17)
+mesh = SubResource("r8")
+
+[node name="Body" type="StaticBody3D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Body"]
+position = Vector3(0, 0.38, 0)
+shape = SubResource("r9")
+
+[node name="Seat" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.44, 0.6)
+mesh = SubResource("r10")
+
+[node name="Back" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.7, 0.79)
+mesh = SubResource("r11")
+
+[node name="ChairLeg-0.140.46" type="MeshInstance3D" parent="."]
+position = Vector3(-0.14, 0.22, 0.46)
+mesh = SubResource("r12")
+
+[node name="ChairLeg-0.140.74" type="MeshInstance3D" parent="."]
+position = Vector3(-0.14, 0.22, 0.74)
+mesh = SubResource("r13")
+
+[node name="ChairLeg0.140.46" type="MeshInstance3D" parent="."]
+position = Vector3(0.14, 0.22, 0.46)
+mesh = SubResource("r14")
+
+[node name="ChairLeg0.140.74" type="MeshInstance3D" parent="."]
+position = Vector3(0.14, 0.22, 0.74)
+mesh = SubResource("r15")
+
+[node name="ChairBody" type="StaticBody3D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="ChairBody"]
+position = Vector3(0, 0.44, 0.62)
+shape = SubResource("r16")

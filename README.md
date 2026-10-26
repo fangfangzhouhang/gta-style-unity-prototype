@@ -1,5 +1,27 @@
 # 《逃离考场》
 
+## 下载与选择引擎（2026-10-26 交付分支）
+
+本分支 `delivery/unity-stage5-godot-20261026` 同时包含 Unity 第五阶段已提交成果（`d5192ed`，原 PR #11）和独立 Godot 原型 A-M2.1。主干合并是独立步骤；本说明不是已完成发行验收的声明。
+
+| 开发方向 | 打开位置 | 交接入口 |
+| --- | --- | --- |
+| Unity 校园版 | 仓库根目录，用 Unity Hub 打开 | [Unity 第五阶段](Docs/20-V1.2手账叙事与存档恢复.md) |
+| Godot 独立重设计版 | `EscapeExamGodot/project.godot`，Godot 4.7.2 标准版 | [Godot 启动与操作](EscapeExamGodot/README.md)、[AI 工作边界](EscapeExamGodot/AGENTS.md) |
+
+克隆交付分支：
+
+```sh
+git clone --branch delivery/unity-stage5-godot-20261026 https://github.com/fangfangzhouhang/gta-style-unity-prototype.git
+```
+
+此仓库为私有仓库，协作者需先取得访问权限并用自己的 GitHub 账号认证，不要向 AI 提供明文令牌。GitHub Code → Download ZIP 也需先切到上述分支；两种方式均包含 Godot 源码，无子模块步骤。
+
+让 AI 工具仅打开 `EscapeExamGodot` 目录，先读 README / AGENTS / PROJECT_STATUS，再导入 project.godot。安装本机 Godot 后可以直接运行和继续开发，无需 Unity、原机器 D 盘路径或仓库外资产。没有捆绑引擎二进制、缓存、玩家存档和发行包。旧 `GodotPilot201` 是历史试验，不是新 Godot 版本。
+
+Unity 第五阶段已有自动路线、13 种重载和旧场景启动记录；人工试玩/发布验收仍未完成。Godot 是可玩原型，不能据此声称两版已达到最终发行质量。当前本机 Unity 未提交的美术/道路等实验不包含在本交付中。
+
+
 **继续开发请先读：[开发过程与后续交接](Docs/19-开发过程与后续交接.md)**（完成 / 未完成、代码地图、存档缺口、验证和后续步骤）。第 0—4 步已实现，第 5 步手账 / 叙事 / 迁移与重载已接入并自动验证；完整人工和发布验收尚未完成。
 
 密码面板修复：点击输入框或确认按钮时，相机不再重新锁住鼠标；输入密码后也可按 Enter / 小键盘 Enter 确认。更新脚本后请先停止旧 Play，再重新开始。

@@ -1,0 +1,27 @@
+D0 environment evidence, observed 2026-10-25 Asia/Shanghai
+
+Command:
+& 'D:\Unity\Editors\Godot\Godot_v4.7.2-stable_win64_console.exe' --version
+Output:
+4.7.2.stable.official.ed1daf0bf
+
+Command:
+Get-FileHash -Algorithm SHA256 -LiteralPath 'D:\Unity\Editors\Godot\Godot_v4.7.2-stable_win64.exe'
+Observed SHA256:
+AB1824F85BFD8E0E4128182C000C4003A3E042245B2967848D089B2A04B22424
+
+Command:
+git --version
+Output:
+git version 2.53.0.windows.1
+
+Initial independent-project check:
+NEW_PROJECT_DIRECTORY_ABSENT
+Second existence guard also passed before New-Item created EscapeExamGodot.
+
+Get-CimInstance Win32_VideoController and Win32_OperatingSystem:
+Access denied (Chinese output: 拒绝访问).
+No elevation attempted. No current hardware/performance claim.
+
+This is a concise transcription of observed command results, not a complete terminal log.
+Historical GodotPilot201 render and acceptance results are not new-project test results.

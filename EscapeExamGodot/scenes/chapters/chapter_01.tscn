@@ -4024,7 +4024,7 @@ light_energy = 0.65
 light_size = 0.3
 omni_range = 4.0
 omni_attenuation = 1.4
-shadow_enabled = true
+shadow_enabled = false
 shadow_bias = 0.035
 
 [node name="Fixture4" type="Node3D" parent="Lighting"]
@@ -4073,7 +4073,7 @@ rotation = Vector3(0, 0, 1.5708)
 
 [node name="Light" type="OmniLight3D" parent="Lighting/Fixture5"]
 position = Vector3(0, -0.25, 0)
-light_color = Color(0.5, 0.72, 1.0, 1)
+light_color = Color(0.45, 0.7, 1.0, 1)
 light_energy = 1.55
 light_size = 0.3
 omni_range = 5.5
@@ -4127,7 +4127,7 @@ rotation = Vector3(0, 0, 1.5708)
 
 [node name="Light" type="OmniLight3D" parent="Lighting/Fixture7"]
 position = Vector3(0, -0.25, 0)
-light_color = Color(0.42, 0.7, 0.95, 1)
+light_color = Color(0.45, 0.7, 1.0, 1)
 light_energy = 1.7
 light_size = 0.3
 omni_range = 5.2

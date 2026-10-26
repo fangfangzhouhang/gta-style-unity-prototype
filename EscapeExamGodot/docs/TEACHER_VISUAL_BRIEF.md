@@ -14,7 +14,7 @@
 ## P0 完成定义
 - 8m 外能辨朝向与大衣剪影（S02）
 - Idle / Walk 轮廓差可读（可暂无绑骨精修）
-- 头顶 `?`/`!` + suspicion 条：暗场景下仍可读，不挡门洞
+- 头顶 `?`/`!` + suspicion 条：**已按 ark 关闭**（节点保留 hidden）；警戒只靠行为/音效/字幕
 - 导入优先 `.glb` → `assets/models/teacher/`；`teacher.tscn` 只动 `Visual/*` 与 Alert UI 节点
 
 ## 与光影交界

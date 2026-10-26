@@ -262,6 +262,7 @@ position = Vector3(0, -0.48, -0.14)
 mesh = SubResource("r23")
 
 [node name="AlertIcon" type="Label3D" parent="."]
+visible = false
 position = Vector3(0, 2.48, 0)
 text = ""
 font_size = 80
@@ -274,6 +275,7 @@ no_depth_test = true
 shaded = false
 
 [node name="SuspicionBar" type="Label3D" parent="."]
+visible = false
 position = Vector3(0, 2.28, 0)
 text = ""
 font_size = 36

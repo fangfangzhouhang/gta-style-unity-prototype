@@ -1,4 +1,4 @@
-[gd_scene load_steps=477 format=3]
+[gd_scene load_steps=520 format=3]
 
 [ext_resource type="Script" path="res://scripts/systems/chapter.gd" id="e1"]
 
@@ -31,6 +31,14 @@
 [ext_resource type="Script" path="res://scripts/systems/acoustics.gd" id="e15"]
 
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="e16"]
+
+[ext_resource type="Script" path="res://scripts/props/door_wedge.gd" id="e17"]
+
+[ext_resource type="Script" path="res://scripts/props/pushable_rack.gd" id="e18"]
+
+[ext_resource type="Script" path="res://scripts/props/maintenance_hatch.gd" id="e19"]
+
+[ext_resource type="Script" path="res://scripts/props/answer_stack.gd" id="e20"]
 
 [sub_resource type="ShaderMaterial" id="r1"]
 shader = ExtResource("e2")
@@ -1914,6 +1922,158 @@ material = SubResource("r7")
 [sub_resource type="BoxShape3D" id="r460"]
 size = Vector3(0.5, 0.65, 0.05)
 
+
+[sub_resource type="StandardMaterial3D" id="r461"]
+albedo_color = Color(0.28, 0.39, 0.34, 1)
+roughness = 0.8
+metallic = 0
+
+[sub_resource type="StandardMaterial3D" id="r462"]
+albedo_color = Color(0.70, 0.70, 0.64, 1)
+roughness = 0.85
+metallic = 0
+
+[sub_resource type="StandardMaterial3D" id="r463"]
+albedo_color = Color(0.43, 0.28, 0.15, 1)
+roughness = 0.6
+metallic = 0
+
+[sub_resource type="StandardMaterial3D" id="r464"]
+albedo_color = Color(0.16, 0.23, 0.22, 1)
+roughness = 0.48
+metallic = 0.3
+
+[sub_resource type="StandardMaterial3D" id="r465"]
+albedo_color = Color(0.72, 0.55, 0.28, 1)
+roughness = 0.4
+metallic = 0.35
+
+[sub_resource type="StandardMaterial3D" id="r466"]
+albedo_color = Color(0.75, 0.70, 0.57, 1)
+roughness = 0.75
+metallic = 0
+
+[sub_resource type="BoxMesh" id="r467"]
+size = Vector3(5.2, 0.2, 4.0)
+material = SubResource("r461")
+
+[sub_resource type="BoxMesh" id="r468"]
+size = Vector3(5.2, 0.16, 4.0)
+material = SubResource("r462")
+
+[sub_resource type="BoxMesh" id="r469"]
+size = Vector3(1.25, 2.3, 0.18)
+material = SubResource("r461")
+
+[sub_resource type="BoxShape3D" id="r470"]
+size = Vector3(1.25, 2.3, 0.18)
+
+[sub_resource type="BoxMesh" id="r471"]
+size = Vector3(1.55, 2.3, 0.18)
+material = SubResource("r461")
+
+[sub_resource type="BoxShape3D" id="r472"]
+size = Vector3(1.55, 2.3, 0.18)
+
+[sub_resource type="BoxMesh" id="r473"]
+size = Vector3(0.7, 1.6, 0.45)
+material = SubResource("r461")
+
+[sub_resource type="BoxShape3D" id="r474"]
+size = Vector3(0.7, 1.6, 0.45)
+
+[sub_resource type="BoxMesh" id="r475"]
+size = Vector3(0.14, 0.06, 0.22)
+material = SubResource("r465")
+
+[sub_resource type="BoxShape3D" id="r476"]
+size = Vector3(0.2, 0.12, 0.28)
+
+[sub_resource type="BoxMesh" id="r477"]
+size = Vector3(0.5, 1.85, 2.05)
+material = SubResource("r464")
+
+[sub_resource type="BoxShape3D" id="r478"]
+size = Vector3(0.5, 1.85, 2.05)
+
+[sub_resource type="BoxMesh" id="r479"]
+size = Vector3(7.2, 0.2, 1.05)
+material = SubResource("r461")
+
+[sub_resource type="BoxShape3D" id="r480"]
+size = Vector3(7.2, 0.2, 1.05)
+
+[sub_resource type="BoxMesh" id="r481"]
+size = Vector3(1.05, 0.2, 9.6)
+material = SubResource("r461")
+
+[sub_resource type="BoxShape3D" id="r482"]
+size = Vector3(1.05, 0.2, 9.6)
+
+[sub_resource type="BoxMesh" id="r483"]
+size = Vector3(1.05, 0.16, 9.6)
+material = SubResource("r462")
+
+[sub_resource type="BoxMesh" id="r484"]
+size = Vector3(7.2, 0.16, 1.05)
+material = SubResource("r462")
+
+[sub_resource type="BoxMesh" id="r485"]
+size = Vector3(0.12, 2.4, 1.05)
+material = SubResource("r461")
+
+[sub_resource type="BoxShape3D" id="r486"]
+size = Vector3(0.12, 2.4, 1.05)
+
+[sub_resource type="BoxMesh" id="r487"]
+size = Vector3(1.05, 2.4, 0.12)
+material = SubResource("r461")
+
+[sub_resource type="BoxShape3D" id="r488"]
+size = Vector3(1.05, 2.4, 0.12)
+
+[sub_resource type="BoxMesh" id="r489"]
+size = Vector3(0.95, 1.15, 0.06)
+material = SubResource("r464")
+
+[sub_resource type="BoxShape3D" id="r490"]
+size = Vector3(0.95, 1.15, 0.08)
+
+[sub_resource type="BoxMesh" id="r491"]
+size = Vector3(0.55, 0.35, 0.4)
+material = SubResource("r466")
+
+[sub_resource type="BoxShape3D" id="r492"]
+size = Vector3(0.55, 0.35, 0.4)
+
+[sub_resource type="BoxMesh" id="r493"]
+size = Vector3(0.18, 2.15, 4.0)
+material = SubResource("r461")
+
+[sub_resource type="BoxShape3D" id="r494"]
+size = Vector3(0.18, 2.15, 4.0)
+
+[sub_resource type="BoxMesh" id="r499"]
+size = Vector3(1.1, 0.2, 1.2)
+material = SubResource("r461")
+
+[sub_resource type="BoxShape3D" id="r500"]
+size = Vector3(1.1, 0.2, 1.2)
+
+[sub_resource type="BoxShape3D" id="r497"]
+size = Vector3(5.2, 0.2, 4.0)
+
+[sub_resource type="BoxShape3D" id="r498"]
+size = Vector3(5.2, 0.16, 4.0)
+
+[sub_resource type="BoxMesh" id="r495"]
+size = Vector3(5.2, 2.15, 0.18)
+material = SubResource("r461")
+
+[sub_resource type="BoxShape3D" id="r496"]
+size = Vector3(5.2, 2.15, 0.18)
+
+
 [node name="Chapter01" type="Node3D"]
 script = ExtResource("e1")
 
@@ -3648,7 +3808,7 @@ position = Vector3(0.4, 0.9, -4.8)
 mesh = SubResource("r324")
 
 [node name="Body" type="StaticBody3D" parent="Architecture/Furniture/PrintDivider"]
-collision_layer = 1
+collision_layer = 0
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape3D" parent="Architecture/Furniture/PrintDivider/Body"]
@@ -4226,12 +4386,19 @@ enabled = false
 start_position = Vector3(0, 0.1, -0.9)
 end_position = Vector3(0, 0.1, 0.9)
 
+
+[node name="Storage" parent="Doors" instance=ExtResource("e6")]
+position = Vector3(-3.6, 0, 4)
+door_name = "教具室门"
+allow_wedge = true
+
 [node name="Player" parent="." instance=ExtResource("e7")]
 position = Vector3(-6.5, 0.04, -5.1)
 
 [node name="Teacher" parent="." instance=ExtResource("e8")]
-position = Vector3(-1.7, 0.04, 4.2)
+position = Vector3(-1.7, 0.04, 3.35)
 rotation = Vector3(0, -1.5708, 0)
+patrol_points = PackedVector3Array(-1.7, 0.02, 3.35, 2.7, 0.02, 3.35, 2.7, 0.02, -3.1, -1.7, 0.02, -3.1)
 
 [node name="ExamTimer" parent="." instance=ExtResource("e9")]
 position = Vector3(-6.5, 0.84, -6.65)
@@ -4734,6 +4901,13 @@ metadata/bounds = Rect2(4, 0.5, 4, 2.9)
 [node name="O" type="Marker3D" parent="Acoustics/Zones"]
 metadata/bounds = Rect2(8, 0.5, 3, 2.9)
 
+[node name="S" type="Marker3D" parent="Acoustics/Zones"]
+metadata/bounds = Rect2(-5, 4, 5.5, 4.2)
+
+[node name="H" type="Marker3D" parent="Acoustics/Zones"]
+metadata/bounds = Rect2(0.1, -9.2, 7.7, 10.2)
+
+
 [node name="CW" type="Marker3D" parent="Acoustics/Portals"]
 position = Vector3(-3, 1, 1.1)
 metadata/a = "C"
@@ -4786,6 +4960,409 @@ metadata/b = "G"
 position = Vector3(8, 1, 1.85)
 metadata/a = "G"
 metadata/b = "O"
+
+[node name="JS" type="Marker3D" parent="Acoustics/Portals"]
+position = Vector3(-3.6, 1, 4)
+metadata/a = "J"
+metadata/b = "S"
+metadata/door = "Doors/Storage"
+
+[node name="MH" type="Marker3D" parent="Acoustics/Portals"]
+position = Vector3(0.4, 1, -7.85)
+metadata/a = "M"
+metadata/b = "H"
+metadata/door = "HatchM"
+
+[node name="HG" type="Marker3D" parent="Acoustics/Portals"]
+position = Vector3(6.2, 1, 0.55)
+metadata/a = "H"
+metadata/b = "G"
+metadata/door = "HatchG"
+
+
+
+[node name="SideRoomS" type="Node3D" parent="Architecture"]
+
+[node name="FloorS" type="MeshInstance3D" parent="Architecture/SideRoomS"]
+position = Vector3(-2.4, -0.1, 6.1)
+mesh = SubResource("r467")
+
+[node name="Body" type="StaticBody3D" parent="Architecture/SideRoomS/FloorS"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Architecture/SideRoomS/FloorS/Body"]
+shape = SubResource("r497")
+
+[node name="CeilingS" type="MeshInstance3D" parent="Architecture/SideRoomS"]
+position = Vector3(-2.4, 3.35, 6.1)
+mesh = SubResource("r468")
+
+[node name="Body" type="StaticBody3D" parent="Architecture/SideRoomS/CeilingS"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Architecture/SideRoomS/CeilingS/Body"]
+shape = SubResource("r498")
+
+[node name="SealOpeningWest" type="MeshInstance3D" parent="Architecture/SideRoomS"]
+position = Vector3(-0.7, 1.15, 4)
+mesh = SubResource("r469")
+
+[node name="Body" type="StaticBody3D" parent="Architecture/SideRoomS/SealOpeningWest"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Architecture/SideRoomS/SealOpeningWest/Body"]
+shape = SubResource("r470")
+
+[node name="SealOpeningEast" type="MeshInstance3D" parent="Architecture/SideRoomS"]
+position = Vector3(1.8, 1.15, 4)
+mesh = SubResource("r471")
+
+[node name="Body" type="StaticBody3D" parent="Architecture/SideRoomS/SealOpeningEast"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Architecture/SideRoomS/SealOpeningEast/Body"]
+shape = SubResource("r472")
+
+[node name="WallWest" type="MeshInstance3D" parent="Architecture/SideRoomS"]
+position = Vector3(-5.0, 1.6, 6.1)
+mesh = SubResource("r493")
+
+[node name="Body" type="StaticBody3D" parent="Architecture/SideRoomS/WallWest"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Architecture/SideRoomS/WallWest/Body"]
+shape = SubResource("r494")
+
+[node name="WallEast" type="MeshInstance3D" parent="Architecture/SideRoomS"]
+position = Vector3(0.2, 1.6, 6.1)
+mesh = SubResource("r493")
+
+[node name="Body" type="StaticBody3D" parent="Architecture/SideRoomS/WallEast"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Architecture/SideRoomS/WallEast/Body"]
+shape = SubResource("r494")
+
+[node name="WallNorth" type="MeshInstance3D" parent="Architecture/SideRoomS"]
+position = Vector3(-2.4, 1.6, 8.05)
+mesh = SubResource("r495")
+
+[node name="Body" type="StaticBody3D" parent="Architecture/SideRoomS/WallNorth"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Architecture/SideRoomS/WallNorth/Body"]
+shape = SubResource("r496")
+
+[node name="Cabinet" type="MeshInstance3D" parent="Architecture/SideRoomS"]
+position = Vector3(-3.6, 0.8, 6.8)
+mesh = SubResource("r473")
+
+[node name="Body" type="StaticBody3D" parent="Architecture/SideRoomS/Cabinet"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Architecture/SideRoomS/Cabinet/Body"]
+shape = SubResource("r474")
+
+[node name="DoorSign" type="Label3D" parent="Architecture/SideRoomS"]
+position = Vector3(-3.6, 2.55, 3.92)
+text = "教具"
+font = ExtResource("e5")
+font_size = 26
+pixel_size = 0.004
+outline_size = 0
+shaded = false
+
+[node name="FixtureS" type="Node3D" parent="Lighting"]
+position = Vector3(-2.8, 3.05, 6.2)
+
+[node name="Light" type="OmniLight3D" parent="Lighting/FixtureS"]
+light_color = Color(1, 0.86, 0.62, 1)
+light_energy = 0.85
+omni_range = 4.5
+omni_attenuation = 1.4
+shadow_enabled = false
+
+[node name="DoorWedge" type="Node3D" parent="."]
+position = Vector3(-3.55, 0.42, 6.45)
+script = ExtResource("e17")
+
+[node name="Mesh" type="MeshInstance3D" parent="DoorWedge"]
+mesh = SubResource("r475")
+
+[node name="Target" type="StaticBody3D" parent="DoorWedge"]
+collision_layer = 8
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="DoorWedge/Target"]
+shape = SubResource("r476")
+
+[node name="PushableRack" type="Node3D" parent="."]
+position = Vector3(0.4, 0, -4.8)
+script = ExtResource("e18")
+travel_limit = 0.9
+push_dir = Vector3(1, 0, 0)
+linked_paths = [NodePath("../Architecture/Furniture/PrintDivider"), NodePath("../Architecture/Furniture/PaperShelf0"), NodePath("../Architecture/Furniture/PaperShelf1"), NodePath("../Architecture/Furniture/PaperShelf2"), NodePath("../Architecture/Furniture/PaperShelf3"), NodePath("../Architecture/Furniture/PaperShelf4"), NodePath("../Architecture/Furniture/PaperStack00"), NodePath("../Architecture/Furniture/PaperStack01"), NodePath("../Architecture/Furniture/PaperStack02"), NodePath("../Architecture/Furniture/PaperStack10"), NodePath("../Architecture/Furniture/PaperStack11"), NodePath("../Architecture/Furniture/PaperStack12"), NodePath("../Architecture/Furniture/PaperStack20"), NodePath("../Architecture/Furniture/PaperStack21"), NodePath("../Architecture/Furniture/PaperStack22"), NodePath("../Architecture/Furniture/PaperStack30"), NodePath("../Architecture/Furniture/PaperStack31"), NodePath("../Architecture/Furniture/PaperStack32"), NodePath("../Architecture/Furniture/PaperStack40"), NodePath("../Architecture/Furniture/PaperStack41"), NodePath("../Architecture/Furniture/PaperStack42")]
+
+[node name="Visual" type="MeshInstance3D" parent="PushableRack"]
+position = Vector3(0, 0.9, 0)
+mesh = SubResource("r477")
+
+[node name="Body" type="StaticBody3D" parent="PushableRack"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="PushableRack/Body"]
+position = Vector3(0, 0.9, 0)
+shape = SubResource("r478")
+
+[node name="Target" type="StaticBody3D" parent="PushableRack"]
+collision_layer = 8
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="PushableRack/Target"]
+position = Vector3(0, 1.0, 0)
+shape = SubResource("r478")
+
+[node name="ScrapeMark" type="Label3D" parent="PushableRack"]
+position = Vector3(-0.35, 0.08, -0.2)
+rotation = Vector3(-1.5708, 0, 0)
+text = "⟵ 刮痕"
+font = ExtResource("e5")
+font_size = 18
+pixel_size = 0.003
+modulate = Color(0.45, 0.4, 0.32, 1)
+outline_size = 0
+
+[node name="MaintenanceH" type="Node3D" parent="Architecture"]
+
+
+[node name="ConnectMH" type="MeshInstance3D" parent="Architecture/MaintenanceH"]
+position = Vector3(0.4, -0.1, -8.2)
+mesh = SubResource("r499")
+
+[node name="Body" type="StaticBody3D" parent="Architecture/MaintenanceH/ConnectMH"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Architecture/MaintenanceH/ConnectMH/Body"]
+shape = SubResource("r500")
+
+[node name="OpeningCutM" type="MeshInstance3D" parent="Architecture/MaintenanceH"]
+position = Vector3(0.4, 1.1, -7.95)
+visible = false
+mesh = SubResource("r489")
+
+[node name="Body" type="StaticBody3D" parent="Architecture/MaintenanceH/OpeningCutM"]
+collision_layer = 64
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Architecture/MaintenanceH/OpeningCutM/Body"]
+shape = SubResource("r490")
+
+[node name="FloorEW" type="MeshInstance3D" parent="Architecture/MaintenanceH"]
+position = Vector3(3.7, -0.1, -8.65)
+mesh = SubResource("r479")
+
+[node name="Body" type="StaticBody3D" parent="Architecture/MaintenanceH/FloorEW"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Architecture/MaintenanceH/FloorEW/Body"]
+shape = SubResource("r480")
+
+[node name="CeilingEW" type="MeshInstance3D" parent="Architecture/MaintenanceH"]
+position = Vector3(3.7, 2.55, -8.65)
+mesh = SubResource("r484")
+
+[node name="FloorNS" type="MeshInstance3D" parent="Architecture/MaintenanceH"]
+position = Vector3(6.2, -0.1, -3.85)
+mesh = SubResource("r481")
+
+[node name="Body" type="StaticBody3D" parent="Architecture/MaintenanceH/FloorNS"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Architecture/MaintenanceH/FloorNS/Body"]
+shape = SubResource("r482")
+
+[node name="CeilingNS" type="MeshInstance3D" parent="Architecture/MaintenanceH"]
+position = Vector3(6.2, 2.55, -3.85)
+mesh = SubResource("r483")
+
+[node name="WallS" type="MeshInstance3D" parent="Architecture/MaintenanceH"]
+position = Vector3(3.7, 1.1, -9.2)
+mesh = SubResource("r485")
+
+[node name="Body" type="StaticBody3D" parent="Architecture/MaintenanceH/WallS"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Architecture/MaintenanceH/WallS/Body"]
+shape = SubResource("r486")
+
+[node name="WallN_EW" type="MeshInstance3D" parent="Architecture/MaintenanceH"]
+position = Vector3(3.0, 1.1, -8.1)
+mesh = SubResource("r485")
+
+[node name="Body" type="StaticBody3D" parent="Architecture/MaintenanceH/WallN_EW"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Architecture/MaintenanceH/WallN_EW/Body"]
+shape = SubResource("r486")
+
+[node name="WallW_NS" type="MeshInstance3D" parent="Architecture/MaintenanceH"]
+position = Vector3(5.65, 1.1, -3.85)
+mesh = SubResource("r487")
+
+[node name="Body" type="StaticBody3D" parent="Architecture/MaintenanceH/WallW_NS"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Architecture/MaintenanceH/WallW_NS/Body"]
+shape = SubResource("r488")
+
+[node name="WallE_NS" type="MeshInstance3D" parent="Architecture/MaintenanceH"]
+position = Vector3(6.75, 1.1, -3.85)
+mesh = SubResource("r487")
+
+[node name="Body" type="StaticBody3D" parent="Architecture/MaintenanceH/WallE_NS"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Architecture/MaintenanceH/WallE_NS/Body"]
+shape = SubResource("r488")
+
+[node name="HatchM" type="Node3D" parent="."]
+position = Vector3(0.4, 0, -7.85)
+script = ExtResource("e19")
+hatch_name = "印务检修盖"
+pair_path = NodePath("../HatchG")
+rack_path = NodePath("../PushableRack")
+nav_link_path = NodePath("NavigationLink3D")
+
+[node name="Hinge" type="Node3D" parent="HatchM"]
+position = Vector3(0, 1.15, 0)
+
+[node name="Panel" type="AnimatableBody3D" parent="HatchM/Hinge"]
+collision_layer = 16
+collision_mask = 0
+sync_to_physics = false
+
+[node name="Shape" type="CollisionShape3D" parent="HatchM/Hinge/Panel"]
+position = Vector3(0, -0.55, 0)
+shape = SubResource("r490")
+
+[node name="Leaf" type="MeshInstance3D" parent="HatchM/Hinge/Panel"]
+position = Vector3(0, -0.55, 0)
+mesh = SubResource("r489")
+
+[node name="Target" type="StaticBody3D" parent="HatchM"]
+collision_layer = 8
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="HatchM/Target"]
+position = Vector3(0, 0.9, 0)
+shape = SubResource("r490")
+
+[node name="Handle" type="MeshInstance3D" parent="HatchM"]
+position = Vector3(0.25, 0.7, 0.05)
+mesh = SubResource("r475")
+
+[node name="NavigationLink3D" type="NavigationLink3D" parent="HatchM"]
+enabled = false
+start_position = Vector3(0, 0.1, 0.7)
+end_position = Vector3(0, 0.1, -0.9)
+
+[node name="HatchG" type="Node3D" parent="."]
+position = Vector3(6.2, 0, 0.55)
+rotation = Vector3(0, 3.14159, 0)
+script = ExtResource("e19")
+hatch_name = "前室侧检修口"
+pair_path = NodePath("../HatchM")
+nav_link_path = NodePath("NavigationLink3D")
+
+[node name="Hinge" type="Node3D" parent="HatchG"]
+position = Vector3(0, 1.15, 0)
+
+[node name="Panel" type="AnimatableBody3D" parent="HatchG/Hinge"]
+collision_layer = 16
+collision_mask = 0
+sync_to_physics = false
+
+[node name="Shape" type="CollisionShape3D" parent="HatchG/Hinge/Panel"]
+position = Vector3(0, -0.55, 0)
+shape = SubResource("r490")
+
+[node name="Leaf" type="MeshInstance3D" parent="HatchG/Hinge/Panel"]
+position = Vector3(0, -0.55, 0)
+mesh = SubResource("r489")
+
+[node name="Target" type="StaticBody3D" parent="HatchG"]
+collision_layer = 8
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="HatchG/Target"]
+position = Vector3(0, 0.9, 0)
+shape = SubResource("r490")
+
+[node name="NavigationLink3D" type="NavigationLink3D" parent="HatchG"]
+enabled = false
+start_position = Vector3(0, 0.1, 0.7)
+end_position = Vector3(0, 0.1, -0.9)
+
+[node name="AnswerStack" type="Node3D" parent="."]
+position = Vector3(-0.8, 0.55, -6.9)
+script = ExtResource("e20")
+labels_path = NodePath("ZoneTags")
+
+[node name="Mesh" type="MeshInstance3D" parent="AnswerStack"]
+mesh = SubResource("r491")
+
+[node name="Target" type="StaticBody3D" parent="AnswerStack"]
+collision_layer = 8
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="AnswerStack/Target"]
+shape = SubResource("r492")
+
+[node name="ZoneTags" type="Node3D" parent="AnswerStack"]
+visible = false
+
+[node name="TagC" type="Label3D" parent="AnswerStack/ZoneTags"]
+position = Vector3(0, -0.05, 0.22)
+text = "考场 C"
+font = ExtResource("e5")
+font_size = 22
+pixel_size = 0.0035
+modulate = Color(0.2, 0.22, 0.18, 1)
+outline_size = 0
+
+[node name="TagM" type="Label3D" parent="AnswerStack/ZoneTags"]
+position = Vector3(0, -0.12, 0.22)
+text = "印务 M"
+font = ExtResource("e5")
+font_size = 22
+pixel_size = 0.0035
+modulate = Color(0.2, 0.22, 0.18, 1)
+outline_size = 0
+
+[node name="TagE" type="Label3D" parent="AnswerStack/ZoneTags"]
+position = Vector3(0, -0.19, 0.22)
+text = "东廊 E"
+font = ExtResource("e5")
+font_size = 22
+pixel_size = 0.0035
+modulate = Color(0.2, 0.22, 0.18, 1)
+outline_size = 0
 
 [node name="HUD" parent="." instance=ExtResource("e16")]
 

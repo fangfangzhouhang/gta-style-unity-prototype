@@ -93,7 +93,7 @@ func set_mode(next: String) -> void:
 
 func start_new() -> void:
 	facts.clear()
-	progress = {"shortcut": false, "gate_stage": 0, "broadcast_mode": 0, "broadcast_zone": 0, "loop_stopped": false}
+	progress = {"shortcut": false, "gate_stage": 0, "broadcast_mode": 0, "broadcast_zone": 0, "loop_stopped": false, "wedge_owned": false}
 	checkpoint = "classroom"
 	caught_count = 0
 	elapsed = 0
@@ -128,6 +128,10 @@ func fall_recover() -> void:
 	player.teleport_to(get_spawn(), 0)
 	ui.toast("回到最近的合法落脚点。进度保留。", 3)
 	trace("fall_recover")
+
+func note_wedge_owned() -> void:
+	progress.wedge_owned = true
+	save_progress()
 
 func unlock_shortcut() -> void:
 	progress.shortcut = true
@@ -205,7 +209,7 @@ func _read_valid_save(path: String) -> Dictionary:
 		if not (value is float or value is int): return {}
 		var maximum := 3 if key == "gate_stage" else (1 if key == "broadcast_mode" else 2)
 		if not is_finite(float(value)) or value != floorf(float(value)) or value < 0 or value > maximum: return {}
-	for key in ["shortcut", "loop_stopped", "completed"]:
+	for key in ["shortcut", "loop_stopped", "completed", "wedge_owned"]:
 		if not p.get(key, false) is bool: return {}
 	if not data.get("timer_owned", false) is bool: return {}
 	for key in ["elapsed", "captures"]:

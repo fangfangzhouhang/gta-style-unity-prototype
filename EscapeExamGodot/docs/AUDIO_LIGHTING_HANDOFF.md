@@ -70,3 +70,23 @@ Static audit only this pass — no playtest screenshots claimed.
 - `EscapeExamGodot/scripts/props/broadcast.gd`
 - `EscapeExamGodot/scenes/chapters/chapter_01.tscn` (Lighting Omni colors/shadows only)
 - `EscapeExamGodot/docs/AUDIO_LIGHTING_HANDOFF.md`
+
+## Spill follow-up (QA bounce #2 — cold corridor silhouette)
+
+**Problem:** In pure cold corridor (no warm window fill), teacher coat silhouette washed out / lost rim.
+
+**Fix (Lighting only — Fixture5 / Fixture7 cold exit Omnis):**
+
+| Param | Fixture5 before → after | Fixture7 before → after |
+|-------|-------------------------|-------------------------|
+| light_energy | 1.55 → **1.8** (~+16%) | 1.7 → **1.95** (~+15%) |
+| omni_range | 5.5 → **6.3** | 5.2 → **6.0** |
+| omni_attenuation | 1.25 → **1.1** (softer falloff / more side spill) | 1.25 → **1.1** |
+| light_size | 0.3 → **0.35** (slightly softer contact) | 0.3 → **0.35** |
+| shadow_enabled | true (unchanged) | true (unchanged) |
+| light_color | `(0.45, 0.7, 1.0)` unchanged | same |
+
+No extra Omni added. Shadow Omni count still **4** (Fixture0/5/6/7) ≤5. Map/walls/teacher mesh untouched.
+
+**Verify S02 cold corridor silhouette:** Play (or shot-block S02) from cold corridor — coat edge should pick a cold rim/spill without needing window warm. Static param audit only this pass (no before/after screenshots captured).
+

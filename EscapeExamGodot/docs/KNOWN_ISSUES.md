@@ -11,3 +11,6 @@
 - 初次打开需要 Godot 4.7.2 导入资源；源码仓库不包含编辑器、导出模板、存档或缓存。
 
 - P1 灰盒风险：若门楔/夹道 H 被做成离场硬前置，将违反「禁止加锁凑时」；验收须保留无楔无暗道通关。若 ajar 门可侧身挤过，视为平衡回归，需 ark 重批。H 须保持 G→M / M→G 可逆，禁止无提示单向困死。
+
+- 冷廊剪影糊墙（纯冷光下大衣轮廓易糊进墙）：开 follow-up 给 Fixture5/7 侧溢（audio）。证据前对照见 `evidence/screenshots/art-review/`（S02/S03 若有）；侧溢数字已在 audio 合入 feat，仍待人工 after 复检。
+- Alert 正面证据已入仓：`evidence/screenshots/art-review/alert-front-q.png`（?）、`alert-front-bang.png`（!）。

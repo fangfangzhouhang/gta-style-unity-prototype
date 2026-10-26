@@ -48,6 +48,9 @@ func set_open(value: bool, silent := false) -> bool:
 	if is_instance_valid(tween): tween.kill()
 	tween = create_tween().set_process_mode(Tween.TWEEN_PROCESS_PHYSICS)
 	tween.tween_property(hinge, "rotation:x", open_angle if is_open else 0.0, 0.4)
+	# Open panel must not keep blocking the portal (pair orientations swing into the walk volume).
+	if has_node("Hinge/Panel"):
+		$Hinge/Panel.collision_layer = 0 if is_open else 16
 	_set_nav(is_open)
 	if not silent:
 		Game.acoustics.emit_sound(global_position + Vector3.UP, "door", 10.0, "检修盖" + ("打开" if is_open else "关上"), "hatch")
@@ -69,6 +72,8 @@ func reset_door() -> void:
 	is_open = false
 	cooldown = 0.0
 	hinge.rotation.x = 0.0
+	if has_node("Hinge/Panel"):
+		$Hinge/Panel.collision_layer = 16
 	_set_nav(false)
 
 func request_teacher_open(delta: float) -> bool:

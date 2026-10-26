@@ -35,5 +35,15 @@ PASS Corrupt primary save falls back to valid backup
 PASS Two corrupt saves leave files and running progress intact
 PASS Capture recovery retains critical progress and timer ownership
 PASS Falling returns player to a legal checkpoint
-PASS Actual character motion through raised gate completes chapter
-Fixture-based engine tests; not OS input or human play. passed=38 failed=0
+PASS DoorWedge exists and was never picked up before exit path
+PASS Storage door enters ajar via DoorWedge API
+PASS Ajar Storage door: player capsule cannot pass through
+PASS PushableRack reaches travel limit exposing HatchM
+PASS Opening HatchM also opens paired HatchG
+PASS HatchM open: player can pass M → H
+PASS HatchG open: player can pass H → G
+PASS HatchG open: player can pass G → H (no soft-lock)
+PASS HatchM open: player can pass H → M (bidirectional)
+PASS P1 hatch/ajar path left DoorWedge unowned (not exit-required)
+PASS No-wedge exit: raise shutter and leave without picking up DoorWedge
+Fixture-based engine tests; not OS input or human play. passed=48 failed=0

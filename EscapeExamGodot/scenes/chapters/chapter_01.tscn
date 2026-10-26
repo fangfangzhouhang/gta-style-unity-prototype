@@ -2074,6 +2074,95 @@ material = SubResource("r461")
 size = Vector3(5.2, 2.15, 0.18)
 
 
+
+[sub_resource type="BoxMesh" id="r501"]
+size = Vector3(9.85, 1.15, 0.18)
+material = SubResource("r2")
+
+[sub_resource type="BoxShape3D" id="r502"]
+size = Vector3(9.85, 1.15, 0.18)
+
+[sub_resource type="BoxMesh" id="r503"]
+size = Vector3(3.05, 1.15, 0.18)
+material = SubResource("r2")
+
+[sub_resource type="BoxShape3D" id="r504"]
+size = Vector3(3.05, 1.15, 0.18)
+
+[sub_resource type="BoxMesh" id="r505"]
+size = Vector3(9.85, 2.15, 0.18)
+material = SubResource("r1")
+
+[sub_resource type="BoxShape3D" id="r506"]
+size = Vector3(9.85, 2.15, 0.18)
+
+[sub_resource type="BoxMesh" id="r507"]
+size = Vector3(3.05, 2.15, 0.18)
+material = SubResource("r1")
+
+[sub_resource type="BoxShape3D" id="r508"]
+size = Vector3(3.05, 2.15, 0.18)
+
+[sub_resource type="BoxMesh" id="r509"]
+size = Vector3(9.85, 0.11, 0.2)
+material = SubResource("r5")
+
+[sub_resource type="BoxMesh" id="r510"]
+size = Vector3(3.05, 0.11, 0.2)
+material = SubResource("r5")
+
+[sub_resource type="BoxMesh" id="r511"]
+size = Vector3(9.85, 0.025, 0.2)
+material = SubResource("r5")
+
+[sub_resource type="BoxMesh" id="r512"]
+size = Vector3(3.05, 0.025, 0.2)
+material = SubResource("r5")
+
+[sub_resource type="BoxMesh" id="r513"]
+size = Vector3(1.65, 1.15, 0.18)
+material = SubResource("r2")
+
+[sub_resource type="BoxShape3D" id="r514"]
+size = Vector3(1.65, 1.15, 0.18)
+
+[sub_resource type="BoxMesh" id="r515"]
+size = Vector3(1.25, 1.15, 0.18)
+material = SubResource("r2")
+
+[sub_resource type="BoxShape3D" id="r516"]
+size = Vector3(1.25, 1.15, 0.18)
+
+[sub_resource type="BoxMesh" id="r517"]
+size = Vector3(1.65, 2.15, 0.18)
+material = SubResource("r1")
+
+[sub_resource type="BoxShape3D" id="r518"]
+size = Vector3(1.65, 2.15, 0.18)
+
+[sub_resource type="BoxMesh" id="r519"]
+size = Vector3(1.25, 2.15, 0.18)
+material = SubResource("r1")
+
+[sub_resource type="BoxShape3D" id="r520"]
+size = Vector3(1.25, 2.15, 0.18)
+
+[sub_resource type="BoxMesh" id="r521"]
+size = Vector3(1.65, 0.11, 0.2)
+material = SubResource("r5")
+
+[sub_resource type="BoxMesh" id="r522"]
+size = Vector3(1.25, 0.11, 0.2)
+material = SubResource("r5")
+
+[sub_resource type="BoxMesh" id="r523"]
+size = Vector3(1.65, 0.025, 0.2)
+material = SubResource("r5")
+
+[sub_resource type="BoxMesh" id="r524"]
+size = Vector3(1.25, 0.025, 0.2)
+material = SubResource("r5")
+
 [node name="Chapter01" type="Node3D"]
 script = ExtResource("e1")
 
@@ -2373,35 +2462,65 @@ mesh = SubResource("r67")
 [node name="Wall01" type="Node3D" parent="Architecture"]
 
 
-[node name="Lower" type="MeshInstance3D" parent="Architecture/Wall01"]
-position = Vector3(-3, 0.575, -8)
-mesh = SubResource("r68")
+[node name="LowerWest" type="MeshInstance3D" parent="Architecture/Wall01"]
+position = Vector3(-5.075, 0.575, -8)
+mesh = SubResource("r501")
 
-[node name="Body" type="StaticBody3D" parent="Architecture/Wall01/Lower"]
+[node name="Body" type="StaticBody3D" parent="Architecture/Wall01/LowerWest"]
 collision_layer = 1
 collision_mask = 0
 
-[node name="Shape" type="CollisionShape3D" parent="Architecture/Wall01/Lower/Body"]
-shape = SubResource("r69")
+[node name="Shape" type="CollisionShape3D" parent="Architecture/Wall01/LowerWest/Body"]
+shape = SubResource("r502")
 
-[node name="Upper" type="MeshInstance3D" parent="Architecture/Wall01"]
-position = Vector3(-3, 2.225, -8)
-mesh = SubResource("r70")
+[node name="LowerEast" type="MeshInstance3D" parent="Architecture/Wall01"]
+position = Vector3(2.475, 0.575, -8)
+mesh = SubResource("r503")
 
-[node name="Body" type="StaticBody3D" parent="Architecture/Wall01/Upper"]
+[node name="Body" type="StaticBody3D" parent="Architecture/Wall01/LowerEast"]
 collision_layer = 1
 collision_mask = 0
 
-[node name="Shape" type="CollisionShape3D" parent="Architecture/Wall01/Upper/Body"]
-shape = SubResource("r71")
+[node name="Shape" type="CollisionShape3D" parent="Architecture/Wall01/LowerEast/Body"]
+shape = SubResource("r504")
 
-[node name="Base" type="MeshInstance3D" parent="Architecture/Wall01"]
-position = Vector3(-3, 0.055, -8)
-mesh = SubResource("r72")
+[node name="UpperWest" type="MeshInstance3D" parent="Architecture/Wall01"]
+position = Vector3(-5.075, 2.225, -8)
+mesh = SubResource("r505")
 
-[node name="DadoCap" type="MeshInstance3D" parent="Architecture/Wall01"]
-position = Vector3(-3, 1.15, -8)
-mesh = SubResource("r73")
+[node name="Body" type="StaticBody3D" parent="Architecture/Wall01/UpperWest"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Architecture/Wall01/UpperWest/Body"]
+shape = SubResource("r506")
+
+[node name="UpperEast" type="MeshInstance3D" parent="Architecture/Wall01"]
+position = Vector3(2.475, 2.225, -8)
+mesh = SubResource("r507")
+
+[node name="Body" type="StaticBody3D" parent="Architecture/Wall01/UpperEast"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Architecture/Wall01/UpperEast/Body"]
+shape = SubResource("r508")
+
+[node name="BaseWest" type="MeshInstance3D" parent="Architecture/Wall01"]
+position = Vector3(-5.075, 0.055, -8)
+mesh = SubResource("r509")
+
+[node name="BaseEast" type="MeshInstance3D" parent="Architecture/Wall01"]
+position = Vector3(2.475, 0.055, -8)
+mesh = SubResource("r510")
+
+[node name="DadoCapWest" type="MeshInstance3D" parent="Architecture/Wall01"]
+position = Vector3(-5.075, 1.15, -8)
+mesh = SubResource("r511")
+
+[node name="DadoCapEast" type="MeshInstance3D" parent="Architecture/Wall01"]
+position = Vector3(2.475, 1.15, -8)
+mesh = SubResource("r512")
 
 [node name="Wall02" type="Node3D" parent="Architecture"]
 
@@ -3454,35 +3573,65 @@ mesh = SubResource("r263")
 [node name="Wall35" type="Node3D" parent="Architecture"]
 
 
-[node name="Lower" type="MeshInstance3D" parent="Architecture/Wall35"]
-position = Vector3(6, 0.575, 0.5)
-mesh = SubResource("r264")
+[node name="LowerWest" type="MeshInstance3D" parent="Architecture/Wall35"]
+position = Vector3(4.825, 0.575, 0.5)
+mesh = SubResource("r513")
 
-[node name="Body" type="StaticBody3D" parent="Architecture/Wall35/Lower"]
+[node name="Body" type="StaticBody3D" parent="Architecture/Wall35/LowerWest"]
 collision_layer = 1
 collision_mask = 0
 
-[node name="Shape" type="CollisionShape3D" parent="Architecture/Wall35/Lower/Body"]
-shape = SubResource("r265")
+[node name="Shape" type="CollisionShape3D" parent="Architecture/Wall35/LowerWest/Body"]
+shape = SubResource("r514")
 
-[node name="Upper" type="MeshInstance3D" parent="Architecture/Wall35"]
-position = Vector3(6, 2.225, 0.5)
-mesh = SubResource("r266")
+[node name="LowerEast" type="MeshInstance3D" parent="Architecture/Wall35"]
+position = Vector3(7.375, 0.575, 0.5)
+mesh = SubResource("r515")
 
-[node name="Body" type="StaticBody3D" parent="Architecture/Wall35/Upper"]
+[node name="Body" type="StaticBody3D" parent="Architecture/Wall35/LowerEast"]
 collision_layer = 1
 collision_mask = 0
 
-[node name="Shape" type="CollisionShape3D" parent="Architecture/Wall35/Upper/Body"]
-shape = SubResource("r267")
+[node name="Shape" type="CollisionShape3D" parent="Architecture/Wall35/LowerEast/Body"]
+shape = SubResource("r516")
 
-[node name="Base" type="MeshInstance3D" parent="Architecture/Wall35"]
-position = Vector3(6, 0.055, 0.5)
-mesh = SubResource("r268")
+[node name="UpperWest" type="MeshInstance3D" parent="Architecture/Wall35"]
+position = Vector3(4.825, 2.225, 0.5)
+mesh = SubResource("r517")
 
-[node name="DadoCap" type="MeshInstance3D" parent="Architecture/Wall35"]
-position = Vector3(6, 1.15, 0.5)
-mesh = SubResource("r269")
+[node name="Body" type="StaticBody3D" parent="Architecture/Wall35/UpperWest"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Architecture/Wall35/UpperWest/Body"]
+shape = SubResource("r518")
+
+[node name="UpperEast" type="MeshInstance3D" parent="Architecture/Wall35"]
+position = Vector3(7.375, 2.225, 0.5)
+mesh = SubResource("r519")
+
+[node name="Body" type="StaticBody3D" parent="Architecture/Wall35/UpperEast"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Architecture/Wall35/UpperEast/Body"]
+shape = SubResource("r520")
+
+[node name="BaseWest" type="MeshInstance3D" parent="Architecture/Wall35"]
+position = Vector3(4.825, 0.055, 0.5)
+mesh = SubResource("r521")
+
+[node name="BaseEast" type="MeshInstance3D" parent="Architecture/Wall35"]
+position = Vector3(7.375, 0.055, 0.5)
+mesh = SubResource("r522")
+
+[node name="DadoCapWest" type="MeshInstance3D" parent="Architecture/Wall35"]
+position = Vector3(4.825, 1.15, 0.5)
+mesh = SubResource("r523")
+
+[node name="DadoCapEast" type="MeshInstance3D" parent="Architecture/Wall35"]
+position = Vector3(7.375, 1.15, 0.5)
+mesh = SubResource("r524")
 
 [node name="Wall36" type="Node3D" parent="Architecture"]
 

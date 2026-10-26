@@ -180,6 +180,93 @@ func run() -> void:
 	player.global_position.y = -5
 	await frames(3)
 	check(player.global_position.y > -1, "Falling returns player to a legal checkpoint")
+	# --- P1 greybox locks (before final gate exit; restore state so exit stays clean) ---
+	var wedge = level.get_node("DoorWedge")
+	var storage = level.get_node("Doors/Storage")
+	var rack = level.get_node("PushableRack")
+	var hatch_m = level.get_node("HatchM")
+	var hatch_g = level.get_node("HatchG")
+	check(is_instance_valid(wedge) and not wedge.owned and not wedge.held, "DoorWedge exists and was never picked up before exit path")
+	# (2) Ajar Storage: capsule cannot squeeze through (DoorWedge API; stand on FloorS)
+	wedge.held = true
+	storage.apply_wedge(wedge)
+	await frames(3)
+	check(storage.wedged and absf(storage.hinge.rotation.y + storage.AJAR_ANGLE) < 0.02, "Storage door enters ajar via DoorWedge API")
+	player.teleport_to(Vector3(-3.6, 0.04, 5.35), 0)
+	await frames(2)
+	var ajar_start_z: float = player.global_position.z
+	player.scripted_move = Vector2(0, -1)
+	await frames(70)
+	player.scripted_move = Vector2.ZERO
+	var ajar_z: float = player.global_position.z
+	check(player.global_position.y > -0.5 and ajar_z > 4.25 and ajar_z < ajar_start_z + 0.05, "Ajar Storage door: player capsule cannot pass through")
+	storage.clear_wedge(false)
+	wedge.held = false
+	wedge.restore_home()
+	storage.reset_door()
+	await frames(2)
+	# (3) HatchM ↔ HatchG bidirectional after open (rack at limit required for HatchM)
+	rack._set_travel(rack.travel_limit)
+	await frames(2)
+	check(rack.at_limit(), "PushableRack reaches travel limit exposing HatchM")
+	hatch_m.set_open(true)
+	await frames(40)
+	check(hatch_m.is_open and hatch_g.is_open, "Opening HatchM also opens paired HatchG")
+	player.teleport_to(Vector3(0.4, 0.04, -7.45), 0)
+	await frames(2)
+	player.scripted_move = Vector2(0, -1)
+	var crossed_m_to_h: bool = false
+	for _i in 45:
+		await physics_frame
+		if player.global_position.y < -0.5: break
+		if player.global_position.z < -8.2:
+			crossed_m_to_h = true
+			break
+	player.scripted_move = Vector2.ZERO
+	check(crossed_m_to_h and player.global_position.y > -0.5, "HatchM open: player can pass M → H")
+	player.teleport_to(Vector3(6.2, 0.04, -0.15), PI)
+	await frames(2)
+	player.scripted_move = Vector2(0, -1)
+	var crossed_h_to_g: bool = false
+	for _i in 45:
+		await physics_frame
+		if player.global_position.y < -0.5: break
+		if player.global_position.z > 1.0:
+			crossed_h_to_g = true
+			break
+	player.scripted_move = Vector2.ZERO
+	check(crossed_h_to_g and player.global_position.y > -0.5, "HatchG open: player can pass H → G")
+	player.teleport_to(Vector3(6.2, 0.04, 1.35), 0)
+	await frames(2)
+	player.scripted_move = Vector2(0, -1)
+	var crossed_g_to_h: bool = false
+	for _i in 45:
+		await physics_frame
+		if player.global_position.y < -0.5: break
+		if player.global_position.z < 0.0:
+			crossed_g_to_h = true
+			break
+	player.scripted_move = Vector2.ZERO
+	check(crossed_g_to_h and player.global_position.y > -0.5, "HatchG open: player can pass G → H (no soft-lock)")
+	player.teleport_to(Vector3(0.4, 0.04, -8.55), PI)
+	await frames(2)
+	player.scripted_move = Vector2(0, -1)
+	var crossed_h_to_m: bool = false
+	for _i in 45:
+		await physics_frame
+		if player.global_position.y < -0.5: break
+		if player.global_position.z > -7.4:
+			crossed_h_to_m = true
+			break
+	player.scripted_move = Vector2.ZERO
+	check(crossed_h_to_m and player.global_position.y > -0.5, "HatchM open: player can pass H → M (bidirectional)")
+	hatch_m.set_open(false)
+	await frames(25)
+	rack.reset_rack()
+	player.teleport_to(Vector3(2.7, 0.04, -4), 0)
+	await frames(2)
+	check(not wedge.owned and not wedge.held, "P1 hatch/ajar path left DoorWedge unowned (not exit-required)")
+	# (1) No-wedge exit: raise shutter and leave without ever calling wedge pick_up
 	game.gate.hold(2.05)
 	game.gate.hold(2.05)
 	await frames(40)
@@ -188,7 +275,7 @@ func run() -> void:
 	player.scripted_move = Vector2(0,-1)
 	await frames(70)
 	player.scripted_move = Vector2.ZERO
-	check(game.mode == "ending", "Actual character motion through raised gate completes chapter")
+	check(game.mode == "ending" and not wedge.owned, "No-wedge exit: raise shutter and leave without picking up DoorWedge")
 	print("RESULT passed=",passed," failed=",failed)
 	lines.append("Fixture-based engine tests; not OS input or human play. passed=%d failed=%d" % [passed,failed])
 	var report := FileAccess.open("res://evidence/logs/acceptance.txt",FileAccess.WRITE)

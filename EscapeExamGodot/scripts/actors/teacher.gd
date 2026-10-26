@@ -31,6 +31,11 @@ func _ready() -> void:
 	last_position = global_position
 	nav.path_desired_distance = 0.25
 	nav.target_desired_distance = 0.3
+	# ark 2026-10-27: no floating alert icons; keep five-state suspicion logic only.
+	if has_node("AlertIcon"):
+		$AlertIcon.visible = false
+	if has_node("SuspicionBar"):
+		$SuspicionBar.visible = false
 
 func reset_teacher() -> void:
 	global_position = patrol_points[0]
@@ -201,28 +206,13 @@ func _physics_process(delta: float) -> void:
 	_update_alert_ui()
 
 func _update_alert_ui() -> void:
-	var icon: Label3D = $AlertIcon
-	var bar: Label3D = $SuspicionBar
-	if state == "chase":
-		icon.text = "!"
-		icon.modulate = Color(0.95, 0.25, 0.22, 1)
-		bar.text = ""
-	elif state == "suspicious" or suspicion > 0.08:
-		icon.text = "?"
-		icon.modulate = Color(0.95, 0.85, 0.35, 1)
-		var filled := int(clampf(suspicion, 0.0, 1.0) * 8.0)
-		var marks := ""
-		for i in range(8):
-			marks += "█" if i < filled else "░"
-		bar.text = marks
-		bar.modulate = Color(0.9, 0.75, 0.35, 0.95).lerp(Color(0.95, 0.35, 0.25, 0.95), suspicion)
-	elif state == "investigate":
-		icon.text = "?"
-		icon.modulate = Color(0.85, 0.8, 0.55, 0.85)
-		bar.text = ""
-	else:
-		icon.text = ""
-		bar.text = ""
+	# Intentionally blank: alert billboards stay hidden; detection state machine unchanged.
+	if has_node("AlertIcon"):
+		$AlertIcon.visible = false
+		$AlertIcon.text = ""
+	if has_node("SuspicionBar"):
+		$SuspicionBar.visible = false
+		$SuspicionBar.text = ""
 
 func _flat_distance(point: Vector3) -> float:
 	return Vector2(global_position.x - point.x, global_position.z - point.z).length()

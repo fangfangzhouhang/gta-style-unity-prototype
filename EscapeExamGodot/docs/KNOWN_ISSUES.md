@@ -14,3 +14,6 @@
 
 - 冷廊剪影糊墙（纯冷光下大衣轮廓易糊进墙）：开 follow-up 给 Fixture5/7 侧溢（audio）。证据前对照见 `evidence/screenshots/art-review/`（S02/S03 若有）；侧溢数字已在 audio 合入 feat，仍待人工 after 复检。
 - Alert 正面证据已入仓：`evidence/screenshots/art-review/alert-front-q.png`（?）、`alert-front-bang.png`（!）。
+
+## Alert UI removed (2026-10-27)
+ark decided floating `?`/`!` and the orange suspicion bar should not show. Teacher five-state logic (`patrol→suspicious→investigate→chase→search/return`) remains; readability relies on gait/stop/turn/audio/silhouette. Prior `art-review/alert-front-*.png` evidence is historical only.

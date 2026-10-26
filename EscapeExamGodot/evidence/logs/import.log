@@ -1,0 +1,86 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ERROR: Failed to read the root certificate store.
+   at: get_system_ca_certificates (platform/windows/os_windows.cpp:2582)
+ERROR: Could not open 'user://' directory: 'user://'.
+   at: _get_and_create_snapshot_storage_dir (modules/objectdb_profiler/editor/objectdb_profiler_panel.cpp:157)
+[   0% ] first_scan_filesystem | Started 项目初始化 (5 steps)
+[   0% ] first_scan_filesystem | 正在扫描文件结构……
+[  16% ] first_scan_filesystem | 正在加载全局类名……
+[  33% ] first_scan_filesystem | 正在校验 GDExtension……
+[  50% ] first_scan_filesystem | 正在创建自动加载脚本……
+[  66% ] first_scan_filesystem | 正在初始化插件……
+[  83% ] first_scan_filesystem | 正在启动文件扫描……
+[ DONE ] first_scan_filesystem
+
+[   0% ] update_scripts_classes | Started 正在注册全局类…… (13 steps)
+[   0% ] update_scripts_classes | 
+[   7% ] update_scripts_classes | 
+[  14% ] update_scripts_classes | 
+[  21% ] update_scripts_classes | 
+[  28% ] update_scripts_classes | 
+[  35% ] update_scripts_classes | 
+[  42% ] update_scripts_classes | 
+[  50% ] update_scripts_classes | 
+[  57% ] update_scripts_classes | 
+[  64% ] update_scripts_classes | 
+[  71% ] update_scripts_classes | 
+[  78% ] update_scripts_classes | 
+[  85% ] update_scripts_classes | 
+[ DONE ] update_scripts_classes
+
+[   0% ] _update_scan_actions | Started 正在扫描动作…… (8 steps)
+[   0% ] _update_scan_actions | bell.wav
+[  11% ] _update_scan_actions | chain.wav
+[  22% ] _update_scan_actions | chime.wav
+[  33% ] _update_scan_actions | door.wav
+[  44% ] _update_scan_actions | notice.wav
+[  55% ] _update_scan_actions | step_hard.wav
+[  66% ] _update_scan_actions | step_soft.wav
+[  77% ] _update_scan_actions | tick.wav
+[ DONE ] _update_scan_actions
+
+[   0% ] reimport | Started 正在导入或重新导入资产 (8 steps)
+[   0% ] reimport | 正在准备重新导入文件……
+[  11% ] reimport | 正在准备重新导入文件……
+[  22% ] reimport | 正在准备重新导入文件……
+[  33% ] reimport | 正在准备重新导入文件……
+[  44% ] reimport | 正在准备重新导入文件……
+[  55% ] reimport | 正在准备重新导入文件……
+[  66% ] reimport | 正在准备重新导入文件……
+[  77% ] reimport | 正在准备重新导入文件……
+[   0% ] reimport | 正在执行重新导入的前置操作……
+[   0% ] reimport | bell.wav
+[  11% ] reimport | chain.wav
+[  22% ] reimport | chime.wav
+[  33% ] reimport | door.wav
+[  44% ] reimport | notice.wav
+[  55% ] reimport | step_hard.wav
+[  66% ] reimport | step_soft.wav
+[  77% ] reimport | tick.wav
+[  88% ] reimport | 正在结束资产导入……
+[ DONE ] reimport
+
+[   0% ] reimport | Started 正在导入或重新导入资产 (8 steps)
+[   0% ] reimport | 正在执行重新导入的后置操作……
+[ DONE ] reimport
+
+[   0% ] loading_editor_layout | Started 正在加载编辑器 (5 steps)
+[   0% ] loading_editor_layout | 正在加载编辑器布局……
+[  16% ] loading_editor_layout | 正在加载停靠面板……
+[ DONE ] loading_editor_layout
+
+ERROR: res://scenes/actors/teacher.tscn:6 - Parse Error: Expected value, got ''.''.
+   at: _printerr (scene/resources/resource_format_text.cpp:41)
+ERROR: Failed loading resource: res://scenes/actors/teacher.tscn.
+   at: _load (core/io/resource_loader.cpp:317)
+SCRIPT ERROR: Parse Error: Cannot infer the type of "listener" variable because the value doesn't have a set type.
+   at: GDScript::reload (res://scripts/systems/acoustics.gd:67)
+SCRIPT ERROR: Parse Error: Cannot infer the type of "side" variable because the value doesn't have a set type.
+   at: GDScript::reload (res://scripts/systems/acoustics.gd:81)
+ERROR: Failed to load script "res://scripts/systems/acoustics.gd" with error "Parse error".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+ERROR: res://scenes/chapters/chapter_01.tscn:111 - Parse Error: Expected value, got ''.''.
+   at: _printerr (scene/resources/resource_format_text.cpp:41)
+ERROR: Failed loading resource: res://scenes/chapters/chapter_01.tscn.
+   at: _load (core/io/resource_loader.cpp:317)

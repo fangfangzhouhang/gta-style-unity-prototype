@@ -13,3 +13,7 @@ local_data/
 export_credentials.cfg
 __pycache__/
 *.pyc
+
+# Keep audited evidence even inside a Unity repo that ignores Logs directories.
+!evidence/logs/
+!evidence/logs/**

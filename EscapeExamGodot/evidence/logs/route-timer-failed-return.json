@@ -1,0 +1,259 @@
+{
+	"events": [
+		{
+			"data": {
+				"build": "A-M2.0",
+				"renderer": "forward_plus"
+			},
+			"event": "boot",
+			"time": 0.0
+		},
+		{
+			"data": {},
+			"event": "new_run",
+			"time": 0.0
+		},
+		{
+			"data": {
+				"id": "timer"
+			},
+			"event": "fact",
+			"time": 0.18
+		},
+		{
+			"data": {
+				"position": [
+					-6.5,
+					0.869999945163727,
+					-6.65000057220459
+				]
+			},
+			"event": "timer_placed",
+			"time": 0.26
+		},
+		{
+			"data": {
+				"held": false
+			},
+			"event": "timer_armed",
+			"time": 0.27
+		},
+		{
+			"data": {},
+			"event": "timer_ringing",
+			"time": 3.27
+		},
+		{
+			"data": {
+				"from": "patrol",
+				"to": "investigate"
+			},
+			"event": "teacher_state",
+			"time": 4.29
+		},
+		{
+			"data": {
+				"kind": "计时器铃声",
+				"strength": 13.0,
+				"target": [
+					-6.5,
+					-6.65000057220459
+				]
+			},
+			"event": "heard",
+			"time": 4.29
+		},
+		{
+			"data": {
+				"from": "investigate",
+				"to": "suspicious"
+			},
+			"event": "teacher_state",
+			"time": 6.85
+		},
+		{
+			"data": {
+				"id": "shortcut"
+			},
+			"event": "fact",
+			"time": 7.17
+		},
+		{
+			"data": {
+				"name": "Shortcut",
+				"open": true
+			},
+			"event": "door",
+			"time": 7.17
+		},
+		{
+			"data": {
+				"name": "Shortcut",
+				"open": false
+			},
+			"event": "door",
+			"time": 8.48
+		},
+		{
+			"data": {
+				"from": "suspicious",
+				"to": "investigate"
+			},
+			"event": "teacher_state",
+			"time": 9.2
+		},
+		{
+			"data": {
+				"kind": "你的脚步",
+				"strength": 3.2,
+				"target": [
+					-5.29904413223267,
+					-3.05428552627563
+				]
+			},
+			"event": "heard",
+			"time": 9.2
+		},
+		{
+			"data": {
+				"kind": "计时器铃声",
+				"strength": 16.5,
+				"target": [
+					-6.5,
+					-6.65000057220459
+				]
+			},
+			"event": "heard",
+			"time": 9.3
+		},
+		{
+			"data": {
+				"from": "investigate",
+				"to": "suspicious"
+			},
+			"event": "teacher_state",
+			"time": 9.8
+		},
+		{
+			"data": {
+				"from": "suspicious",
+				"to": "investigate"
+			},
+			"event": "teacher_state",
+			"time": 9.87
+		},
+		{
+			"data": {
+				"kind": "你的脚步",
+				"strength": 5.3,
+				"target": [
+					-5.29999923706055,
+					-0.0543107911944389
+				]
+			},
+			"event": "heard",
+			"time": 9.87
+		},
+		{
+			"data": {
+				"from": "investigate",
+				"to": "suspicious"
+			},
+			"event": "teacher_state",
+			"time": 9.87
+		},
+		{
+			"data": {
+				"from": "suspicious",
+				"to": "investigate"
+			},
+			"event": "teacher_state",
+			"time": 9.98
+		},
+		{
+			"data": {
+				"kind": "你的脚步",
+				"strength": 5.6,
+				"target": [
+					-5.16955137252808,
+					1.43957185745239
+				]
+			},
+			"event": "heard",
+			"time": 10.19
+		},
+		{
+			"data": {
+				"kind": "计时器铃声",
+				"strength": 16.5,
+				"target": [
+					-6.5,
+					-6.65000057220459
+				]
+			},
+			"event": "heard",
+			"time": 10.31
+		},
+		{
+			"data": {
+				"from": "investigate",
+				"to": "suspicious"
+			},
+			"event": "teacher_state",
+			"time": 10.78
+		},
+		{
+			"data": {
+				"from": "suspicious",
+				"to": "investigate"
+			},
+			"event": "teacher_state",
+			"time": 11.06
+		},
+		{
+			"data": {
+				"kind": "你的脚步",
+				"strength": 7.0,
+				"target": [
+					-3.36376452445984,
+					1.07706713676453
+				]
+			},
+			"event": "heard",
+			"time": 11.06
+		},
+		{
+			"data": {
+				"from": "investigate",
+				"to": "suspicious"
+			},
+			"event": "teacher_state",
+			"time": 11.06
+		},
+		{
+			"data": {
+				"from": "suspicious",
+				"to": "chase"
+			},
+			"event": "teacher_state",
+			"time": 11.83
+		},
+		{
+			"data": {
+				"checkpoint": "print",
+				"gate": 0,
+				"reason": "你的脚步让老师来到了这里。"
+			},
+			"event": "caught",
+			"time": 11.87
+		}
+	],
+	"result": {
+		"captures": 1,
+		"gate": 0,
+		"kind": "script_assisted_active_ai_no_teleport",
+		"seconds": 11.8659090909092,
+		"strategy": "timer",
+		"success": false
+	}
+}

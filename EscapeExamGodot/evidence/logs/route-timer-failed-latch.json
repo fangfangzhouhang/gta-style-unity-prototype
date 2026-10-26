@@ -1,0 +1,115 @@
+{
+	"events": [
+		{
+			"data": {
+				"build": "A-M2.1",
+				"renderer": "forward_plus"
+			},
+			"event": "boot",
+			"time": 0.0
+		},
+		{
+			"data": {},
+			"event": "new_run",
+			"time": 0.0
+		},
+		{
+			"data": {
+				"id": "timer"
+			},
+			"event": "fact",
+			"time": 0.2
+		},
+		{
+			"data": {
+				"position": [
+					-6.5,
+					0.869999945163727,
+					-6.65000057220459
+				]
+			},
+			"event": "timer_placed",
+			"time": 0.26
+		},
+		{
+			"data": {
+				"held": false
+			},
+			"event": "timer_armed",
+			"time": 0.27
+		},
+		{
+			"data": {},
+			"event": "timer_ringing",
+			"time": 3.27
+		},
+		{
+			"data": {
+				"from": "patrol",
+				"to": "investigate"
+			},
+			"event": "teacher_state",
+			"time": 4.28
+		},
+		{
+			"data": {
+				"kind": "计时器铃声",
+				"strength": 13.0,
+				"target": [
+					-6.5,
+					-6.65000057220459
+				]
+			},
+			"event": "heard",
+			"time": 4.28
+		},
+		{
+			"data": {
+				"from": "investigate",
+				"to": "suspicious"
+			},
+			"event": "teacher_state",
+			"time": 6.83
+		},
+		{
+			"data": {
+				"id": "shortcut"
+			},
+			"event": "fact",
+			"time": 7.17
+		},
+		{
+			"data": {
+				"name": "Shortcut",
+				"open": true
+			},
+			"event": "door",
+			"time": 7.17
+		},
+		{
+			"data": {
+				"from": "suspicious",
+				"to": "chase"
+			},
+			"event": "teacher_state",
+			"time": 7.88
+		},
+		{
+			"data": {
+				"checkpoint": "print",
+				"gate": 0,
+				"reason": "老师在无遮挡处确认了你的位置。转角和关门能切断视线。"
+			},
+			"event": "caught",
+			"time": 9.31
+		}
+	],
+	"result": {
+		"captures": 1,
+		"gate": 0,
+		"kind": "script_assisted_active_ai_no_teleport",
+		"seconds": 9.30990833333328,
+		"strategy": "timer",
+		"success": false
+	}
+}

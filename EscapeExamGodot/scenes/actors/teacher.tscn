@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3]
+[gd_scene load_steps=31 format=3]
 
 [ext_resource type="Script" path="res://scripts/actors/teacher.gd" id="e1"]
 
@@ -7,7 +7,7 @@ radius = 0.28
 height = 2.05
 
 [sub_resource type="StandardMaterial3D" id="r2"]
-albedo_color = Color(0.34, 0.42, 0.48, 1)
+albedo_color = Color(0.3, 0.38, 0.46, 1)
 roughness = 0.72
 metallic = 0.05
 
@@ -17,7 +17,7 @@ roughness = 0.85
 metallic = 0
 
 [sub_resource type="StandardMaterial3D" id="r4"]
-albedo_color = Color(0.86, 0.82, 0.78, 1)
+albedo_color = Color(0.9, 0.86, 0.84, 1)
 roughness = 0.35
 metallic = 0.02
 
@@ -47,11 +47,11 @@ roughness = 0.4
 metallic = 0
 
 [sub_resource type="BoxMesh" id="r8"]
-size = Vector3(0.52, 0.95, 0.3)
+size = Vector3(0.58, 1.12, 0.34)
 material = SubResource("r2")
 
 [sub_resource type="BoxMesh" id="r9"]
-size = Vector3(0.28, 0.08, 0.24)
+size = Vector3(0.34, 0.09, 0.26)
 material = SubResource("r7")
 
 [sub_resource type="BoxMesh" id="r10"]
@@ -71,7 +71,7 @@ size = Vector3(0.19, 0.14, 0.34)
 material = SubResource("r6")
 
 [sub_resource type="BoxMesh" id="r14"]
-size = Vector3(0.16, 0.72, 0.18)
+size = Vector3(0.17, 0.86, 0.19)
 material = SubResource("r2")
 
 [sub_resource type="BoxMesh" id="r15"]
@@ -79,7 +79,7 @@ size = Vector3(0.12, 0.16, 0.13)
 material = SubResource("r4")
 
 [sub_resource type="BoxMesh" id="r16"]
-size = Vector3(0.16, 0.72, 0.18)
+size = Vector3(0.17, 0.86, 0.19)
 material = SubResource("r2")
 
 [sub_resource type="BoxMesh" id="r17"]
@@ -87,8 +87,8 @@ size = Vector3(0.12, 0.16, 0.13)
 material = SubResource("r4")
 
 [sub_resource type="SphereMesh" id="r18"]
-radius = 0.155
-height = 0.36
+radius = 0.15
+height = 0.4
 radial_segments = 16
 rings = 8
 material = SubResource("r4")
@@ -114,12 +114,31 @@ size = Vector3(0.28, 0.36, 0.035)
 material = SubResource("r7")
 
 [sub_resource type="BoxMesh" id="r26"]
-size = Vector3(0.09, 0.012, 0.02)
+size = Vector3(0.1, 0.008, 0.015)
 material = SubResource("r25")
 
 [sub_resource type="BoxMesh" id="r27"]
 size = Vector3(0.025, 0.18, 0.025)
 material = SubResource("r24")
+
+
+[sub_resource type="TorusMesh" id="r28"]
+inner_radius = 0.035
+outer_radius = 0.048
+rings = 8
+ring_segments = 12
+material = SubResource("r25")
+
+[sub_resource type="TorusMesh" id="r29"]
+inner_radius = 0.035
+outer_radius = 0.048
+rings = 8
+ring_segments = 12
+material = SubResource("r25")
+
+[sub_resource type="BoxMesh" id="r30"]
+size = Vector3(0.05, 0.01, 0.01)
+material = SubResource("r25")
 
 [node name="Teacher" type="CharacterBody3D"]
 script = ExtResource("e1")
@@ -141,11 +160,11 @@ target_desired_distance = 0.3
 [node name="Visual" type="Node3D" parent="."]
 
 [node name="Coat" type="MeshInstance3D" parent="Visual"]
-position = Vector3(0, 1.28, 0)
+position = Vector3(0, 1.22, 0)
 mesh = SubResource("r8")
 
 [node name="Collar" type="MeshInstance3D" parent="Visual"]
-position = Vector3(0, 1.72, -0.06)
+position = Vector3(0, 1.78, -0.05)
 mesh = SubResource("r9")
 
 [node name="LeftLeg" type="Node3D" parent="Visual"]
@@ -171,7 +190,7 @@ position = Vector3(0, -0.84, -0.07)
 mesh = SubResource("r13")
 
 [node name="LeftArm" type="Node3D" parent="Visual"]
-position = Vector3(-0.36, 1.68, 0)
+position = Vector3(-0.4, 1.62, 0)
 
 [node name="Sleeve" type="MeshInstance3D" parent="Visual/LeftArm"]
 position = Vector3(0, -0.32, 0)
@@ -182,7 +201,7 @@ position = Vector3(0, -0.72, 0)
 mesh = SubResource("r15")
 
 [node name="RightArm" type="Node3D" parent="Visual"]
-position = Vector3(0.36, 1.68, 0)
+position = Vector3(0.4, 1.62, 0)
 
 [node name="Sleeve" type="MeshInstance3D" parent="Visual/RightArm"]
 position = Vector3(0, -0.32, 0)
@@ -219,6 +238,21 @@ mesh = SubResource("r21")
 position = Vector3(0.06, 0.03, -0.145)
 mesh = SubResource("r22")
 
+
+[node name="GlassL" type="MeshInstance3D" parent="Visual/Head"]
+position = Vector3(-0.06, 0.03, -0.14)
+rotation_degrees = Vector3(90, 0, 0)
+mesh = SubResource("r28")
+
+[node name="GlassR" type="MeshInstance3D" parent="Visual/Head"]
+position = Vector3(0.06, 0.03, -0.14)
+rotation_degrees = Vector3(90, 0, 0)
+mesh = SubResource("r29")
+
+[node name="GlassesBridge" type="MeshInstance3D" parent="Visual/Head"]
+position = Vector3(0, 0.03, -0.145)
+mesh = SubResource("r30")
+
 [node name="Smile" type="MeshInstance3D" parent="Visual/Head"]
 position = Vector3(0, -0.07, -0.145)
 mesh = SubResource("r26")
@@ -228,10 +262,10 @@ position = Vector3(0, -0.48, -0.14)
 mesh = SubResource("r23")
 
 [node name="AlertIcon" type="Label3D" parent="."]
-position = Vector3(0, 2.35, 0)
+position = Vector3(0, 2.48, 0)
 text = ""
-font_size = 64
-pixel_size = 0.01
+font_size = 80
+pixel_size = 0.012
 modulate = Color(0.95, 0.85, 0.35, 1)
 outline_size = 8
 outline_modulate = Color(0.05, 0.05, 0.05, 0.85)
@@ -240,10 +274,10 @@ no_depth_test = true
 shaded = false
 
 [node name="SuspicionBar" type="Label3D" parent="."]
-position = Vector3(0, 2.18, 0)
+position = Vector3(0, 2.28, 0)
 text = ""
-font_size = 28
-pixel_size = 0.008
+font_size = 36
+pixel_size = 0.01
 modulate = Color(0.9, 0.75, 0.35, 0.9)
 outline_size = 4
 outline_modulate = Color(0.05, 0.05, 0.05, 0.7)

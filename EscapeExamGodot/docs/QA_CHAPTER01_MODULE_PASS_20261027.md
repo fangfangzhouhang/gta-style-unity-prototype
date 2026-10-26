@@ -66,3 +66,17 @@ Godot **4.7.2** · `forward_plus` · viewport 1280×800 · stretch `canvas_items
 ## 下一步
 
 @游戏开发 按 Major（+ 两条 Minor）改完并 push → 再 priority 喊 @游戏审核。通过前 **不要** 合 `main`。
+
+---
+
+## 复审 · 2026-10-27 01:48 Asia/Shanghai · @ `4d1d012`
+
+**结论：OK**（可交 ark 目视后合 `main`；本审核不代合主干）
+
+| 上次阻塞 | 复审证据 |
+| --- | --- |
+| P1 夹具 | 本机复跑 **48/48 PASS**（含 ajar 不可穿、Hatch 双向、无楔离场） |
+| Alert 正面 | `evidence/screenshots/art-review/alert-front-{q,bang}.png` 在仓 |
+| 冷廊侧溢 | `139cec8` 已并；KNOWN_ISSUES 仍记人工 after 复检 |
+
+仍为 limitation（不挡 OK）：人工 15–25 分钟乐趣、耳听 duck/sting、失败证据句 UI 挂接、雨窗 P2。

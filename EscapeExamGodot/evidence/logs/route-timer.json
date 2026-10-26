@@ -1,0 +1,112 @@
+{
+	"events": [
+		{
+			"data": {
+				"build": "A-M2.1",
+				"renderer": "forward_plus"
+			},
+			"event": "boot",
+			"time": 0.0
+		},
+		{
+			"data": {},
+			"event": "new_run",
+			"time": 0.0
+		},
+		{
+			"data": {
+				"id": "timer"
+			},
+			"event": "fact",
+			"time": 0.2
+		},
+		{
+			"data": {
+				"position": [
+					-6.5,
+					0.869999945163727,
+					-6.65000057220459
+				]
+			},
+			"event": "timer_placed",
+			"time": 0.26
+		},
+		{
+			"data": {
+				"held": false
+			},
+			"event": "timer_armed",
+			"time": 0.27
+		},
+		{
+			"data": {},
+			"event": "timer_ringing",
+			"time": 3.27
+		},
+		{
+			"data": {
+				"from": "patrol",
+				"to": "investigate"
+			},
+			"event": "teacher_state",
+			"time": 4.28
+		},
+		{
+			"data": {
+				"kind": "计时器铃声",
+				"strength": 13.0,
+				"target": [
+					-6.5,
+					-6.65000057220459
+				]
+			},
+			"event": "heard",
+			"time": 4.28
+		},
+		{
+			"data": {
+				"id": "gate"
+			},
+			"event": "fact",
+			"time": 11.52
+		},
+		{
+			"data": {
+				"stage": 1
+			},
+			"event": "gate_stage",
+			"time": 13.53
+		},
+		{
+			"data": {
+				"stage": 2
+			},
+			"event": "gate_stage",
+			"time": 15.55
+		},
+		{
+			"data": {
+				"stage": 3
+			},
+			"event": "gate_stage",
+			"time": 17.56
+		},
+		{
+			"data": {
+				"captures": 0,
+				"seconds": 19.3802977575759,
+				"stopped_loop": false
+			},
+			"event": "chapter_complete",
+			"time": 19.38
+		}
+	],
+	"result": {
+		"captures": 0,
+		"gate": 3,
+		"kind": "script_assisted_active_ai_no_teleport",
+		"seconds": 19.3802977575759,
+		"strategy": "timer",
+		"success": true
+	}
+}

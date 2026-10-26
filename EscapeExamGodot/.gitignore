@@ -1,0 +1,19 @@
+# Godot caches; keep authored .tscn/.tres and .uid files
+.godot/
+*.tmp
+*.bak
+# Build output and local test saves
+builds/
+tools/runtime/
+test_userdata/
+local_data/
+# Local credentials must never enter version control
+.env
+.env.*
+export_credentials.cfg
+__pycache__/
+*.pyc
+
+# Keep audited evidence even inside a Unity repo that ignores Logs directories.
+!evidence/logs/
+!evidence/logs/**

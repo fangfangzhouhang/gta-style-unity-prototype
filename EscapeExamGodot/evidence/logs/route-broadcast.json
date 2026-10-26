@@ -1,0 +1,150 @@
+{
+	"events": [
+		{
+			"data": {
+				"build": "A-M2.1",
+				"renderer": "forward_plus"
+			},
+			"event": "boot",
+			"time": 0.0
+		},
+		{
+			"data": {},
+			"event": "new_run",
+			"time": 0.0
+		},
+		{
+			"data": {
+				"id": "timer"
+			},
+			"event": "fact",
+			"time": 0.19
+		},
+		{
+			"data": {
+				"position": [
+					-6.5,
+					0.869999945163727,
+					-6.65000057220459
+				]
+			},
+			"event": "timer_placed",
+			"time": 0.26
+		},
+		{
+			"data": {
+				"held": false
+			},
+			"event": "timer_armed",
+			"time": 0.27
+		},
+		{
+			"data": {},
+			"event": "timer_ringing",
+			"time": 3.27
+		},
+		{
+			"data": {
+				"from": "patrol",
+				"to": "investigate"
+			},
+			"event": "teacher_state",
+			"time": 4.28
+		},
+		{
+			"data": {
+				"kind": "计时器铃声",
+				"strength": 13.0,
+				"target": [
+					-6.5,
+					-6.65000057220459
+				]
+			},
+			"event": "heard",
+			"time": 4.28
+		},
+		{
+			"data": {
+				"id": "loop"
+			},
+			"event": "fact",
+			"time": 9.62
+		},
+		{
+			"data": {
+				"kind": "终场铃",
+				"strength": 20.7,
+				"target": [
+					-7.0,
+					-7.59999990463257
+				]
+			},
+			"event": "heard",
+			"time": 9.86
+		},
+		{
+			"data": {
+				"id": "broadcast"
+			},
+			"event": "fact",
+			"time": 9.86
+		},
+		{
+			"data": {
+				"kind": "计时器铃声",
+				"strength": 19.9,
+				"target": [
+					-6.5,
+					-6.65000057220459
+				]
+			},
+			"event": "heard",
+			"time": 10.31
+		},
+		{
+			"data": {
+				"id": "gate"
+			},
+			"event": "fact",
+			"time": 14.54
+		},
+		{
+			"data": {
+				"stage": 1
+			},
+			"event": "gate_stage",
+			"time": 16.54
+		},
+		{
+			"data": {
+				"stage": 2
+			},
+			"event": "gate_stage",
+			"time": 18.57
+		},
+		{
+			"data": {
+				"stage": 3
+			},
+			"event": "gate_stage",
+			"time": 20.58
+		},
+		{
+			"data": {
+				"captures": 0,
+				"seconds": 22.3935746666668,
+				"stopped_loop": true
+			},
+			"event": "chapter_complete",
+			"time": 22.39
+		}
+	],
+	"result": {
+		"captures": 0,
+		"gate": 3,
+		"kind": "script_assisted_active_ai_no_teleport",
+		"seconds": 22.3935746666668,
+		"strategy": "broadcast",
+		"success": true
+	}
+}

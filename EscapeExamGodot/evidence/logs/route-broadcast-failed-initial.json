@@ -1,0 +1,64 @@
+{
+	"events": [
+		{
+			"data": {
+				"build": "A-M2.0",
+				"renderer": "forward_plus"
+			},
+			"event": "boot",
+			"time": 0.0
+		},
+		{
+			"data": {},
+			"event": "new_run",
+			"time": 0.0
+		},
+		{
+			"data": {
+				"from": "patrol",
+				"to": "suspicious"
+			},
+			"event": "teacher_state",
+			"time": 7.45
+		},
+		{
+			"data": {
+				"id": "loop"
+			},
+			"event": "fact",
+			"time": 9.42
+		},
+		{
+			"data": {
+				"id": "broadcast"
+			},
+			"event": "fact",
+			"time": 9.66
+		},
+		{
+			"data": {
+				"from": "suspicious",
+				"to": "chase"
+			},
+			"event": "teacher_state",
+			"time": 9.76
+		},
+		{
+			"data": {
+				"checkpoint": "classroom",
+				"gate": 0,
+				"reason": "门外的目击让老师确认了你的位置。"
+			},
+			"event": "caught",
+			"time": 10.5
+		}
+	],
+	"result": {
+		"captures": 1,
+		"gate": 0,
+		"kind": "script_assisted_active_ai_no_teleport",
+		"seconds": 10.4989077575759,
+		"strategy": "broadcast",
+		"success": false
+	}
+}

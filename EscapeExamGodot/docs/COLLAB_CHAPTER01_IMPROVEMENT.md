@@ -34,6 +34,14 @@
 - **禁止**：改 GDScript/tscn 逻辑；加钥匙/第二敌人提案若无 ark 书面同意不得进本分支。
 - **Worktree 焦点路径**：`EscapeExamGodot/docs/`、`DESIGN.md` 建议补丁（PR 描述贴 diff 即可）。
 
+**定稿锁定（ark · 2026-10-27）**
+- 侧室 **S「教具储藏」**：优先挂转角 **J**
+- **门楔**：仅窥视 + 撑卷纸架；**不允许**挤过半开门
+- 夹道 **H「卷纸检修」**：要做；全可选、无 soft-lock
+- **雨窗曲柄**：标 **P2**，不进本轮 P0/P1
+- 排期：P0 = 情节写 docs（节拍表 + 失败证据句）；**P1 = @游戏开发 实现** S + 门楔 + 推架露盖 + H；P2 = 雨窗曲柄声学
+- 草案：`/workspace/escape-exam-docs/design-proposal-puzzle-map-expand-20261027.md`（实现前对照）
+
 ### B · @游戏光影音效设计
 - **产出**：Environment/灯具参数、AudioBus、环境床、停播 duck、抓捕刺音、试听区灯；可改 `chapter_01` 灯光节点、`ambience`、`default_bus_layout`、`assets/audio/*`。
 - **禁止**：改老师 AI 状态机数值；重写地图拓扑；重跑 `tools/author_scene.py`（会盖光照）。

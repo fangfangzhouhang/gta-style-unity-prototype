@@ -2,7 +2,7 @@
 
 - **任务 ID**：`AUDIO-FIXTURE4-COAT-RIM-20261027`
 - **分支**：`audio/fixture4-coat-rim`（worktree `/workspace/wt-audio-joint`；**未**合并进 `feat/chapter01-module-pass`）
-- **本交付 Commit**：（ · ）
+- **本交付 Commit**：`96564a51d8d5b9c92588419fd10ddcf93b47dcb8`（`96564a5` · `audio: Fixture4 coat-rim knife`）
 - **基线 tip**：`373da02d15b21a6cb5a85bbf19159724542f26f9`（F4 aim `6b05191` ∪ art coat albedo `614e536`）
 - **日期**：2026-10-27（Asia/Shanghai）
 - **Godot**：4.7.2 stable（`/home/box/.local/bin/godot`）· box 实跑 `gl_compatibility` + llvmpipe

@@ -1,7 +1,7 @@
 # 【美术交付】ART-COAT-CONTRAST-S02
 
 - **任务 ID**：`ART-COAT-CONTRAST-S02`
-- **分支**：`art/chapter01-module-pass`
+- **分支**：`art/chapter01-module-pass` @ `bf5b49e` (`bf5b49e11404af5f7e93ae78ac0b11906fdc8154`)
 - **日期**：2026-10-27（Asia/Shanghai）
 - **范围**：仅美术材质 / 块面明度；**未改**灯参、`teacher.gd`、NavMesh、chapter 拓扑、AudioBus。Alert 保持 hidden。
 

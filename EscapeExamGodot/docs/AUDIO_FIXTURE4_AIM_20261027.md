@@ -5,7 +5,7 @@
 - **日期**：2026-10-27（Asia/Shanghai）
 - **分支**：`audio/fixture4-aim-coat`（独立 worktree `/workspace/wt-audio-f4-aim`；**未**合并进 `feat/chapter01-module-pass`）
 - **基准 Commit（feat tip）**：`bc10edcd8addb9e1a266eeac8d18c8ce89adff13`（`bc10edc` · `docs: stamp AUDIO-FIXTURE4-FILL delivery commit SHA`）
-- **本交付 Commit**：*(stamp after commit)*
+- **本交付 Commit**：`a71f05f39b0cae6649a962e44408508368a4a70b`（`a71f05f` · `audio: Fixture4 aim coat rim (reduce west-wall wash)`）
 - **Godot**：4.7.2 stable（`/home/box/.local/bin/godot`）
 - **约束遵守**：仅改 `Lighting/Fixture4` 父节点 `position` + Omni `energy`/`range`/`attenuation`；`shadow_enabled=false` 保持；未新增第 5 盏阴影 Omni；未重开 AlertIcon/SuspicionBar；未改教师 AI / 拓扑 / 玩家 / 解谜 / 非光照场景；**未改** ambient / WorldEnvironment；**未再抬 energy**（≤0.55，本交付略降）。
 

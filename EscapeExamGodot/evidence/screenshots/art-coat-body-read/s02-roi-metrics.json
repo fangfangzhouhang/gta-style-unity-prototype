@@ -1,0 +1,30 @@
+{
+  "before": {
+    "coat_wide": 24.68,
+    "torso_tight": 20.26,
+    "left_wall": 13.91,
+    "east_rim": 25.67,
+    "near_wall": 12.27,
+    "coat_minus_wall": 10.77,
+    "rim_minus_near": 13.4,
+    "center_probe_rgb": [
+      0.0275,
+      0.0902,
+      0.1961
+    ]
+  },
+  "after": {
+    "coat_wide": 27.82,
+    "torso_tight": 22.84,
+    "left_wall": 13.91,
+    "east_rim": 25.67,
+    "near_wall": 12.27,
+    "coat_minus_wall": 13.91,
+    "rim_minus_near": 13.4,
+    "center_probe_rgb": [
+      0.0471,
+      0.1098,
+      0.2039
+    ]
+  }
+}

@@ -21,7 +21,7 @@ size = Vector3(0.48, 1.02, 0.24)
 material = ExtResource("m_coat")
 
 [sub_resource type="BoxMesh" id="mesh_coat_flare"]
-size = Vector3(0.52, 0.20, 0.26)
+size = Vector3(0.56, 0.20, 0.27)
 material = ExtResource("m_coat_flare")
 
 [sub_resource type="BoxMesh" id="mesh_lapel_l"]
@@ -33,7 +33,7 @@ size = Vector3(0.08, 0.32, 0.03)
 material = ExtResource("m_coat_flare")
 
 [sub_resource type="BoxMesh" id="mesh_collar"]
-size = Vector3(0.30, 0.08, 0.20)
+size = Vector3(0.34, 0.09, 0.22)
 material = ExtResource("m_collar")
 
 [sub_resource type="BoxMesh" id="mesh_trousers"]
@@ -45,7 +45,7 @@ size = Vector3(0.16, 0.10, 0.30)
 material = ExtResource("m_shoes")
 
 [sub_resource type="BoxMesh" id="mesh_sleeve"]
-size = Vector3(0.12, 0.98, 0.14)
+size = Vector3(0.14, 0.98, 0.15)
 material = ExtResource("m_coat")
 
 [sub_resource type="BoxMesh" id="mesh_hand"]
@@ -174,7 +174,7 @@ position = Vector3(0, -1.02, -0.05)
 mesh = SubResource("mesh_shoe")
 
 [node name="LeftArm" type="Node3D" parent="Visual"]
-position = Vector3(-0.33, 1.80, 0)
+position = Vector3(-0.34, 1.80, 0)
 
 [node name="Sleeve" type="MeshInstance3D" parent="Visual/LeftArm"]
 position = Vector3(0, -0.40, 0)
@@ -185,7 +185,7 @@ position = Vector3(0, -0.88, 0)
 mesh = SubResource("mesh_hand")
 
 [node name="RightArm" type="Node3D" parent="Visual"]
-position = Vector3(0.33, 1.80, 0)
+position = Vector3(0.34, 1.80, 0)
 
 [node name="Sleeve" type="MeshInstance3D" parent="Visual/RightArm"]
 position = Vector3(0, -0.40, 0)

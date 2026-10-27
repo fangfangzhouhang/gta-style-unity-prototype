@@ -49,3 +49,8 @@
 1. ✅ 老师 Visual 高瘦混搭轮廓（P0-TEACHER-SLIM · `91204e2`）
 2. ✅ 警戒 Label3D 保持 hidden（产品取消，不重开）
 3. ✅ S01–S05 引擎复检截图 `art-s0x-*.png` 已入库
+
+## ART-COAT-CONTRAST-S02（续）
+- 大衣 vs 西廊墙对比度 pass：见 `docs/ART_COAT_CONTRAST_S02.md`
+- 截图：`art-s02-coat-contrast-{before,after}.png`（+ optional S03）
+- 材质：`mat_coat.tres` 提亮偏蓝灰；新建 `mat_coat_flare.tres` 挂 CoatFlare/翻领

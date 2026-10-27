@@ -206,7 +206,7 @@ func _physics_process(delta: float) -> void:
 	_update_alert_ui()
 
 func _update_alert_ui() -> void:
-	# Intentionally blank: alert billboards stay hidden; detection state machine unchanged.
+# Intentionally blank: alert billboards stay hidden; detection state machine unchanged.
 	if has_node("AlertIcon"):
 		$AlertIcon.visible = false
 		$AlertIcon.text = ""

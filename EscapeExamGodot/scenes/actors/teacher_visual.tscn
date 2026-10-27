@@ -1,0 +1,102 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/actors/teacher_visual_body.tscn" id="body"]
+
+[sub_resource type="Environment" id="env_grey"]
+background_mode = 1
+background_color = Color(0.55, 0.56, 0.58, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.72, 0.74, 0.76, 1)
+ambient_light_energy = 0.55
+tonemap_mode = 2
+
+[sub_resource type="StandardMaterial3D" id="mat_floor"]
+albedo_color = Color(0.45, 0.46, 0.48, 1)
+roughness = 0.85
+
+[sub_resource type="BoxMesh" id="mesh_floor"]
+size = Vector3(8, 0.05, 8)
+material = SubResource("mat_floor")
+
+[sub_resource type="StandardMaterial3D" id="mat_back"]
+albedo_color = Color(0.62, 0.63, 0.65, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="mesh_back"]
+size = Vector3(6, 3.4, 0.08)
+material = SubResource("mat_back")
+
+[node name="TeacherVisualReview" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("env_grey")
+
+[node name="Floor" type="MeshInstance3D" parent="."]
+position = Vector3(0, -0.025, 0)
+mesh = SubResource("mesh_floor")
+
+[node name="Backdrop" type="MeshInstance3D" parent="."]
+visible = false
+position = Vector3(0, 1.6, -2.2)
+mesh = SubResource("mesh_back")
+
+[node name="KeyLight" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, -0.353553, 0.353553, 0, 0.707107, 0.707107, -0.5, -0.612372, 0.612372, 2, 4, -2)
+light_color = Color(1, 0.98, 0.94, 1)
+light_energy = 1.15
+shadow_enabled = true
+
+[node name="FillLight" type="OmniLight3D" parent="."]
+position = Vector3(-2.2, 2.4, -1.5)
+light_color = Color(0.75, 0.82, 0.92, 1)
+light_energy = 1.4
+omni_range = 8.0
+
+[node name="RimLight" type="OmniLight3D" parent="."]
+position = Vector3(0.4, 2.0, 1.6)
+light_color = Color(0.55, 0.65, 0.78, 1)
+light_energy = 0.9
+omni_range = 6.0
+
+[node name="ClassroomWarm" type="OmniLight3D" parent="."]
+position = Vector3(0, 2.8, -0.5)
+light_color = Color(1, 0.92, 0.78, 1)
+light_energy = 0.0
+omni_range = 10.0
+
+[node name="CorridorCold" type="OmniLight3D" parent="."]
+position = Vector3(-1.5, 2.6, -2.0)
+light_color = Color(0.55, 0.7, 0.85, 1)
+light_energy = 0.0
+omni_range = 9.0
+
+[node name="CamFront" type="Camera3D" parent="."]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 1.22, -4.4)
+current = true
+fov = 35.0
+
+[node name="CamSide" type="Camera3D" parent="."]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 4.4, 1.22, 0)
+fov = 35.0
+
+[node name="CamBack" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.22, 4.4)
+fov = 35.0
+
+[node name="Cam8m" type="Camera3D" parent="."]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 1.45, -8.0)
+fov = 40.0
+
+[node name="Idle" type="Node3D" parent="."]
+
+[node name="Body" parent="Idle" instance=ExtResource("body")]
+
+[node name="Walk" type="Node3D" parent="."]
+visible = false
+
+[node name="Body" parent="Walk" instance=ExtResource("body")]
+
+[node name="Chase" type="Node3D" parent="."]
+visible = false
+
+[node name="Body" parent="Chase" instance=ExtResource("body")]

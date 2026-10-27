@@ -1,0 +1,8 @@
+Legacy startup smoke tests; 3 simulated seconds per scene.
+PASS: OpenWorld Play startup; camera; no runtime errors during smoke window; new chapter absent.
+PASS: ExamHall Play startup; camera; no runtime errors during smoke window; new chapter absent.
+PASS: SchoolEscape Play startup; camera; no runtime errors during smoke window; new chapter absent.
+PASS: Home Play startup; camera; no runtime errors during smoke window; new chapter absent.
+PASS: HubTown Play startup; camera; no runtime errors during smoke window; new chapter absent.
+PASS: TransitHub Play startup; camera; no runtime errors during smoke window; new chapter absent.
+PASS: TravelMissions Play startup; camera; no runtime errors during smoke window; new chapter absent.

@@ -1,0 +1,16 @@
+PASS: spawn 2F; exit 2F; desk/chair metrics; continuous route and standing clearance; scene saved.
+2026-10-22T10:32:51.9339445Z
+PASS: enclosed roofs; human scale; first-person eyes 1.65/0.95m; crouch feet; blocked standing.
+PASS: actor NavMesh; 2F-to-gate path; swept player/window collision; falling recovery to ground checkpoint; speed/light/map/foliage balance.
+PASS: Play startup; 2F spawn; exam zone/stage/objective; unified HUD present.
+PASS: live CharacterController route with plan, key, utility door, power and gate interactions; east stairs and patrols; escape without capture. Seconds=40.36
+
+CAMPUS_SITE_LAYOUT_PASS
+CAMPUS_V11_LAYOUT_PASS
+CAMPUS_CLEANUP_PASS removed=0
+CAMPUS_VALIDATION_PASS
+CAMPUS_MOTORCYCLE_PHYSICS_PASS steeringRatio=1.300
+CAMPUS_ESCAPE_PUZZLE_NAV_PASS
+CAMPUS_GAMEPLAY_VALIDATION_PASS
+CAMPUS_PLAY_VALIDATION_PASS
+CAMPUS_ESCAPE_RUN_PASS

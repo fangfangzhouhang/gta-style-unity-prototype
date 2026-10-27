@@ -1,10 +1,10 @@
 # 逃离考场 · Godot 独立版
 
-当前为 **feat/chapter01-module-pass 研发版**（2026-10-27），包含 A-M2.1 后续 P1/氛围迭代。用户已选择 A「最后一遍铃」，体验参考确认为《你好，邻居》。观察监考者，利用计时器与广播改变调查方向，再分段抬起出口卷栅。完整美术、人工首玩节奏和发行验收尚未完成。
+当前版本 **A-M2.1，可玩原型**（2026-10-26）。用户已选择 A「最后一遍铃」，体验参考确认为《你好，邻居》。观察监考者，利用计时器与广播改变调查方向，再分段抬起出口卷栅。完整美术、人工首玩节奏和发行验收尚未完成。
 
 ## 克隆后直接打开
 
-本目录是完整 Godot 工程，入口 `project.godot`。仓库已仅保留 Godot 游戏；当前工作分支为 `feat/chapter01-module-pass`，用户确认前不合并 main。
+本目录是完整 Godot 工程，入口 `project.godot`，不是 Unity 插件；运行不依赖旁边的 Unity Assets，也不需要旧 GodotPilot201。
 
 1. 安装/解压 **Godot 4.7.2 标准版**：[官方归档](https://godotengine.org/download/archive/4.7.2-stable/)。不需要 .NET。
 2. Godot 项目管理器选择“导入”，选中本目录 `project.godot`，打开后等待首次资源导入。
@@ -70,7 +70,3 @@ Check 是夹具式引擎测试；Route / TimerRoute 是使用真实角色物理�
 - [验收](evidence/ACCEPTANCE.md)、[已知问题](docs/KNOWN_ISSUES.md)、[素材来源](ASSET_CREDITS.md)。
 - 通过 run.ps1 / 本机 cmd 启动的数据位于 local_data；测试位于 test_userdata。直接从编辑器运行则使用系统 user://EscapeExamGodot。两者不共享，均不入库。
 - 仓库中的 EscapeExamGodot/ 是独立源码目录，不含嵌套 .git 或子模块；克隆一次即可得到所需源码。
-
-## 当前工作目录
-
-本机使用 `D:/Unity/EscapeExamRepository/EscapeExamGodot`。旧 `D:/Unity/EscapeExamGodot` 是历史原型，不作为后续开发源。克隆用户直接使用本目录，不需要相同绝对路径。详见 [Godot 单引擎迁移](docs/GODOT_ONLY_MIGRATION.md)。

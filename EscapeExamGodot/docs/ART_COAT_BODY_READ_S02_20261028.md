@@ -3,7 +3,7 @@
 - **任务 ID**：`ART-COAT-BODY-READ-S02`
 - **分支**：`art/chapter01-module-pass`（worktree `/workspace/wt-art`）
 - **基线 tip（rebase 起点）**：`2b95d84`（`origin/feat/chapter01-module-pass`）
-- **本交付 Commit**：_（stamp after commit）_
+- **本交付 Commit**：5dcd17e3ea6a95522b9599da59f7cf588805093d（5dcd17e）
 - **日期**：2026-10-28（Asia/Shanghai）
 - **Godot**：4.7.2 stable · box 实跑 `gl_compatibility` + llvmpipe
 - **范围**：仅大衣材质 albedo + Visual 肩/袖/领块面比例；**未改**灯参 / Omni / AudioBus / post、`teacher.gd` AI、NavMesh、chapter 拓扑、Alert UI。

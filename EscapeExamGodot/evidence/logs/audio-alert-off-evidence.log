@@ -1,0 +1,40 @@
+PASS Ambience autoload node present at /root/Ambience
+PASS AlertIcon.visible==false during patrol
+PASS SuspicionBar.visible==false during patrol
+PASS AlertIcon.visible==false during investigate
+PASS SuspicionBar.visible==false during investigate
+PASS AlertIcon.visible==false during suspicious
+PASS SuspicionBar.visible==false during suspicious
+PASS AlertIcon.visible==false during chase
+PASS SuspicionBar.visible==false during chase
+PASS RainBed and TubeHum players exist under Ambience
+PASS CatchSting player exists under Ambience
+PASS RainBed.playing==true after start (unless quiet)
+PASS TubeHum.playing==true after start (unless quiet)
+PASS Ambient bus exists
+PASS Sting bus exists
+NOTE shadow OmniLight3D count under Lighting = 4 (budget ≤5; expect 4)
+PASS shadow Omni count ≤5 (measured=4)
+PASS true quiet: RainBed not playing after set_loop_quiet(true)
+PASS true quiet: TubeHum not playing after set_loop_quiet(true)
+PASS beds restart: RainBed.playing after set_loop_quiet(false)
+PASS beds restart: TubeHum.playing after set_loop_quiet(false)
+NOTE Ambient bus before sting = 0.00 dB
+NOTE Ambient bus shortly after sting = -22.00 dB (target ~-22)
+PASS Ambient bus ducked (≤ -12 dB shortly after sting; got -22.00)
+PASS catch sting played (CatchSting.playing or position>0 shortly after play_catch_sting)
+NOTE Ambient bus after restore window = 0.00 dB (target ~0)
+PASS Ambient bus restored toward 0 (≥ -6 dB; got 0.00)
+NOTE Ambient bus after reset_audio_state = 0.00 dB
+PASS reset_audio_state: Ambient bus ~0 (got 0.00)
+PASS reset_audio_state: CatchSting not stuck playing
+PASS ambience.gd does not call acoustics.emit_sound (static)
+PASS ambience.gd documents acoustics AI exclusion (comment OK)
+NOTE attempting mood viewport PNGs (may fail under pure headless — do not fake)
+NOTE screenshot OK classroom-warm bytes=559608 path=/workspace/wt-audio-evidence/EscapeExamGodot/evidence/screenshots/audio-alert-off/classroom-warm.png
+NOTE screenshot OK corridor-cold bytes=259412 path=/workspace/wt-audio-evidence/EscapeExamGodot/evidence/screenshots/audio-alert-off/corridor-cold.png
+NOTE screenshot OK exit-pressure bytes=376208 path=/workspace/wt-audio-evidence/EscapeExamGodot/evidence/screenshots/audio-alert-off/exit-pressure.png
+NOTE screenshots ok=3 fail=0
+NOTE human ear / playfeel: 未验证 (box headless/xvfb; no audio recording claimed)
+RESULT passed=27 failed=0
+Fixture/bus/player state probe; human ear 未验证. screenshots_ok=3 screenshots_fail=0

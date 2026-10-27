@@ -7,8 +7,8 @@ const STING := preload("res://assets/audio/catch_sting.wav")
 
 const AMBIENT_BUS := "Ambient"
 const STING_BUS := "Sting"
-const BED_RAIN_DB := -14.0
-const BED_HUM_DB := -18.0
+const BED_RAIN_DB := -9.0
+const BED_HUM_DB := -13.0
 const AMBIENT_NORMAL_DB := 0.0
 const AMBIENT_DUCK_DB := -22.0
 const BED_FADE_OUT_DB := -40.0

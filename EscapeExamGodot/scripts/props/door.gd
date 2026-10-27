@@ -102,7 +102,7 @@ func set_open(value: bool, teacher_action := false) -> bool:
 	wedged = false
 	cooldown = 1.1
 	tween = create_tween().set_process_mode(Tween.TWEEN_PROCESS_PHYSICS)
-	tween.tween_property(hinge, "rotation:y", -PI / 2 if is_open else 0.0, 0.45)
+	tween.tween_property(hinge, "rotation:y", -PI / 2 if is_open else 0.0, 0.60)
 	Game.acoustics.emit_sound(global_position + Vector3.UP, "door", 9, "门轴与门闩", "teacher" if teacher_action else "door")
 	Game.trace("door", {"name": name, "open": value})
 	return true

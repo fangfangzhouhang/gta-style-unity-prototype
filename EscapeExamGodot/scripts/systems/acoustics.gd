@@ -76,6 +76,10 @@ func emit_sound(point: Vector3, kind: String, reach: float, caption: String, sou
 	sound.max_distance = 45
 	sound.volume_db = clampf(-float(path.cost) * 0.55 - (5.0 if path.muffled else 0.0), -28, -2)
 	if source_id == "player": sound.volume_db -= 7
+	# Door open/close: less piercing — extra atten + slight pitch down (longer feel).
+	if kind == "door":
+		sound.volume_db = clampf(sound.volume_db - 4.0, -32.0, -6.0)
+		sound.pitch_scale = 0.94
 	sound.play()
 	sound.finished.connect(sound.queue_free)
 	if Game.sound_captions and source_id != "player" and kind != "tick":

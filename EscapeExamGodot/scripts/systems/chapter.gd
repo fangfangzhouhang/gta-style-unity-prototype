@@ -10,9 +10,17 @@ func reset_world() -> void:
 	$Broadcast.reset_panel()
 	$ExamTimer.owned = false
 	$ExamTimer.reset_timer()
+	if has_node("DoorWedge"):
+		$DoorWedge.reset_wedge()
+	if has_node("PushableRack"):
+		$PushableRack.reset_rack()
+	if has_node("AnswerStack"):
+		$AnswerStack.reset_stack()
 	restore_checkpoint()
 
 func restore_checkpoint() -> void:
 	$Player.teleport_to(Game.get_spawn(), 0)
 	$Teacher.reset_teacher()
 	$ExamTimer.reset_timer()
+	if has_node("DoorWedge"):
+		$DoorWedge.restore_home()

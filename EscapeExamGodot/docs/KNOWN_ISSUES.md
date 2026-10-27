@@ -12,5 +12,8 @@
 
 - P1 灰盒风险：若门楔/夹道 H 被做成离场硬前置，将违反「禁止加锁凑时」；验收须保留无楔无暗道通关。若 ajar 门可侧身挤过，视为平衡回归，需 ark 重批。H 须保持 G→M / M→G 可逆，禁止无提示单向困死。
 
-- 冷廊剪影（S02）：老师背光贴暖门口时轮廓清晰；纯冷廊暗区易糊进墙。不改拓扑；待 Fixture5·7 极轻侧溢（audio follow-up）。证据：`evidence/screenshots/art-review/s02-door-corridor.png`、`s03-cabinet-teacher.png`。侧溢落地后补 after 图。
-- Alert 正面证据：`evidence/screenshots/art-review/alert-front-q.png`（?）、`alert-front-bang.png`（!）。嫌疑条略压脸下半，不挡识别；有余量再抬高。
+- 冷廊剪影（S02）：老师背光贴暖门口时轮廓清晰；纯冷廊暗区易糊进墙。不改拓扑；Fixture5·7 侧溢已合入 feat，仍待人工 after 复检。证据：`evidence/screenshots/art-review/s02-door-corridor.png`、`s03-cabinet-teacher.png`。
+- Alert 正面证据（历史）：`evidence/screenshots/art-review/alert-front-q.png`（?）、`alert-front-bang.png`（!）。嫌疑条略压脸下半，不挡识别。
+
+## Alert UI removed (2026-10-27)
+ark decided floating `?`/`!` and the orange suspicion bar should not show. Teacher five-state logic (`patrol→suspicious→investigate→chase→search/return`) remains; readability relies on gait/stop/turn/audio/silhouette. Prior `art-review/alert-front-*.png` evidence is historical only. Nodes kept hidden; must not re-enable.

@@ -31,6 +31,11 @@ func _ready() -> void:
 	last_position = global_position
 	nav.path_desired_distance = 0.25
 	nav.target_desired_distance = 0.3
+	# ark 2026-10-27: no floating alert icons; keep five-state suspicion logic only.
+	if has_node("AlertIcon"):
+		$AlertIcon.visible = false
+	if has_node("SuspicionBar"):
+		$SuspicionBar.visible = false
 
 func reset_teacher() -> void:
 	global_position = patrol_points[0]
@@ -178,7 +183,8 @@ func _physics_process(delta: float) -> void:
 	else:
 		speed = 0
 	for door in get_tree().get_nodes_in_group("doors"):
-		if not door.locked and not door.is_open and global_position.distance_to(door.global_position) < 1.25:
+		var needs_open: bool = (not door.is_open) or bool(door.get("wedged"))
+		if not door.locked and needs_open and global_position.distance_to(door.global_position) < 1.25:
 			if door.request_teacher_open(delta): speed = 0
 	velocity.x = direction.x * speed
 	velocity.z = direction.z * speed
@@ -200,13 +206,13 @@ func _physics_process(delta: float) -> void:
 	_update_alert_ui()
 
 func _update_alert_ui() -> void:
-	# ark: no floating ?/! / suspicion bar — stealth feedback from motion/audio/toast only
-	var icon: Label3D = $AlertIcon
-	var bar: Label3D = $SuspicionBar
-	icon.visible = false
-	bar.visible = false
-	icon.text = ""
-	bar.text = ""
+# Intentionally blank: alert billboards stay hidden; detection state machine unchanged.
+	if has_node("AlertIcon"):
+		$AlertIcon.visible = false
+		$AlertIcon.text = ""
+	if has_node("SuspicionBar"):
+		$SuspicionBar.visible = false
+		$SuspicionBar.text = ""
 
 func _flat_distance(point: Vector3) -> float:
 	return Vector2(global_position.x - point.x, global_position.z - point.z).length()

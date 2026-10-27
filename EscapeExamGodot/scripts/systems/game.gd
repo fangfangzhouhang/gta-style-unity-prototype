@@ -1,5 +1,6 @@
 extends Node
 
+const FailEvidence := preload("res://scripts/systems/fail_evidence.gd")
 const SCHEMA := 1
 const SAVE_PATH := "user://chapter01.json"
 var world
@@ -109,14 +110,23 @@ func start_new() -> void:
 func get_spawn() -> Vector3:
 	return world.get_node("Checkpoints/Print" if checkpoint == "print" else "Checkpoints/Classroom").global_position
 
-func caught(reason: String) -> void:
+func caught(reason: String = "") -> void:
 	if mode != "game" or not playing: return
 	caught_count += 1
-	trace("caught", {"reason": reason, "checkpoint": checkpoint, "gate": gate.stage})
+	var resolved: Dictionary = FailEvidence.build_message_from_game(self)
+	var primary: String = str(resolved.get("primary", FailEvidence.LINE_FALLBACK))
+	var message: String = str(resolved.get("message", FailEvidence.format_recovery_ui(primary, "")))
+	trace("caught", {
+		"reason": reason,
+		"kind": resolved.get("kind", "fallback"),
+		"primary": primary,
+		"checkpoint": checkpoint,
+		"gate": gate.stage if is_instance_valid(gate) else -1,
+	})
 	if is_instance_valid(Ambience):
 		Ambience.play_catch_sting()
 	set_mode("recover")
-	ui.show_recovery("被请回了座位。\n" + reason + "\n已打开的近路和卷栅档位保留。")
+	ui.show_recovery(message)
 	await get_tree().create_timer(1.1, true).timeout
 	world.restore_checkpoint()
 	save_progress()

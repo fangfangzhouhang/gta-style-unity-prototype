@@ -19,6 +19,7 @@ var patrol_index := 0
 var grace := 4.0
 var frozen := false
 var heard_id := ""
+var last_heard_kind := ""
 var step_distance := 0.0
 var repath := 0.0
 var last_position := Vector3.ZERO
@@ -48,6 +49,7 @@ func reset_teacher() -> void:
 	grace = 4
 	dwell = 1
 	heard_id = ""
+	last_heard_kind = ""
 	noise_priority = 0
 	investigation_dwell = 0
 	velocity = Vector3.ZERO
@@ -75,6 +77,7 @@ func hear_noise(point: Vector3, strength: float, description: String, id: String
 	if state == "suspicious" and suspicion > 0.3: return
 	if state == "investigate" and strength < noise_priority * 0.7: return
 	heard_id = id
+	last_heard_kind = description
 	noise_priority = strength
 	investigation_dwell = 0
 	noise_target = point

@@ -1,5 +1,6 @@
 extends SceneTree
 
+const FailEvidence := preload("res://scripts/systems/fail_evidence.gd")
 var game
 var level
 var passed := 0
@@ -177,6 +178,39 @@ func run() -> void:
 	game.caught("自动夹具测试")
 	await create_timer(1.3, true).timeout
 	check(game.mode == "game" and game.gate.stage == 1 and game.timer.owned, "Capture recovery retains critical progress and timer ownership")
+	# --- Fail-evidence resolver (PLOT §2 / card §5 minimal slice) ---
+	var fe_held := FailEvidence.resolve_primary({"timer_held": true, "timer_ringing": true, "chase_visible": true, "teacher_state": "chase"})
+	check("手里" in fe_held, "FailEvidence: held ringing primary mentions hand")
+	var fe_gate_rec := FailEvidence.resolve_recovery({"gate_stage": 1, "shortcut": false})
+	check(fe_gate_rec == FailEvidence.RECOVERY_GATE and "档位" in fe_gate_rec, "FailEvidence: gate.stage>=1 recovery keeps stage line")
+	var fe_no_shortcut := FailEvidence.resolve_recovery({"gate_stage": 0, "shortcut": false})
+	check(fe_no_shortcut.is_empty(), "FailEvidence: shortcut false omits shortcut comfort")
+	var fe_shortcut_only := FailEvidence.resolve_recovery({"gate_stage": 0, "shortcut": true})
+	check(fe_shortcut_only == FailEvidence.RECOVERY_SHORTCUT, "FailEvidence: shortcut true alone shows near-path comfort")
+	var fe_los := FailEvidence.resolve_primary({"teacher_state": "chase", "chase_visible": true})
+	check(fe_los == FailEvidence.LINE_LOS_CORNER, "FailEvidence: chase catch maps to los_corner")
+	var fe_fallback := FailEvidence.resolve_primary({})
+	check(fe_fallback == FailEvidence.LINE_FALLBACK, "FailEvidence: empty context uses fallback")
+	var fe_near_ring := FailEvidence.resolve_primary({"timer_held": false, "timer_ringing": true, "timer_near": true})
+	check(fe_near_ring == FailEvidence.LINE_NEAR_RING, "FailEvidence: near ringing timer maps to 1.3")
+	var fe_gate_chain := FailEvidence.resolve_primary({"gate_recent": true, "gate_near": true, "teacher_state": "chase"})
+	check(fe_gate_chain == FailEvidence.LINE_GATE_CHAIN, "FailEvidence: recent gate work maps to 1.5")
+	# Live catch: held ringing → recovery UI contains hand line; progress comfort uses gate stage
+	teacher.frozen = true
+	game.timer.owned = true
+	game.timer.held = true
+	game.timer.state = "ringing"
+	game.timer.remaining = 4.0
+	game.caught("held_ring_fixture")
+	await create_timer(0.15, true).timeout
+	var recovery_text: String = str(game.ui.get_node("Recovery/Label").text)
+	check("手里" in recovery_text, "Live catch: held ringing recovery mentions hand")
+	check("已升起的卷栅档位保留" in recovery_text, "Live catch: gate.stage>=1 second line is stage comfort")
+	check("近路" not in recovery_text, "Live catch: with stage>=1 does not also print shortcut comfort")
+	await create_timer(1.2, true).timeout
+	check(game.mode == "game" and game.gate.stage == 1, "Held-ring catch recovery returns to game with stage kept")
+	game.timer.state = "idle"
+	game.timer.held = game.timer.owned
 	player.global_position.y = -5
 	await frames(3)
 	check(player.global_position.y > -1, "Falling returns player to a legal checkpoint")

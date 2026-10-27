@@ -1,9 +1,9 @@
-# 双引擎仓库协作边界
+# 仓库协作边界
 
-- 使用中文。先明确本次任务属于 Unity 还是 Godot；不要同时修改两套游戏逻辑。
-- Unity 工程位于根目录 Assets/、Packages/、ProjectSettings/，交接见 Docs/19-开发过程与后续交接.md 与 Docs/20-V1.2手账叙事与存档恢复.md。
-- 新 Godot 独立版位于 EscapeExamGodot/，先读其 AGENTS.md、README.md、PROJECT_STATUS.md；直接打开该目录 project.godot。
-- Godot 不依赖 Unity 资产、不共享存档，不要将 Godot 文件放进 Unity Assets；旧 GodotPilot201 不代表新 Godot 版本。
-- Unity 第五阶段已提交但人工/发行验收未完成；Godot 为 A-M2.1 原型，不能把脚本通关当人工试玩。
-- 不提交 Library、.godot、引擎、导出包、本机存档或凭据。不推送和合并无关未提交实验；仅处理用户授权范围。
-- 本交付分支保存 d5192ed Unity 基线与独立 Godot 快照；主干合并须有明确任务授权，不因存在 PR 自动合并。
+- 使用中文；游戏后续只使用 Godot，入口 EscapeExamGodot/project.godot。
+- 当前开发成果继续放在 feat/chapter01-module-pass，用户确认前不合并到 main。
+- 用户仅授权本轮在 main 清理旧 Unity 内容；这不意味着授权把开发分支新代码合入 main。
+- 开发分支目录保持原状；不得将 main 的目录清理自动套用到开发分支。
+- main 的 Godot 是已合入的历史基线，开发分支比它新。禁止用旧基线覆盖新开发成果。
+- 不提交引擎、.godot、存档、导出包或凭据；区分自动检查与人工试玩。
+- Godot 子目录旧文档中的双引擎和旧本机路径属于历史，当前分支规则以上述用户边界为准。

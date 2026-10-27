@@ -1,53 +1,20 @@
-# Unity generated
-[Ll]ibrary/
-[Tt]emp/
-[Oo]bj/
-[Bb]uild/
-[Bb]uilds/
-[Ll]ogs/
-[Uu]ser[Ss]ettings/
-[Mm]emoryCaptures/
-[Rr]ecordings/
-
-# IDE
-.vs/
-.idea/
-.vscode/
-*.csproj
-*.unityproj
-*.sln
-*.suo
-*.tmp
-*.user
-*.userprefs
-*.pidb
-*.booproj
-*.svd
-*.pdb
-*.mdb
-*.opendb
-*.VC.db
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Crash / local
-sysinfo.txt
-crashlytics-buildid.txt
-InitTestScene*.unity
-*.apk
-*.aab
-*.unitypackage
-*.app
-ExportedObj/
-.consulo/
-Assets/AssetStoreTools*
-Assets/Plugins/Editor/JetBrains*
-Assets/StreamingAssets/aa*
-ServerData/
-.gradle/
-.plastic/
-*.stackdump
+# Godot caches / build outputs / local profiles
+.godot/
+**/tools/runtime/
+**/test_userdata/
+**/local_data/
+builds/
+build/
 __pycache__/
 *.pyc
+*.tmp
+*.bak
+# Credentials / machine files
+.env
+.env.*
+export_credentials.cfg
+.vs/
+.idea/
+.DS_Store
+Thumbs.db
+# Retain audited Godot evidence/logs.

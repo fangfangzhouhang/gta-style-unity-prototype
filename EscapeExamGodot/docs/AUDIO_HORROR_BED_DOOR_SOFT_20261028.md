@@ -5,7 +5,7 @@
 - **日期**：2026-10-28（Asia/Shanghai）
 - **分支**：`audio/horror-bed-door-soft`（worktree `/workspace/wt-audio-bed-door`；**未**合并进 `feat/chapter01-module-pass` / main）
 - **基线 tip**：`c93930a2944bb74dc33b9e45fda6accabf3f1017`（`origin/feat/chapter01-module-pass`；≈先前口述 tip `1af8e06` 之后的 revert 恢复 tip）
-- **本交付 Commit**：*(push 后 tip；见文末或 `git rev-parse audio/horror-bed-door-soft`)*
+- **本交付 Commit**：`d05dc66530f2b4504cbd557341f7433935980ef7`（`d05dc66` · 含教师脚步；最终 tip 以 stamp 提交为准）
 - **Godot**：4.7.2 stable（`/home/box/.local/bin/godot`）
 - **约束遵守**：未改光照 / 教师 AI 参数 / 房间拓扑 / Alert UI / 速度与探测；Ambient 床仍只走 `Ambient` bus，**不**进 AI 听力；教师脚步走既有 `Game.acoustics.emit_sound`（SFX），`source_id=teacher` 故不触发自身 `hear_noise`；未抬玩家脚步 / tick / Sting / Master。
 - **状态**：代码完成 · acceptance 机检见下 · **不报人耳 PASS**（box headless；无录音、无真人试听）

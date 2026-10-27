@@ -193,9 +193,13 @@ func _physics_process(delta: float) -> void:
 	var travelled := Vector2(global_position.x - last_position.x, global_position.z - last_position.z).length()
 	step_distance += travelled
 	last_position = global_position
-	if step_distance > 1.0:
+	# Audio-only cadence: chase steps a bit tighter; soft vs hard by state (no AI/speed change).
+	var step_span := 0.85 if state == "chase" else 1.0
+	if step_distance > step_span:
 		step_distance = 0
-		Game.acoustics.emit_sound(global_position, "teacher_step", 17, "老师的脚步", "teacher")
+		var step_kind := "teacher_step" if state == "chase" else "teacher_step_soft"
+		var step_reach := 20.0 if state == "chase" else 15.0
+		Game.acoustics.emit_sound(global_position, step_kind, step_reach, "老师的脚步", "teacher")
 	anim_time += delta * (9 if state == "chase" else 4)
 	var moving := travelled > 0.002
 	$Visual/LeftLeg.rotation.x = sin(anim_time) * 0.30 if moving else 0

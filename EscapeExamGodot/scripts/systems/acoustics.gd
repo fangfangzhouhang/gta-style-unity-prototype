@@ -3,6 +3,7 @@ extends Node3D
 const CLIPS := {
 	"player_step": preload("res://assets/audio/step_soft.wav"),
 	"teacher_step": preload("res://assets/audio/step_hard.wav"),
+	"teacher_step_soft": preload("res://assets/audio/step_soft.wav"),
 	"timer": preload("res://assets/audio/bell.wav"),
 	"tick": preload("res://assets/audio/tick.wav"),
 	"door": preload("res://assets/audio/door.wav"),
@@ -80,6 +81,20 @@ func emit_sound(point: Vector3, kind: String, reach: float, caption: String, sou
 	if kind == "door":
 		sound.volume_db = clampf(sound.volume_db - 4.0, -32.0, -6.0)
 		sound.pitch_scale = 0.94
+	# Teacher footsteps: louder as distance to player decreases (horror proximity cue).
+	elif kind == "teacher_step" or kind == "teacher_step_soft":
+		var dist := listener.distance_to(sound.global_position)
+		# near 0.75 m → -2 dB; far 18 m → -26 dB; closed-door muffling −6.
+		var t := clampf((dist - 0.75) / 17.25, 0.0, 1.0)
+		sound.volume_db = lerpf(-2.0, -26.0, t)
+		if path.muffled:
+			sound.volume_db -= 6.0
+		if kind == "teacher_step":
+			sound.volume_db += 1.5  # chase/hard presence
+		sound.volume_db = clampf(sound.volume_db, -30.0, -1.0)
+		# Slightly longer hear radius for 3D falloff; bus stays SFX.
+		sound.unit_size = 6.5
+		sound.max_distance = 40.0
 	sound.play()
 	sound.finished.connect(sound.queue_free)
 	if Game.sound_captions and source_id != "player" and kind != "tick":

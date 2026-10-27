@@ -1,0 +1,32 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.
+     at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
+OpenGL API 4.5 (Core Profile) Mesa 25.0.7-2+deb13u1 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 19.1.7, 256 bits)
+ALSA lib confmisc.c:855:(parse_card) cannot find card '0'
+ALSA lib conf.c:5205:(_snd_config_evaluate) function snd_func_card_inum returned error: No such file or directory
+ALSA lib confmisc.c:422:(snd_func_concat) error evaluating strings
+ALSA lib conf.c:5205:(_snd_config_evaluate) function snd_func_concat returned error: No such file or directory
+ALSA lib confmisc.c:1342:(snd_func_refer) error evaluating name
+ALSA lib conf.c:5205:(_snd_config_evaluate) function snd_func_refer returned error: No such file or directory
+ALSA lib conf.c:5728:(snd_config_expand) Evaluate error: No such file or directory
+ALSA lib pcm.c:2722:(snd_pcm_open_noupdate) Unknown PCM default
+ERROR: Condition "status < 0" is true. Returning: ERR_CANT_OPEN
+   at: init_output_device (drivers/alsa/audio_driver_alsa.cpp:97)
+WARNING: All audio drivers failed, falling back to the dummy driver.
+     at: initialize (servers/audio/audio_server.cpp:258)
+
+EVENT {"data":{"build":"A-M2.1","renderer":"gl_compatibility"},"event":"boot","time":0.0}
+EVENT {"data":{},"event":"new_run","time":0.0}
+SHADOW_ON Fixture0
+SHADOW_ON Fixture5
+SHADOW_ON Fixture6
+SHADOW_ON Fixture7
+SHADOW_OMNI_COUNT 4
+EVENT {"data":{"from":"patrol","to":"suspicious"},"event":"teacher_state","time":1.02}
+saved S02 res://evidence/screenshots/audio-cold-spill/s02-after.png 1280x800 probe=(0.0, 0.0196, 0.0706, 1.0) fov=72.0 eye=(-1.75, 1.66, 1.5) teacher=(-1.75, 0.02, -1.0)
+saved S03 res://evidence/screenshots/audio-cold-spill/s03-after.png 1280x800 probe=(0.0, 0.0157, 0.0667, 1.0) fov=70.0 eye=(-3.0, 0.98, 0.2) teacher=(-1.75, 0.02, -1.0)
+AUDIO_COLD_SPILL_CAPTURE_OK method=gl_compatibility shadow=4
+WARNING: 4 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 2 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

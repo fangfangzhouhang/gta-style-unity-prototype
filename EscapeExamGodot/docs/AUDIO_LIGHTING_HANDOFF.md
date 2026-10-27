@@ -90,3 +90,8 @@ No extra Omni added. Shadow Omni count still **4** (Fixture0/5/6/7) ≤5. Map/wa
 
 **Verify S02 cold corridor silhouette:** Play (or shot-block S02) from cold corridor — coat edge should pick a cold rim/spill without needing window warm. Static param audit only this pass (no before/after screenshots captured).
 
+## Spill follow-up #2 (2026-10-27) — art merge 后大衣仍过暗
+
+见 `docs/AUDIO_COLD_CORRIDOR_SPILL_20261027.md`（任务 `AUDIO-COLD-SPILL-20261027`）。
+Fixture5/7 再推：energy 2.45/2.5 · range 8.0/7.8 · atten 0.9 · size 0.45 · color `(0.48,0.72,1.0)`。
+Shadow Omni 仍 4。分支 `audio/cold-corridor-silhouette-spill`（未合 feat）。人眼联检未验证。

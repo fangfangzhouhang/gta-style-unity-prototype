@@ -5,7 +5,7 @@
 - **日期**：2026-10-27（Asia/Shanghai）
 - **分支**：`audio/cold-corridor-silhouette-spill`（独立 worktree `/workspace/wt-audio-spill`；**未**合并进 `feat/chapter01-module-pass`）
 - **基准 Commit（feat tip，含 art `88e91f6`）**：`b6257f47e58bc3120616602822509ba9133f4114`（`b6257f4` · `merge: origin/art/chapter01-module-pass into feat/chapter01-module-pass`）
-- **本交付 Commit**：见本分支 tip（`git rev-parse audio/cold-corridor-silhouette-spill`）；本文随同次提交写入
+- **本交付 Commit**：`3b0100e73d71fc3b239edbfeb8c5af562a759689`（`3b0100e` · `audio: cold corridor Fixture5/7 silhouette spill`）
 - **Godot**：4.7.2 stable（`/home/box/.local/bin/godot`）
 - **约束遵守**：仅改 `Lighting/Fixture5` + `Lighting/Fixture7` Omni 参数；未重开 AlertIcon/SuspicionBar；未改教师 AI / 拓扑 / 玩家速度 / 解谜 / 非光照场景；未新增第 5 盏阴影 Omni。
 

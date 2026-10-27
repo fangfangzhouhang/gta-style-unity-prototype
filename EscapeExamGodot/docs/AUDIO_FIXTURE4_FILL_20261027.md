@@ -5,7 +5,7 @@
 - **日期**：2026-10-27（Asia/Shanghai）
 - **分支**：`audio/fixture4-west-fill`（独立 worktree `/workspace/wt-audio-f4`；**未**合并进 `feat/chapter01-module-pass`）
 - **基准 Commit（feat tip）**：`60fd24a6b0abcf5716964873e2b77c02d662df84`（`60fd24a` · `docs: stamp AUDIO-COLD-SPILL delivery commit SHA`）
-- **本交付 Commit**：*(填入 push 后 tip SHA)*
+- **本交付 Commit**：`6ddedaa949d29ba7561919bdbbdf1c50e6059ebe`（`6ddedaa` · `audio: Fixture4 west-corridor no-shadow fill bump`）
 - **Godot**：4.7.2 stable（`/home/box/.local/bin/godot`）
 - **约束遵守**：仅改 `Lighting/Fixture4` Omni 参数；`shadow_enabled=false` 保持；未新增第 5 盏阴影 Omni；未重开 AlertIcon/SuspicionBar；未改教师 AI / 拓扑 / 玩家 / 解谜 / 非光照场景；**未改** ambient / WorldEnvironment。
 

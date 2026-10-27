@@ -1,0 +1,97 @@
+{
+  "method": "BT.709 luma mean 0-255; same-shot S02 ROIs locked to art +1.2\u2192+3.8 reproduction boxes",
+  "rois": {
+    "coat_wide": [
+      666,
+      340,
+      806,
+      458
+    ],
+    "torso_tight": [
+      688,
+      430,
+      770,
+      504
+    ],
+    "wall_left": [
+      68,
+      306,
+      180,
+      482
+    ],
+    "coat_east_rim": [
+      760,
+      360,
+      820,
+      460
+    ],
+    "west_wall_near": [
+      200,
+      320,
+      320,
+      500
+    ]
+  },
+  "rows": [
+    {
+      "name": "before",
+      "coat": 28.1,
+      "torso": 24.77,
+      "wall": 30.96,
+      "delta": -2.86,
+      "rimE": 28.65,
+      "wallN": 27.04,
+      "delta_rim": 1.61,
+      "center": [
+        0.0392,
+        0.1098,
+        0.2314
+      ]
+    },
+    {
+      "name": "after",
+      "coat": 24.68,
+      "torso": 20.26,
+      "wall": 13.91,
+      "delta": 10.77,
+      "rimE": 25.67,
+      "wallN": 12.27,
+      "delta_rim": 13.4,
+      "center": [
+        0.0275,
+        0.0902,
+        0.1961
+      ]
+    },
+    {
+      "name": "art_after",
+      "coat": 11.5,
+      "torso": 9.9,
+      "wall": 7.7,
+      "delta": 3.8,
+      "rimE": 13.33,
+      "wallN": 1.46,
+      "delta_rim": 11.88,
+      "center": [
+        0.0,
+        0.0392,
+        0.1059
+      ]
+    },
+    {
+      "name": "f4_aim",
+      "coat": 24.67,
+      "torso": 21.13,
+      "wall": 30.96,
+      "delta": -6.29,
+      "rimE": 28.65,
+      "wallN": 27.04,
+      "delta_rim": 1.61,
+      "center": [
+        0.0157,
+        0.0824,
+        0.1765
+      ]
+    }
+  ]
+}

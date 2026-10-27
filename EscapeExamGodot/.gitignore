@@ -17,3 +17,6 @@ __pycache__/
 # Keep audited evidence even inside a Unity repo that ignores Logs directories.
 !evidence/logs/
 !evidence/logs/**
+
+# Review screenshots are evidence, not runtime textures.
+evidence/**/*.import

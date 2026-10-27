@@ -1,9 +1,9 @@
-# 双引擎仓库协作边界
+# Godot 唯一开发仓库
 
-- 使用中文。先明确本次任务属于 Unity 还是 Godot；不要同时修改两套游戏逻辑。
-- Unity 工程位于根目录 Assets/、Packages/、ProjectSettings/，交接见 Docs/19-开发过程与后续交接.md 与 Docs/20-V1.2手账叙事与存档恢复.md。
-- 新 Godot 独立版位于 EscapeExamGodot/，先读其 AGENTS.md、README.md、PROJECT_STATUS.md；直接打开该目录 project.godot。
-- Godot 不依赖 Unity 资产、不共享存档，不要将 Godot 文件放进 Unity Assets；旧 GodotPilot201 不代表新 Godot 版本。
-- Unity 第五阶段已提交但人工/发行验收未完成；Godot 为 A-M2.1 原型，不能把脚本通关当人工试玩。
-- 不提交 Library、.godot、引擎、导出包、本机存档或凭据。不推送和合并无关未提交实验；仅处理用户授权范围。
-- 本交付分支保存 d5192ed Unity 基线与独立 Godot 快照；主干合并须有明确任务授权，不因存在 PR 自动合并。
+- 使用中文。当前游戏仅使用 Godot，入口 EscapeExamGodot/project.godot。
+- 所有工作在 feat/chapter01-module-pass 分支完成并推送；用户明确确认前不得合并 main、推送 main 或修改默认分支。
+- 进入 EscapeExamGodot 阅读其 AGENTS.md、README.md、PROJECT_STATUS.md、DESIGN.md 后再开发；保持既有 P1/氛围迭代，不拿旧 A-M2.1 覆盖。
+- Unity 已放弃。不要恢复根目录 Assets/、Packages/、ProjectSettings/ 或 Unity 专用技能，不需要 Unity 编辑器。
+- 本机工作副本 D:/Unity/EscapeExamRepository；旧 D:/Unity/EscapeExamGodot、gta-style-unity-prototype 只供历史追溯，勿并行编辑或盲目同步。
+- 不提交引擎二进制、.godot、玩家/测试存档、导出包、凭据。验收证据可以提交。
+- 区分静态检查、引擎自动检查、脚本通关、真实输入与人工试玩；不把自动通过称为好玩或发行完成。

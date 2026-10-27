@@ -1,3 +1,0 @@
-Unity=2022.3.49f1c1
-Temporary furniture sets=20
-Editor render only; no Play/Profiler/character acceptance. Baking NOT executed.

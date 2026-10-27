@@ -5,7 +5,7 @@
 - **日期**：2026-10-27（Asia/Shanghai）
 - **分支**：`audio/alert-off-runtime-evidence`（独立 worktree `/workspace/wt-audio-evidence`；**未**合并进 `feat/chapter01-module-pass`）
 - **基准 Commit（feat tip，本分支起点）**：`e13865320612d09263def9ec4808835c2d98bcd4`（`e138653` · `plot: chapter01 beats, fail-evidence task card, unlock A/B`）
-- **本交付 Commit**：`6173908b6c7f2184f8222e8350d9e7317241a6eb`（`6173908` · `audio: Alert-off runtime evidence probe + log`）
+- **本交付 Commit（证据内容）**：`4fbe9e62f94d59d19f7c3a5ac86d37b3d3a0ace7`（`4fbe9e6` · `audio: Alert-off runtime evidence probe + log`）；分支 tip 以 `git rev-parse audio/alert-off-runtime-evidence` 为准（可含本文 SHA 戳记提交）
 - **Godot**：4.7.2 stable（`/home/box/.local/bin/godot`）
 - **约束遵守**：未重开 AlertIcon/SuspicionBar；未改教师 AI 参数 / 房间拓扑 / 玩家速度 / 解谜通关；未整文件重写 `chapter_01.tscn` 非光照部分；本轮**仅新增**夹具脚本 + 证据日志/截图 + 本文档。
 

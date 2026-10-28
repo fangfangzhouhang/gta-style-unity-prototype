@@ -1,10 +1,11 @@
 # DESIGN.md 硬句补丁表 · gated 最小钥匙链（给 ark / 游戏开发）
 
 - **日期**：2026-10-28（Asia/Shanghai）
-- **状态**：**仅列表** · **禁止本文件作者直接改** `EscapeExamGodot/DESIGN.md` 正文
+- **状态**：**仅列表** · **禁止本文件作者直接改** `EscapeExamGodot/DESIGN.md` 正文 · **补丁仍待合入 DESIGN.md**（gated 代码已在 feat，DESIGN 正文尚未按本表替换）
 - **批准源**：`docs/design/CHAPTER01_GATED_PROGRESSION_REDESIGN.md` §13 · ark **「用户已批准」最小钥匙链** · 2026-10-28
-- **用法**：实现 gated **时或后**，由 ark / 开发按本表 **逐句替换** DESIGN.md；未实现前 DESIGN 仍描述自由回路代码真相亦可，但产品方向以 gated 为准
-- **对照**：`docs/design/SPACE_UNLOCK_AB.md`（A = 历史产品方向 + 当前代码基线）
+- **代码对照**：feat tip `9121693209ffa42a67c576b47b87ebedb7559978` · **G·K3**=`Doors/GateAntechamber` · **体验未 PASS** · **未合 main**
+- **用法**：由 ark / 开发按本表 **逐句替换** DESIGN.md；合入前 DESIGN 可仍含自由回路硬句，但**产品方向与 feat 代码**以 gated 为准
+- **对照**：`docs/design/SPACE_UNLOCK_AB.md`（A = 历史产品方向；feat 已非自由回路运行时）
 
 ---
 
@@ -12,7 +13,7 @@
 
 1. **不要**在未实现钥链时 silently 改 DESIGN 拓扑段让文档假装已上线。
 2. 若需「文档先于代码」：可在 DESIGN 相关段加一行脚注「产品方向见 gated；代码仍自由回路至 commit ___」——**可选**，须 ark 同意。
-3. 下列「拟替换」为策划措辞草案；开发可微调节点名（尤其 G·K3）。
+3. 下列「拟替换」为策划措辞草案；**G·K3 节点名已锁定**为 `Doors/GateAntechamber`（勿再写 Gate/Handle）。
 4. Unity 侧 DESIGN / 文档 **不**交叉覆盖。
 
 ---
@@ -91,7 +92,7 @@
 - [ ] P4 撑时长句已澄清「无动机加钥」
 - [ ] P5 S 必经 / H 可选已一致
 - [ ] P6–P8 确认无误伤
-- [ ] 实现 commit SHA 写入 DESIGN 或 PROJECT_STATUS（由开发）
+- [ ] 实现 commit SHA 写入 DESIGN 或 PROJECT_STATUS（由开发）· feat tip 已知 `9121693…`；**DESIGN.md 正文仍未打补丁**
 - [ ] **未**恢复 Alert UI；**未**写「已人工验证 18–28」
 
 ---
@@ -103,4 +104,4 @@
 
 ---
 
-*列表完。合入前保持 DESIGN.md 正文不动亦可；产品方向以 gated「用户已批准」为准。*
+*列表完。**补丁仍待合入 DESIGN.md**（2026-10-28 戳：feat 已落地 `9121693…`，本表尚未 apply）。产品方向以 gated「用户已批准」+ feat 代码为准；本 bot 不改 DESIGN.md 正文。*

@@ -41,6 +41,8 @@ func show_mode(mode: String) -> void:
 	$Inventory.visible = mode == "game"
 	$Help.visible = mode == "game"
 	$Chapter.visible = mode == "game"
+	if has_node("PrologueLayer"):
+		$PrologueLayer.visible = mode == "prologue"
 	match mode:
 		"title", "pause":
 			$Menu.show()
@@ -107,3 +109,39 @@ func _hint() -> void:
 	hint_level = mini(hint_level + 1, 3)
 	var hints := ["", "先看哪里能绕行。老师不是一直朝着同一个方向。", "如果发声的位置与你不同，你可以从另一个出口离开。", "把计时器留在考场并上弦，经印务室绕到东廊；卷栅可分三次摇开，随时撤退。"]
 	$Reading/Box/Body.text += "\n\n主动提示 %d / 3：%s" % [hint_level, hints[hint_level]]
+
+func show_prologue(active: bool) -> void:
+	if not has_node("PrologueLayer"):
+		return
+	$PrologueLayer.visible = active
+	if not active:
+		set_prologue_vo("")
+		set_prologue_skip_hint(false)
+
+func set_prologue_vo(text_vo: String) -> void:
+	if not has_node("PrologueLayer/VO"):
+		return
+	$PrologueLayer/VO.text = text_vo
+
+func set_prologue_skip_hint(visible_hint: bool) -> void:
+	if not has_node("PrologueLayer/SkipHint"):
+		return
+	$PrologueLayer/SkipHint.visible = visible_hint
+
+func set_prologue_fade(alpha: float) -> void:
+	if not has_node("PrologueLayer/Fade"):
+		return
+	var c: Color = $PrologueLayer/Fade.color
+	c.a = clampf(alpha, 0.0, 1.0)
+	$PrologueLayer/Fade.color = c
+
+func fade_prologue(seconds: float, to_black: bool) -> void:
+	if not has_node("PrologueLayer/Fade"):
+		await get_tree().create_timer(seconds, true).timeout
+		return
+	var fade: ColorRect = $PrologueLayer/Fade
+	var tw := create_tween()
+	tw.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	var target := 1.0 if to_black else 0.0
+	tw.tween_property(fade, "color:a", target, maxf(0.05, seconds))
+	await tw.finished

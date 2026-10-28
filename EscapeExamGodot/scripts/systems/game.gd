@@ -22,6 +22,8 @@ var sensitivity := 0.0022
 var view_fov := 78.0
 var sound_captions := true
 var test_mode := false
+var prologue = null
+var skip_prologue_once := false
 var events: Array[Dictionary] = []
 var previous_mode := "pause"
 var build_id := "A-M2.1"
@@ -76,7 +78,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		capture()
 		get_viewport().set_input_as_handled()
 	elif event.is_action_pressed("pause_game"):
-		if mode == "game": set_mode("pause")
+		if mode == "prologue":
+			skip_prologue()
+		elif mode == "game": set_mode("pause")
 		elif mode == "pause": set_mode("game")
 		elif mode in ["journal", "reading", "settings"]:
 			if mode == "settings": save_settings()
@@ -95,7 +99,7 @@ func _notification(what: int) -> void:
 
 func set_mode(next: String) -> void:
 	mode = next
-	get_tree().paused = next != "game"
+	get_tree().paused = next not in ["game", "prologue"]
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED if next == "game" and not test_mode else Input.MOUSE_MODE_VISIBLE
 	if is_instance_valid(ui): ui.show_mode(next)
 
@@ -123,10 +127,57 @@ func start_new() -> void:
 	world.reset_world()
 	if is_instance_valid(Ambience):
 		Ambience.reset_audio_state()
-	set_mode("game")
-	ui.toast("广播又说：离结束还有一分钟。\n试卷已经写完。考场门上了锁。钥匙不在门上。", 7.0)
 	save_progress()
 	trace("new_run")
+	# Acceptance / bake: skip cinematic and enter B0 immediately.
+	if test_mode or skip_prologue_once:
+		skip_prologue_once = false
+		enter_b0(false)
+		return
+	_ensure_prologue()
+	set_mode("prologue")
+	if not prologue.finished.is_connected(_on_prologue_finished):
+		prologue.finished.connect(_on_prologue_finished, CONNECT_ONE_SHOT)
+	prologue.begin()
+
+func enter_b0(from_prologue := true) -> void:
+	## B0 开场观察窗：教室出生点可玩；不响铃、不重开 Alert。
+	if is_instance_valid(player):
+		player.teleport_to(get_spawn(), 0)
+		if is_instance_valid(player.camera):
+			player.camera.current = true
+			player.camera.fov = view_fov
+	apply_teacher_presence_from_progress()
+	# Ensure ExamTimer is idle (never ring on prologue exit).
+	if is_instance_valid(timer) and timer.has_method("reset_timer"):
+		timer.reset_timer()
+	set_mode("game")
+	if is_instance_valid(ui):
+		ui.toast("广播又说：离结束还有一分钟。\n试卷已经写完。考场门上了锁。钥匙不在门上。", 7.0)
+	trace("enter_b0", {"from_prologue": from_prologue})
+
+func _ensure_prologue() -> void:
+	if is_instance_valid(prologue):
+		return
+	if is_instance_valid(world) and world.has_node("Prologue"):
+		prologue = world.get_node("Prologue")
+		return
+	var script := load("res://scripts/systems/prologue.gd")
+	prologue = Node3D.new()
+	prologue.name = "Prologue"
+	prologue.set_script(script)
+	if is_instance_valid(world):
+		world.add_child(prologue)
+	else:
+		add_child(prologue)
+
+func _on_prologue_finished(skipped: bool) -> void:
+	enter_b0(true)
+	trace("prologue_to_b0", {"skipped": skipped})
+
+func skip_prologue() -> void:
+	if mode == "prologue" and is_instance_valid(prologue) and prologue.has_method("request_skip"):
+		prologue.request_skip()
 
 func get_spawn() -> Vector3:
 	return world.get_node("Checkpoints/Print" if checkpoint == "print" else "Checkpoints/Classroom").global_position

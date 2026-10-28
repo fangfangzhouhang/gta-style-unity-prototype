@@ -2193,6 +2193,18 @@ size = Vector3(0.22, 0.28, 0.01)
 [sub_resource type="BoxShape3D" id="rKeyNoteShape"]
 size = Vector3(0.28, 0.32, 0.08)
 
+[sub_resource type="BoxMesh" id="rGateJambS"]
+size = Vector3(0.22, 2.3, 0.28)
+
+[sub_resource type="BoxShape3D" id="rGateJambSShape"]
+size = Vector3(0.22, 2.3, 0.28)
+
+[sub_resource type="BoxMesh" id="rGateJambN"]
+size = Vector3(0.22, 2.3, 0.28)
+
+[sub_resource type="BoxShape3D" id="rGateJambNShape"]
+size = Vector3(0.22, 2.3, 0.28)
+
 [node name="Chapter01" type="Node3D"]
 script = ExtResource("e1")
 
@@ -3856,6 +3868,31 @@ collision_mask = 0
 [node name="Shape" type="CollisionShape3D" parent="Architecture/ShortcutBakeCut/Body"]
 shape = SubResource("r303")
 
+
+[node name="GateAntechamberJambS" type="MeshInstance3D" parent="Architecture"]
+position = Vector3(4, 1.15, 1.12)
+mesh = SubResource("rGateJambS")
+visible = false
+
+[node name="Body" type="StaticBody3D" parent="Architecture/GateAntechamberJambS"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Architecture/GateAntechamberJambS/Body"]
+shape = SubResource("rGateJambSShape")
+
+[node name="GateAntechamberJambN" type="MeshInstance3D" parent="Architecture"]
+position = Vector3(4, 1.15, 2.48)
+mesh = SubResource("rGateJambN")
+visible = false
+
+[node name="Body" type="StaticBody3D" parent="Architecture/GateAntechamberJambN"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Architecture/GateAntechamberJambN/Body"]
+shape = SubResource("rGateJambNShape")
+
 [node name="Furniture" type="Node3D" parent="Architecture"]
 
 
@@ -5071,12 +5108,17 @@ shape = SubResource("r460")
 
 
 [node name="KeyK1" type="Node3D" parent="."]
-position = Vector3(-4.05, 1.05, -0.55)
+position = Vector3(-4.36, 1.05, -0.55)
 script = ExtResource("e21")
 key_id = "k1"
 key_label = "考场值班钥"
 fact_id = "key_k1"
 fact_summary = "考场值班钥：能打开考场正门。被抓也不会丢。"
+open_first = true
+closed_prompt = "讲台第三格 · 拉开"
+take_prompt = "取出考场值班钥"
+cabinet_path = NodePath("Architecture/Furniture/CoverCabinet")
+open_angle = -1.9
 empty_caption = "讲台第三格 · 空"
 
 [node name="Mesh" type="MeshInstance3D" parent="KeyK1"]
@@ -5111,12 +5153,15 @@ collision_mask = 0
 shape = SubResource("rKeyShape")
 
 [node name="KeyK2" type="Node3D" parent="."]
-position = Vector3(-2.55, 0.55, 4.35)
+position = Vector3(-2.55, 0.42, 4.28)
 script = ExtResource("e21")
 key_id = "k2"
 key_label = "教具室钥"
 fact_id = "key_k2"
 fact_summary = "教具室钥：打开洗手池旁的教具室。被抓也不会丢。"
+open_first = true
+closed_prompt = "洗手池下柜 · 打开"
+take_prompt = "取出教具室钥"
 empty_caption = "洗手池下柜 · 空"
 
 [node name="Mesh" type="MeshInstance3D" parent="KeyK2"]
@@ -5151,12 +5196,15 @@ collision_mask = 0
 shape = SubResource("rKeyShape")
 
 [node name="KeyK3" type="Node3D" parent="."]
-position = Vector3(-3.35, 1.15, 6.55)
+position = Vector3(-3.35, 1.15, 6.48)
 script = ExtResource("e21")
 key_id = "k3"
 key_label = "出口前室钥"
 fact_id = "key_k3"
 fact_summary = "出口前室钥：打开东廊通往卷栅前室的门。被抓也不会丢。"
+open_first = true
+closed_prompt = "教具柜 · 打开"
+take_prompt = "取出出口前室钥"
 empty_caption = "教具柜挂牌 · 空"
 
 [node name="Mesh" type="MeshInstance3D" parent="KeyK3"]
@@ -5627,6 +5675,7 @@ hatch_name = "印务检修盖"
 pair_path = NodePath("../HatchG")
 rack_path = NodePath("../PushableRack")
 nav_link_path = NodePath("NavigationLink3D")
+require_unlocked_door_id = "gateantechamber"
 
 [node name="Hinge" type="Node3D" parent="HatchM"]
 position = Vector3(0, 1.15, 0)
@@ -5668,6 +5717,7 @@ script = ExtResource("e19")
 hatch_name = "前室侧检修口"
 pair_path = NodePath("../HatchM")
 nav_link_path = NodePath("NavigationLink3D")
+require_unlocked_door_id = "gateantechamber"
 
 [node name="Hinge" type="Node3D" parent="HatchG"]
 position = Vector3(0, 1.15, 0)

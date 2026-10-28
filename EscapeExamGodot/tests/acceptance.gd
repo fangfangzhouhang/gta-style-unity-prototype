@@ -51,6 +51,27 @@ func run() -> void:
 	check(not game.has_key("k1") and not game.has_key("k2") and not game.has_key("k3"), "Phase0 player holds no keys")
 	check(teacher.frozen and not game.progress.teacher_summoned, "Phase0 teacher inactive / not summoned")
 	check(not classroom.get_node("NavigationLink3D").enabled, "Phase0 Classroom NavigationLink disabled while locked")
+	# --- Cabinet UX: open-then-take (K1/K2) ---
+	var key_k1 = level.get_node("KeyK1")
+	var key_k2 = level.get_node("KeyK2")
+	check(key_k1.open_first and not key_k1.is_open and not game.has_key("k1"), "Phase0 K1 cabinet starts closed without granting key")
+	key_k1.interact(player)
+	await frames(8)
+	check(key_k1.is_open and not game.has_key("k1"), "C-A1 K1 first E opens cabinet without granting key")
+	key_k1.interact(player)
+	await frames(4)
+	check(game.has_key("k1") and key_k1.is_open, "C-A2 K1 second E grants key after open")
+	key_k1.interact(player)
+	check(game.has_key("k1"), "C-A3 K1 empty re-interact does not duplicate key")
+	# Reset K1 ownership for later Phase0 lock fixtures that expect no keys... actually later grant_key again is fine.
+	# Keep k1 for now; Phase0 checks already passed. Later grant_key("k1") is idempotent.
+	check(key_k2.open_first and not key_k2.is_open and not game.has_key("k2"), "Phase0 K2 sink cabinet starts closed")
+	key_k2.interact(player)
+	await frames(8)
+	check(key_k2.is_open and not game.has_key("k2"), "C-A4 K2 first E opens sink cabinet without granting key")
+	key_k2.interact(player)
+	await frames(4)
+	check(game.has_key("k2"), "C-A4 K2 second E grants key after open")
 	player.teleport_to(Vector3(-9.4, 0.04, -5.4), PI/2)
 	player.scripted_move = Vector2(0, -1)
 	await frames(45)
@@ -179,6 +200,36 @@ func run() -> void:
 	await frames(55)
 	player.scripted_move = Vector2.ZERO
 	check(player.global_position.x < 3.9, "Locked GateAntechamber blocks capsule into exit antechamber")
+	# G-A1: no k3 → GateAntechamber refuses unlock/open
+	var gate_locked_before: bool = gate_door.locked
+	gate_door.interact(player)
+	await frames(6)
+	check(gate_door.locked and gate_locked_before and not game.progress.doors_unlocked.gateantechamber, "G-A1 no K3: GateAntechamber interact refuses unlock")
+	# G-A2: hatch cannot open into G before GateAntechamber unlock
+	var hatch_m_early = level.get_node("HatchM")
+	var hatch_g_early = level.get_node("HatchG")
+	var rack_early = level.get_node("PushableRack")
+	rack_early._set_travel(rack_early.travel_limit)
+	await frames(2)
+	var hatch_opened: bool = hatch_m_early.set_open(true)
+	check(not hatch_opened and not hatch_m_early.is_open and not hatch_g_early.is_open, "G-A2 hatch refuses open before GateAntechamber unlock")
+	hatch_m_early.interact(player)
+	await frames(4)
+	check(not hatch_m_early.is_open, "G-A2 hatch interact also refuses before GateAntechamber unlock")
+	rack_early.reset_rack()
+	# G-A2 geometry: try clip past GateAntechamber jambs into G (x>4.2)
+	player.teleport_to(Vector3(3.3, 0.04, 1.12), -PI/2)
+	await frames(2)
+	player.scripted_move = Vector2(0, -1)
+	await frames(55)
+	player.scripted_move = Vector2.ZERO
+	check(player.global_position.x < 4.05, "G-A2 south jamb seals GateAntechamber gap")
+	player.teleport_to(Vector3(3.3, 0.04, 2.48), -PI/2)
+	await frames(2)
+	player.scripted_move = Vector2(0, -1)
+	await frames(55)
+	player.scripted_move = Vector2.ZERO
+	check(player.global_position.x < 4.05, "G-A2 north jamb seals GateAntechamber gap")
 	# Critical path: K2 → Storage → K3 → GateAntechamber
 	game.grant_key("k2", "教具室钥")
 	player.teleport_to(Vector3(-3.6, 0.04, 3.4), 0)
@@ -190,6 +241,7 @@ func run() -> void:
 	gate_door.interact(player)
 	await frames(35)
 	check(not gate_door.locked and game.progress.doors_unlocked.gateantechamber, "K3 unlocks GateAntechamber into progress")
+	check(not gate_door.locked, "G-A3 with K3: GateAntechamber unlocks")
 	check(gate_door.get_node("NavigationLink3D").enabled, "Unlocked GateAntechamber NavigationLink enabled")
 	# Half-chain save: keys + doors + teacher_summoned round-trip
 	game.gate.hold(2.05)

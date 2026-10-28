@@ -1,12 +1,15 @@
 extends Node3D
 
 ## Maintenance hatch into corridor H. Open/close; weak door noise; optional rack clear check.
+## Optional require_unlocked_door_id gates H→G skip until GateAntechamber is unlocked (anti-skip).
 
 @export var hatch_name := "检修盖"
 @export var pair_path: NodePath
 @export var rack_path: NodePath
 @export var open_angle := -1.35
 @export var nav_link_path: NodePath
+## Progress doors_unlocked id that must be true before this hatch may open (empty = none).
+@export var require_unlocked_door_id := ""
 
 @onready var hinge: Node3D = $Hinge
 var is_open := false
@@ -22,13 +25,26 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	cooldown = maxf(0.0, cooldown - delta)
 
+func _progress_allows() -> bool:
+	if require_unlocked_door_id.is_empty():
+		return true
+	if not is_instance_valid(Game):
+		return false
+	return bool(Game.progress.get("doors_unlocked", {}).get(require_unlocked_door_id, false))
+
 func prompt(_actor) -> String:
+	if not _progress_allows() and not is_open:
+		return "E  查看检修盖 · 前室那头还扣着"
 	if not _rack_allows():
 		return "E  查看检修盖 · 卷纸架挡住了"
 	return "E  " + ("关上" if is_open else "打开") + hatch_name
 
 func interact(_actor) -> void:
 	if cooldown > 0.0: return
+	if not _progress_allows() and not is_open:
+		Game.ui.toast("夹道通往前室的那头还扣着。先用出口前室钥开东廊门。", 2.6)
+		Game.discover("hatch_gated", "检修夹道连到出口前室，但前室门禁开之前走不通。")
+		return
 	if not _rack_allows() and not is_open:
 		Game.ui.toast("先把卷纸架推开，才能打开检修盖。", 2.0)
 		return
@@ -43,6 +59,11 @@ func _rack_allows() -> bool:
 func set_open(value: bool, silent := false) -> bool:
 	if cooldown > 0.0 and not silent: return false
 	if is_open == value: return true
+	# Hard gate: never open (even via pair/API) until GateAntechamber unlocked — anti-skip into G.
+	if value and not _progress_allows():
+		if not silent:
+			Game.ui.toast("夹道通往前室的那头还扣着。先用出口前室钥开东廊门。", 2.6)
+		return false
 	is_open = value
 	cooldown = 0.8
 	if is_instance_valid(tween): tween.kill()
@@ -78,6 +99,7 @@ func reset_door() -> void:
 
 func request_teacher_open(delta: float) -> bool:
 	if is_open: return false
+	if not _progress_allows(): return false
 	if not _rack_allows(): return false
 	# Teacher spends same ~1.2s as a normal door.
 	if not has_meta("teacher_t"): set_meta("teacher_t", 0.0)

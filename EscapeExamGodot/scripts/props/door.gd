@@ -82,7 +82,14 @@ func interact(actor) -> void:
 			Game.unlock_shortcut()
 		elif not key_id.is_empty():
 			if not Game.has_key(key_id):
-				Game.ui.toast(door_name + "上着锁。需要对应的钥匙。", 2.2)
+				var hint := door_name + "上着锁。需要对应的钥匙。"
+				if key_id == "k3":
+					hint = door_name + "扣着。教具室那串出口前室钥还没拿到。"
+				elif key_id == "k1":
+					hint = door_name + "扣着。要考场值班钥。"
+				elif key_id == "k2":
+					hint = door_name + "扣着。洗手池下柜里有教具室钥。"
+				Game.ui.toast(hint, 2.4)
 				Game.discover("locked_" + unlock_progress_id(), door_name + "上着锁，钥匙不在这里。")
 				return
 			_unlock_with_key()

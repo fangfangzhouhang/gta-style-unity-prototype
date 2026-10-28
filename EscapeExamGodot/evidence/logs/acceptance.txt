@@ -7,6 +7,13 @@ PASS Phase0 GateAntechamber starts locked needing K3
 PASS Phase0 player holds no keys
 PASS Phase0 teacher inactive / not summoned
 PASS Phase0 Classroom NavigationLink disabled while locked
+PASS Phase0 K1 cabinet starts closed without granting key
+PASS C-A1 K1 first E opens cabinet without granting key
+PASS C-A2 K1 second E grants key after open
+PASS C-A3 K1 empty re-interact does not duplicate key
+PASS Phase0 K2 sink cabinet starts closed
+PASS C-A4 K2 first E opens sink cabinet without granting key
+PASS C-A4 K2 second E grants key after open
 PASS Physical glass prevents escape through the classroom window
 PASS Locked Classroom door blocks capsule into west corridor
 PASS Phase0 false timer ring does not summon teacher
@@ -34,8 +41,14 @@ PASS Timer begins its visible delayed countdown
 PASS Countdown transitions to a real ringing sound event
 PASS Broadcast controls independently change route, zone and repetition
 PASS Locked GateAntechamber blocks capsule into exit antechamber
+PASS G-A1 no K3: GateAntechamber interact refuses unlock
+PASS G-A2 hatch refuses open before GateAntechamber unlock
+PASS G-A2 hatch interact also refuses before GateAntechamber unlock
+PASS G-A2 south jamb seals GateAntechamber gap
+PASS G-A2 north jamb seals GateAntechamber gap
 PASS K2 unlocks Storage into progress
 PASS K3 unlocks GateAntechamber into progress
+PASS G-A3 with K3: GateAntechamber unlocks
 PASS Unlocked GateAntechamber NavigationLink enabled
 PASS One completed ratchet stage is retained
 PASS Gate collision body rises with its visible geometry
@@ -68,4 +81,16 @@ PASS HatchG open: player can pass G → H (no soft-lock)
 PASS HatchM open: player can pass H → M (bidirectional)
 PASS P1 hatch/ajar path left DoorWedge unowned (not exit-required)
 PASS No-wedge exit: raise shutter and leave without picking up DoorWedge
-Fixture-based engine tests; not OS input or human play. passed=70 failed=0
+PASS Prologue node available for cinematic skeleton
+PASS Prologue P01–P09 carry finalized VO (not empty/[VO])
+PASS P01 VO matches plot final
+PASS P07 VO matches plot final (uncanny smile)
+PASS Prologue begins in prologue mode
+PASS Alert UI stays hidden during prologue
+PASS Prologue never rings exam timer
+PASS Skip fades into B0 gameplay mode
+PASS B0 places player at classroom observation spawn
+PASS B0 keeps Phase0 teacher inactive (no summon from prologue)
+PASS Entering B0 does not trigger bell
+PASS Alert UI stays hidden after prologue→B0
+Fixture-based engine tests; not OS input or human play. passed=95 failed=0

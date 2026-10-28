@@ -151,6 +151,9 @@ func enter_b0(from_prologue := true) -> void:
 	# Ensure ExamTimer is idle (never ring on prologue exit).
 	if is_instance_valid(timer) and timer.has_method("reset_timer"):
 		timer.reset_timer()
+	# Skip/finish prologue: unduck Ambient + ensure rain/hum beds (not AI).
+	if is_instance_valid(Ambience):
+		Ambience.reset_audio_state()
 	set_mode("game")
 	if is_instance_valid(ui):
 		ui.toast("广播又说：离结束还有一分钟。\n试卷已经写完。考场门上了锁。钥匙不在门上。", 7.0)
@@ -419,7 +422,11 @@ func load_settings() -> void:
 	sensitivity = clampf(config.get_value("controls", "sensitivity", sensitivity), 0.0006, 0.005)
 	view_fov = clampf(config.get_value("view", "fov", view_fov), 65, 95)
 	sound_captions = config.get_value("audio", "captions", true)
-	AudioServer.set_bus_volume_db(0, clampf(config.get_value("audio", "volume", 0.0), -30, 0))
+	# play.cmd redirects APPDATA→local_data; slider min −30 ≈ mute. Treat ≤−24 as mis-set.
+	var master_db := float(config.get_value("audio", "volume", 0.0))
+	if master_db <= -24.0:
+		master_db = 0.0
+	AudioServer.set_bus_volume_db(0, clampf(master_db, -24.0, 0.0))
 
 func trace(event: String, data: Dictionary = {}) -> void:
 	var entry := {"time": snappedf(elapsed, 0.01), "event": event, "data": data}

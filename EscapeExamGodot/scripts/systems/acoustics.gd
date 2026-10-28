@@ -79,7 +79,8 @@ func emit_sound(point: Vector3, kind: String, reach: float, caption: String, sou
 	if source_id == "player": sound.volume_db -= 16  # ark: footsteps quieter (light/lookdev audio)
 	# Door open/close: less piercing — extra atten + slight pitch down (longer feel).
 	if kind == "door":
-		sound.volume_db = clampf(sound.volume_db - 4.0, -32.0, -6.0)
+		# Softened vs raw, but not buried under player steps (ark: interactive SFX inaudible).
+		sound.volume_db = clampf(sound.volume_db - 2.0, -30.0, -3.0)
 		sound.pitch_scale = 0.94
 	# Teacher footsteps: louder as distance to player decreases (horror proximity cue).
 	elif kind == "teacher_step" or kind == "teacher_step_soft":

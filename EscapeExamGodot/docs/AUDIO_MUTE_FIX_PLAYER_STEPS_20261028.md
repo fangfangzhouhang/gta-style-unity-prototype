@@ -5,7 +5,7 @@
 - **日期**：2026-10-28（Asia/Shanghai）
 - **分支**：`audio/mute-fix-player-steps`（worktree `/workspace/wt-audio-bed-door`；**未**合 main）
 - **基线 tip**：`55d491f`（含 `2344404` 脚步 −16）（`origin/feat/chapter01-module-pass`；含 游戏开发 玩家脚步 −11→−16）
-- **本交付 Commit（代码）**：见分支 tip（本文提交后 `git rev-parse audio/mute-fix-player-steps`）
+- ****本交付 Commit（代码）**：`fdff35f`
 - **Godot**：4.7.2 stable
 - **约束遵守**：未改 AI / 拓扑 / 解谜 / Alert UI / 教师距离曲线；床仍只走 Ambient、**不**进 acoustics AI；**未再改**玩家脚步 −16 行（已由 2344404 落地）。
 - **状态**：代码硬化完成 · **不报人耳 PASS**（box headless/dummy audio；待 ark Windows `play.cmd` 复测）

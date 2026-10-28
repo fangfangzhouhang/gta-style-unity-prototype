@@ -3,7 +3,7 @@
 - **任务 ID**：`ART-KEYCHAIN-METAL-READ`
 - **分支**：`art/chapter01-module-pass`（worktree `/workspace/wt-art`）
 - **基线 tip（FF sync）**：`9121693209ffa42a67c576b47b87ebedb7559978`（`feat/chapter01-module-pass` · gated min keychain）
-- **本交付 Commit**：_PENDING_STAMP_
+- **本交付 Commit**：477a8f3f346f825e8b2c2ac887a071fa8f0ab8ab（477a8f3）
 - **日期**：2026-10-28（Asia/Shanghai）
 - **Godot**：4.7.2 stable · box 实跑 `gl_compatibility` + llvmpipe
 - **范围**：共享交互金属材质 + KeyK1/K2/K3 可视 mesh/材质 + GateAntechamber 把手/锁牌材质覆盖；**未改** `.gd` 钥匙/门逻辑、chapter 拓扑、NavMesh、教师 AI、灯/AudioBus、Alert UI。

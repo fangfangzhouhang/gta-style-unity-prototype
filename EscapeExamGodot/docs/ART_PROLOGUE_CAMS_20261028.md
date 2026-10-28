@@ -3,6 +3,7 @@
 - **任务 ID**：`ART-PROLOGUE-CAMS`
 - **分支**：`art/chapter01-module-pass`（worktree `/workspace/wt-art/EscapeExamGodot`）
 - **基线 tip**：`73611ba`（全长 `73611ba0a37d2cecb7ec6a4e9351b816019370a2`）· art tip 祖先含此 SHA（merge `73611ba` → art 后再改机位）
+- **本交付 tip**：`d73f56e`（全长 `d73f56ef0f6936b5dc5d647645b8fa2d4f6da7e0`）· message 含 `ART-PROLOGUE-CAMS`
 - **日期**：2026-10-28（Asia/Shanghai）
 - **镜头真源**：`docs/ART_PROLOGUE_CINEMATIC_20261028.md`（V2）
 - **驱动**：`scripts/systems/prologue.gd` → `const SHOTS`（`PrologueCamera` 运行时 `eye` / `look_at` / `fov`；非 AnimationPlayer / Marker3D）

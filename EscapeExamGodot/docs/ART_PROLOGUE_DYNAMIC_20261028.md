@@ -2,7 +2,7 @@
 
 - **任务 ID**：`ART-PROLOGUE-DYNAMIC`
 - **分支**：`feat/chapter01-module-pass`（worktree `/workspace/wt-art/EscapeExamGodot` · 本地跟踪名 `art/prologue-dynamic`）
-- **本交付 tip**：（全长 ）· message 含 
+- **本交付 tip**：`16daf3e`（全长 `16daf3e2799dd9a5c6a165870b403d3bcafbeeaa`）· message 含 `ART-PROLOGUE-DYNAMIC`
 - **叠放基线 tip**：`aa09ce8`（开发 P0 Gate anti-skip + Cabinet UX；含 CAMS `d73f56e`/`d6fec5e`）
 - **对齐策划**：`docs/design/CHAPTER01_PLAYTEST_PATCH_20261028.md` §5 P1（文档 tip `9b872df` / feat 上 `016bf4f`）
 - **日期**：2026-10-28（Asia/Shanghai）

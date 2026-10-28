@@ -1,7 +1,20 @@
 PASS Title pauses the world and releases mouse
 PASS Player starts on a physical classroom floor
 PASS Classroom has a solid complete ceiling
+PASS Phase0 Classroom starts locked needing K1
+PASS Phase0 Storage starts locked needing K2
+PASS Phase0 GateAntechamber starts locked needing K3
+PASS Phase0 player holds no keys
+PASS Phase0 teacher inactive / not summoned
+PASS Phase0 Classroom NavigationLink disabled while locked
 PASS Physical glass prevents escape through the classroom window
+PASS Locked Classroom door blocks capsule into west corridor
+PASS Phase0 false timer ring does not summon teacher
+PASS K1 unlocks Classroom into progress
+PASS First Classroom open schedules delayed teacher summon
+PASS Delayed summon activates teacher at corridor patrol start
+PASS Summoned teacher appears near corridor patrol start (not classroom center)
+PASS Unlocked Classroom NavigationLink enabled
 PASS Player can crouch
 PASS Standing query rejects an obstructed full capsule
 PASS Standing is allowed after overhead obstruction is removed
@@ -11,7 +24,7 @@ PASS Occluded pursuit preserves last seen location instead of reading current pl
 PASS Audible remote timer creates investigation
 PASS NavigationAgent moves teacher physically toward the investigated source
 PASS A lure does not cancel an active pursuit
-PASS Initial route connects classroom and print room before shortcut unlock
+PASS After Classroom unlock, corridor still connects classroom-side and print-side points
 PASS Shortcut cannot be unlocked from the classroom side
 PASS Back latch unlocks the physical door and persistent progress
 PASS Shortcut changes navigation route length
@@ -20,6 +33,10 @@ PASS Closed door attenuates sound and hides exact source location
 PASS Timer begins its visible delayed countdown
 PASS Countdown transitions to a real ringing sound event
 PASS Broadcast controls independently change route, zone and repetition
+PASS Locked GateAntechamber blocks capsule into exit antechamber
+PASS K2 unlocks Storage into progress
+PASS K3 unlocks GateAntechamber into progress
+PASS Unlocked GateAntechamber NavigationLink enabled
 PASS One completed ratchet stage is retained
 PASS Gate collision body rises with its visible geometry
 PASS Reading freezes the world and releases the pointer
@@ -27,6 +44,9 @@ PASS Escape closes reading without immediately opening pause
 PASS Actual viewport mouse click on Resume closes pause
 PASS Save transaction writes isolated test profile
 PASS Load restores gate, shortcut and discovered facts at checkpoint
+PASS Half-chain save restores all three keys
+PASS Half-chain save restores door unlocks
+PASS Half-chain save restores teacher_summoned presence
 PASS Malformed save rejects gate_stage
 PASS Malformed save rejects broadcast_zone
 PASS Malformed save rejects shortcut
@@ -34,8 +54,10 @@ PASS Malformed play time cannot crash load
 PASS Corrupt primary save falls back to valid backup
 PASS Two corrupt saves leave files and running progress intact
 PASS Capture recovery retains critical progress and timer ownership
+PASS Capture recovery retains keys and door unlocks
 PASS Falling returns player to a legal checkpoint
 PASS DoorWedge exists and was never picked up before exit path
+PASS Storage reset keeps unlock from progress
 PASS Storage door enters ajar via DoorWedge API
 PASS Ajar Storage door: player capsule cannot pass through
 PASS PushableRack reaches travel limit exposing HatchM
@@ -46,4 +68,4 @@ PASS HatchG open: player can pass G → H (no soft-lock)
 PASS HatchM open: player can pass H → M (bidirectional)
 PASS P1 hatch/ajar path left DoorWedge unowned (not exit-required)
 PASS No-wedge exit: raise shutter and leave without picking up DoorWedge
-Fixture-based engine tests; not OS input or human play. passed=48 failed=0
+Fixture-based engine tests; not OS input or human play. passed=70 failed=0

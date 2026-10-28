@@ -1,4 +1,4 @@
-[gd_scene load_steps=520 format=3]
+[gd_scene load_steps=526 format=3]
 
 [ext_resource type="Script" path="res://scripts/systems/chapter.gd" id="e1"]
 
@@ -27,6 +27,7 @@
 [ext_resource type="AudioStream" path="res://assets/audio/chime.wav" id="e13"]
 
 [ext_resource type="Script" path="res://scripts/props/note.gd" id="e14"]
+[ext_resource type="Script" path="res://scripts/props/key_pickup.gd" id="e21"]
 
 [ext_resource type="Script" path="res://scripts/systems/acoustics.gd" id="e15"]
 
@@ -2163,6 +2164,23 @@ material = SubResource("r5")
 size = Vector3(1.25, 0.025, 0.2)
 material = SubResource("r5")
 
+[sub_resource type="BoxMesh" id="rKeyMesh"]
+size = Vector3(0.12, 0.04, 0.04)
+
+[sub_resource type="StandardMaterial3D" id="rKeyMat"]
+albedo_color = Color(0.72, 0.62, 0.28, 1)
+roughness = 0.35
+metallic = 0.55
+
+[sub_resource type="BoxShape3D" id="rKeyShape"]
+size = Vector3(0.35, 0.35, 0.35)
+
+[sub_resource type="BoxMesh" id="rKeyNoteMesh"]
+size = Vector3(0.22, 0.28, 0.01)
+
+[sub_resource type="BoxShape3D" id="rKeyNoteShape"]
+size = Vector3(0.28, 0.32, 0.08)
+
 [node name="Chapter01" type="Node3D"]
 script = ExtResource("e1")
 
@@ -2175,6 +2193,8 @@ light_color = Color(0.45, 0.55, 0.7, 1)
 light_energy = 0.12
 shadow_enabled = false
 directional_shadow_max_distance = 30
+
+
 
 [node name="Architecture" type="NavigationRegion3D" parent="."]
 navigation_mesh = ExtResource("e3")
@@ -4517,7 +4537,15 @@ mesh = SubResource("r397")
 position = Vector3(-3, 0, 1.1)
 rotation = Vector3(0, -1.5708, 0)
 door_name = "考场门"
-initial_open = true
+key_id = "k1"
+progress_id = "classroom"
+summon_teacher_on_first_open = true
+unlock_noise_reach = 24.0
+
+[node name="NavigationLink3D" type="NavigationLink3D" parent="Doors/Classroom"]
+enabled = false
+start_position = Vector3(0, 0.1, -0.9)
+end_position = Vector3(0, 0.1, 0.9)
 
 [node name="Print" parent="Doors" instance=ExtResource("e6")]
 position = Vector3(-1.75, 0, -2)
@@ -4540,6 +4568,28 @@ end_position = Vector3(0, 0.1, 0.9)
 position = Vector3(-3.6, 0, 4)
 door_name = "教具室门"
 allow_wedge = true
+key_id = "k2"
+progress_id = "storage"
+unlock_noise_reach = 18.0
+
+[node name="NavigationLink3D" type="NavigationLink3D" parent="Doors/Storage"]
+enabled = false
+start_position = Vector3(0, 0.1, -0.9)
+end_position = Vector3(0, 0.1, 0.9)
+
+[node name="GateAntechamber" parent="Doors" instance=ExtResource("e6")]
+position = Vector3(4, 0, 1.8)
+rotation = Vector3(0, 1.5708, 0)
+door_name = "出口前室门"
+key_id = "k3"
+progress_id = "gateantechamber"
+unlock_noise_reach = 20.0
+
+[node name="NavigationLink3D" type="NavigationLink3D" parent="Doors/GateAntechamber"]
+enabled = false
+start_position = Vector3(0, 0.1, -0.9)
+end_position = Vector3(0, 0.1, 0.9)
+
 
 [node name="Player" parent="." instance=ExtResource("e7")]
 position = Vector3(-6.5, 0.04, -5.1)
@@ -4959,8 +5009,8 @@ rotation = Vector3(0, 0, 0)
 script = ExtResource("e14")
 fact_id = "exam"
 title = "终场须知"
-body = "考试已经结束时，请听终场铃。\n\n可走动交卷，不必等在座位。\n门外贴着离场方向。\n\n纸角有人写：\n「如果那一分钟永远不走呢？」"
-summary = "终场须知允许交卷。考场正门没有上锁，出口在东廊。"
+body = "考试已经结束时，请听终场铃。\n\n可走动交卷，不必等在座位。\n考场门已上锁。\n\n页边另注：\n「值班钥放回讲台第三格柜。」\n\n纸角有人写：\n「如果那一分钟永远不走呢？」"
+summary = "终场须知允许交卷。考场门上了锁；值班钥应在讲台侧柜。出口在东廊。"
 
 [node name="Paper" type="MeshInstance3D" parent="ExamSheet"]
 position = Vector3(0, 0, 0)
@@ -5016,6 +5066,153 @@ collision_mask = 0
 
 [node name="Shape" type="CollisionShape3D" parent="PrintRecord/Target"]
 shape = SubResource("r460")
+
+
+[node name="KeyK1" type="Node3D" parent="."]
+position = Vector3(-4.05, 1.05, -0.55)
+script = ExtResource("e21")
+key_id = "k1"
+key_label = "考场值班钥"
+fact_id = "key_k1"
+fact_summary = "考场值班钥：能打开考场正门。被抓也不会丢。"
+empty_caption = "讲台第三格 · 空"
+
+[node name="Mesh" type="MeshInstance3D" parent="KeyK1"]
+mesh = SubResource("rKeyMesh")
+surface_material_override/0 = SubResource("rKeyMat")
+
+[node name="Caption" type="Label3D" parent="KeyK1"]
+position = Vector3(0, 0.12, 0.08)
+text = "考场值班钥\n\nE  拿起"
+font = ExtResource("e5")
+font_size = 22
+pixel_size = 0.0024
+modulate = Color(0.85, 0.8, 0.55, 1)
+outline_size = 0
+shaded = false
+
+[node name="Target" type="StaticBody3D" parent="KeyK1"]
+collision_layer = 8
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="KeyK1/Target"]
+shape = SubResource("rKeyShape")
+
+[node name="KeyK2" type="Node3D" parent="."]
+position = Vector3(-2.55, 0.55, 4.35)
+script = ExtResource("e21")
+key_id = "k2"
+key_label = "教具室钥"
+fact_id = "key_k2"
+fact_summary = "教具室钥：打开洗手池旁的教具室。被抓也不会丢。"
+empty_caption = "洗手池下柜 · 空"
+
+[node name="Mesh" type="MeshInstance3D" parent="KeyK2"]
+mesh = SubResource("rKeyMesh")
+surface_material_override/0 = SubResource("rKeyMat")
+
+[node name="Caption" type="Label3D" parent="KeyK2"]
+position = Vector3(0, 0.12, 0.08)
+text = "教具室钥\n\nE  拿起"
+font = ExtResource("e5")
+font_size = 22
+pixel_size = 0.0024
+modulate = Color(0.85, 0.8, 0.55, 1)
+outline_size = 0
+shaded = false
+
+[node name="Target" type="StaticBody3D" parent="KeyK2"]
+collision_layer = 8
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="KeyK2/Target"]
+shape = SubResource("rKeyShape")
+
+[node name="KeyK3" type="Node3D" parent="."]
+position = Vector3(-3.35, 1.15, 6.55)
+script = ExtResource("e21")
+key_id = "k3"
+key_label = "出口前室钥"
+fact_id = "key_k3"
+fact_summary = "出口前室钥：打开东廊通往卷栅前室的门。被抓也不会丢。"
+empty_caption = "教具柜挂牌 · 空"
+
+[node name="Mesh" type="MeshInstance3D" parent="KeyK3"]
+mesh = SubResource("rKeyMesh")
+surface_material_override/0 = SubResource("rKeyMat")
+
+[node name="Caption" type="Label3D" parent="KeyK3"]
+position = Vector3(0, 0.12, 0.08)
+text = "出口前室钥\n\nE  拿起"
+font = ExtResource("e5")
+font_size = 22
+pixel_size = 0.0024
+modulate = Color(0.85, 0.8, 0.55, 1)
+outline_size = 0
+shaded = false
+
+[node name="Target" type="StaticBody3D" parent="KeyK3"]
+collision_layer = 8
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="KeyK3/Target"]
+shape = SubResource("rKeyShape")
+
+[node name="SinkKeyNote" type="Node3D" parent="."]
+position = Vector3(-2.15, 1.25, 4.55)
+script = ExtResource("e14")
+fact_id = "sink_key_note"
+title = "洗手池柜贴条"
+body = "教具室备用钥 · 勿带离本层。\n\n用完请放回洗手池下柜。"
+summary = "洗手池下柜里有教具室备用钥。"
+
+[node name="Paper" type="MeshInstance3D" parent="SinkKeyNote"]
+mesh = SubResource("rKeyNoteMesh")
+
+[node name="Caption" type="Label3D" parent="SinkKeyNote"]
+position = Vector3(0, 0.08, 0.012)
+text = "柜贴\n\nE  查看"
+font = ExtResource("e5")
+font_size = 22
+pixel_size = 0.0024
+modulate = Color(0.16, 0.2, 0.17, 1)
+outline_size = 0
+shaded = false
+
+[node name="Target" type="StaticBody3D" parent="SinkKeyNote"]
+collision_layer = 8
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="SinkKeyNote/Target"]
+shape = SubResource("rKeyNoteShape")
+
+[node name="StorageKeyNote" type="Node3D" parent="."]
+position = Vector3(-3.2, 1.35, 6.9)
+script = ExtResource("e14")
+fact_id = "storage_key_note"
+title = "教具柜短笺"
+body = "闸前钥由教具室保管。\n\n终场通知底稿在印务。\n东廊门禁开后才能到卷栅。"
+summary = "教具柜：出口前室钥在此；短读指向印务底稿与东廊门禁。"
+
+[node name="Paper" type="MeshInstance3D" parent="StorageKeyNote"]
+mesh = SubResource("rKeyNoteMesh")
+
+[node name="Caption" type="Label3D" parent="StorageKeyNote"]
+position = Vector3(0, 0.08, 0.012)
+text = "教具柜短笺\n\nE  查看"
+font = ExtResource("e5")
+font_size = 22
+pixel_size = 0.0024
+modulate = Color(0.16, 0.2, 0.17, 1)
+outline_size = 0
+shaded = false
+
+[node name="Target" type="StaticBody3D" parent="StorageKeyNote"]
+collision_layer = 8
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="StorageKeyNote/Target"]
+shape = SubResource("rKeyNoteShape")
 
 [node name="Acoustics" type="Node3D" parent="."]
 script = ExtResource("e15")
@@ -5104,6 +5301,7 @@ metadata/b = "B"
 position = Vector3(4, 1, 1.8)
 metadata/a = "E"
 metadata/b = "G"
+metadata/door = "Doors/GateAntechamber"
 
 [node name="GO" type="Marker3D" parent="Acoustics/Portals"]
 position = Vector3(8, 1, 1.85)

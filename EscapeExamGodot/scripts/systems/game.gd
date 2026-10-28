@@ -1,7 +1,9 @@
 extends Node
 
-const SCHEMA := 1
+const SCHEMA := 2
 const SAVE_PATH := "user://chapter01.json"
+const TEACHER_SUMMON_DELAY_MIN := 2.5
+const TEACHER_SUMMON_DELAY_MAX := 4.0
 var world
 var player
 var teacher
@@ -23,6 +25,7 @@ var test_mode := false
 var events: Array[Dictionary] = []
 var previous_mode := "pause"
 var build_id := "A-M2.1"
+var _summon_remaining := -1.0
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -60,6 +63,11 @@ func boot(level: Node3D) -> void:
 func _process(delta: float) -> void:
 	if playing and mode == "game":
 		elapsed += delta
+		if _summon_remaining >= 0.0:
+			_summon_remaining -= delta
+			if _summon_remaining <= 0.0:
+				_summon_remaining = -1.0
+				_activate_teacher(true, true)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not is_instance_valid(ui):
@@ -91,23 +99,118 @@ func set_mode(next: String) -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED if next == "game" and not test_mode else Input.MOUSE_MODE_VISIBLE
 	if is_instance_valid(ui): ui.show_mode(next)
 
+func _default_progress() -> Dictionary:
+	return {
+		"shortcut": false,
+		"gate_stage": 0,
+		"broadcast_mode": 0,
+		"broadcast_zone": 0,
+		"loop_stopped": false,
+		"wedge_owned": false,
+		"keys": {"k1": false, "k2": false, "k3": false},
+		"doors_unlocked": {"classroom": false, "storage": false, "gateantechamber": false},
+		"teacher_summoned": false,
+	}
+
 func start_new() -> void:
 	facts.clear()
-	progress = {"shortcut": false, "gate_stage": 0, "broadcast_mode": 0, "broadcast_zone": 0, "loop_stopped": false, "wedge_owned": false}
+	progress = _default_progress()
 	checkpoint = "classroom"
 	caught_count = 0
 	elapsed = 0
+	_summon_remaining = -1.0
 	playing = true
 	world.reset_world()
 	if is_instance_valid(Ambience):
 		Ambience.reset_audio_state()
 	set_mode("game")
-	ui.toast("广播又说：离结束还有一分钟。\n试卷已经写完。门外的脚步还没有离开。", 7.0)
+	ui.toast("广播又说：离结束还有一分钟。\n试卷已经写完。考场门上了锁。钥匙不在门上。", 7.0)
 	save_progress()
 	trace("new_run")
 
 func get_spawn() -> Vector3:
 	return world.get_node("Checkpoints/Print" if checkpoint == "print" else "Checkpoints/Classroom").global_position
+
+func has_key(id: String) -> bool:
+	return bool(progress.get("keys", {}).get(id, false))
+
+func grant_key(id: String, label: String = "") -> void:
+	if not progress.has("keys") or not progress.get("keys") is Dictionary:
+		progress["keys"] = {"k1": false, "k2": false, "k3": false}
+	if bool(progress.get("keys", {}).get(id, false)):
+		return
+	progress["keys"][id] = true
+	var shown := label if not label.is_empty() else id
+	if is_instance_valid(ui):
+		ui.toast("拿到了" + shown + "。被抓也不会丢。", 3.0)
+	trace("key_granted", {"id": id})
+	save_progress()
+
+func unlock_keyed_door(door_progress_id: String, _key: String, door_label: String = "") -> void:
+	if not progress.has("doors_unlocked") or not progress.doors_unlocked is Dictionary:
+		progress.doors_unlocked = {}
+	progress.doors_unlocked[door_progress_id] = true
+	var shown := door_label if not door_label.is_empty() else door_progress_id
+	discover("door_" + door_progress_id, shown + "的锁已经打开，进度保留。")
+	save_progress()
+	trace("door_unlocked", {"id": door_progress_id})
+
+func schedule_teacher_summon(delay: float = -1.0) -> void:
+	if bool(progress.get("teacher_summoned", false)):
+		return
+	if _summon_remaining >= 0.0:
+		return
+	if delay < 0.0:
+		delay = randf_range(TEACHER_SUMMON_DELAY_MIN, TEACHER_SUMMON_DELAY_MAX)
+	_summon_remaining = delay
+	trace("teacher_summon_scheduled", {"delay": snappedf(delay, 0.01)})
+	if is_instance_valid(ui):
+		ui.toast("门响得太清楚了……走廊那边好像有人在听。", 3.0)
+
+func summon_teacher_now() -> void:
+	## Test helper: activate immediately without delay, with door investigate.
+	_summon_remaining = -1.0
+	_activate_teacher(true, true)
+
+func apply_teacher_presence_from_progress() -> void:
+	_summon_remaining = -1.0
+	_activate_teacher(bool(progress.get("teacher_summoned", false)), false)
+
+func _activate_teacher(active: bool, investigate_classroom := false) -> void:
+	if not is_instance_valid(teacher):
+		return
+	if active:
+		progress.teacher_summoned = true
+		teacher.visible = true
+		teacher.collision_layer = 2
+		teacher.collision_mask = 51
+		teacher.frozen = false
+		teacher.reset_teacher()
+		# Corridor patrol start only — never teleport into classroom.
+		if investigate_classroom:
+			var door = world.get_node_or_null("Doors/Classroom") if is_instance_valid(world) else null
+			if door != null:
+				teacher.grace = 0.0
+				teacher.hear_noise(door.global_position + Vector3.UP, 18.0, "考场门轴", "classroom_open_summon")
+			if is_instance_valid(acoustics):
+				acoustics.emit_sound(teacher.global_position, "teacher_step", 16.0, "远处的脚步", "teacher")
+		if investigate_classroom:
+			save_progress()
+		trace("teacher_summoned", {"pos": [teacher.global_position.x, teacher.global_position.z], "investigate": investigate_classroom})
+	else:
+		teacher.frozen = true
+		teacher.visible = false
+		teacher.collision_layer = 0
+		teacher.collision_mask = 0
+		teacher.velocity = Vector3.ZERO
+		# Park off the playable nav so Phase0 path queries ignore them.
+		teacher.global_position = Vector3(0.0, -40.0, 0.0)
+		teacher.state = "patrol"
+		teacher.suspicion = 0.0
+		teacher.heard_id = ""
+
+func is_teacher_active() -> bool:
+	return is_instance_valid(teacher) and not teacher.frozen and bool(progress.get("teacher_summoned", false))
 
 func caught(reason: String) -> void:
 	if mode != "game" or not playing: return
@@ -116,7 +219,7 @@ func caught(reason: String) -> void:
 	if is_instance_valid(Ambience):
 		Ambience.play_catch_sting()
 	set_mode("recover")
-	ui.show_recovery("被请回了座位。\n" + reason + "\n已打开的近路和卷栅档位保留。")
+	ui.show_recovery("被请回了座位。\n" + reason + "\n钥匙、已开的锁、近路和卷栅档位都还在。")
 	await get_tree().create_timer(1.1, true).timeout
 	world.restore_checkpoint()
 	save_progress()
@@ -181,11 +284,12 @@ func load_progress() -> bool:
 	if data.is_empty():
 		ui.toast("存档无法读取，原文件仍保留。可以开始新的试走。", 5)
 		return false
-	progress = data.progress
+	progress = _normalize_progress(data.progress)
 	facts = data.get("facts", {})
 	checkpoint = "print" if data.get("checkpoint", "classroom") == "print" and progress.get("shortcut", false) else "classroom"
 	caught_count = int(data.get("captures", 0))
 	elapsed = float(data.get("elapsed", 0))
+	_summon_remaining = -1.0
 	playing = true
 	world.reset_world()
 	if is_instance_valid(Ambience):
@@ -196,12 +300,31 @@ func load_progress() -> bool:
 	ui.toast("已从备份恢复。" if used_backup else "继续上次的进度。回到安全落脚点。", 4)
 	return true
 
+func _normalize_progress(raw: Dictionary) -> Dictionary:
+	var p := _default_progress()
+	for key in raw:
+		p[key] = raw[key]
+	if not p.get("keys") is Dictionary:
+		p["keys"] = {"k1": false, "k2": false, "k3": false}
+	else:
+		for kid in ["k1", "k2", "k3"]:
+			p["keys"][kid] = bool(p.get("keys", {}).get(kid, false))
+	if not p.get("doors_unlocked") is Dictionary:
+		p.doors_unlocked = {"classroom": false, "storage": false, "gateantechamber": false}
+	else:
+		for did in ["classroom", "storage", "gateantechamber"]:
+			p.doors_unlocked[did] = bool(p.doors_unlocked.get(did, false))
+	p.teacher_summoned = bool(p.get("teacher_summoned", false))
+	return p
+
 func _read_valid_save(path: String) -> Dictionary:
 	if not FileAccess.file_exists(path): return {}
 	var parser := JSON.new()
 	if parser.parse(FileAccess.get_file_as_string(path)) != OK: return {}
 	var data = parser.data
-	if not data is Dictionary or data.get("schema", 0) != SCHEMA: return {}
+	if not data is Dictionary: return {}
+	var schema := int(data.get("schema", 0))
+	if schema != SCHEMA and schema != 1: return {}
 	if not data.get("progress") is Dictionary or not data.get("facts", {}) is Dictionary: return {}
 	var p: Dictionary = data.progress
 	for key in ["gate_stage", "broadcast_mode", "broadcast_zone"]:
@@ -211,6 +334,15 @@ func _read_valid_save(path: String) -> Dictionary:
 		if not is_finite(float(value)) or value != floorf(float(value)) or value < 0 or value > maximum: return {}
 	for key in ["shortcut", "loop_stopped", "completed", "wedge_owned"]:
 		if not p.get(key, false) is bool: return {}
+	if p.has("teacher_summoned") and not p.teacher_summoned is bool: return {}
+	if p.has("keys"):
+		if not p.get("keys") is Dictionary: return {}
+		for kid in p["keys"]:
+			if not p["keys"][kid] is bool: return {}
+	if p.has("doors_unlocked"):
+		if not p.doors_unlocked is Dictionary: return {}
+		for did in p.doors_unlocked:
+			if not p.doors_unlocked[did] is bool: return {}
 	if not data.get("timer_owned", false) is bool: return {}
 	for key in ["elapsed", "captures"]:
 		var value = data.get(key, 0)

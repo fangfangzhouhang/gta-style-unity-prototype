@@ -183,7 +183,7 @@ func _physics_process(delta: float) -> void:
 	else:
 		speed = 0
 	for door in get_tree().get_nodes_in_group("doors"):
-		var needs_open: bool = (not door.is_open) or bool(door.get("wedged"))
+		var needs_open: bool = (not door.is_open) or (door.get("wedged") == true)
 		if not door.locked and needs_open and global_position.distance_to(door.global_position) < 1.25:
 			if door.request_teacher_open(delta): speed = 0
 	velocity.x = direction.x * speed

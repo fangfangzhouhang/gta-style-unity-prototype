@@ -16,11 +16,14 @@ func reset_world() -> void:
 		$PushableRack.reset_rack()
 	if has_node("AnswerStack"):
 		$AnswerStack.reset_stack()
+	for key in get_tree().get_nodes_in_group("key_pickups"):
+		if key.has_method("refresh_from_progress"):
+			key.refresh_from_progress()
 	restore_checkpoint()
 
 func restore_checkpoint() -> void:
 	$Player.teleport_to(Game.get_spawn(), 0)
-	$Teacher.reset_teacher()
+	Game.apply_teacher_presence_from_progress()
 	$ExamTimer.reset_timer()
 	if has_node("DoorWedge"):
 		$DoorWedge.restore_home()

@@ -29,17 +29,54 @@ func run() -> void:
 	game.start_new()
 	var player = game.player
 	var teacher = game.teacher
-	teacher.frozen = true
 	await frames(5)
 	check(player.is_on_floor(), "Player starts on a physical classroom floor")
 	var physics: PhysicsDirectSpaceState3D = player.get_world_3d().direct_space_state
 	var ceiling := physics.intersect_ray(PhysicsRayQueryParameters3D.create(player.global_position + Vector3.UP * 1.6, player.global_position + Vector3.UP * 5, 1))
 	check(not ceiling.is_empty(), "Classroom has a solid complete ceiling")
+	# --- Phase0 gated locks ---
+	var classroom = level.get_node("Doors/Classroom")
+	var storage = level.get_node("Doors/Storage")
+	var gate_door = level.get_node("Doors/GateAntechamber")
+	check(classroom.locked and classroom.key_id == "k1", "Phase0 Classroom starts locked needing K1")
+	check(storage.locked and storage.key_id == "k2", "Phase0 Storage starts locked needing K2")
+	check(gate_door.locked and gate_door.key_id == "k3", "Phase0 GateAntechamber starts locked needing K3")
+	check(not game.has_key("k1") and not game.has_key("k2") and not game.has_key("k3"), "Phase0 player holds no keys")
+	check(teacher.frozen and not game.progress.teacher_summoned, "Phase0 teacher inactive / not summoned")
+	check(not classroom.get_node("NavigationLink3D").enabled, "Phase0 Classroom NavigationLink disabled while locked")
 	player.teleport_to(Vector3(-9.4, 0.04, -5.4), PI/2)
 	player.scripted_move = Vector2(0, -1)
 	await frames(45)
 	player.scripted_move = Vector2.ZERO
 	check(player.global_position.x > -9.75, "Physical glass prevents escape through the classroom window")
+	# Locked classroom blocks capsule toward corridor
+	player.teleport_to(Vector3(-4.2, 0.04, 1.1), -PI/2)
+	await frames(2)
+	var c_block_start_x: float = player.global_position.x
+	player.scripted_move = Vector2(0, -1)
+	await frames(55)
+	player.scripted_move = Vector2.ZERO
+	check(player.global_position.x > -3.55, "Locked Classroom door blocks capsule into west corridor")
+	# False timer ring does not summon teacher in Phase0
+	game.acoustics.emit_sound(Vector3(-6.5, 1, -5.5), "timer", 28, "误响测试", "timer", "phase0_false_ring")
+	await frames(10)
+	check(teacher.frozen and not game.progress.teacher_summoned, "Phase0 false timer ring does not summon teacher")
+	# Pick K1 and unlock classroom → schedule summon
+	game.grant_key("k1", "考场值班钥")
+	player.teleport_to(Vector3(-3.55, 0.04, 1.1), -PI/2)
+	await frames(2)
+	classroom.interact(player)
+	await frames(40)
+	check(not classroom.locked and game.progress.doors_unlocked.classroom, "K1 unlocks Classroom into progress")
+	check(game._summon_remaining >= 0.0 or game.progress.teacher_summoned, "First Classroom open schedules delayed teacher summon")
+	# Force remaining delay short for fixture
+	if game._summon_remaining > 0.05:
+		game._summon_remaining = 0.05
+	await frames(20)
+	check(game.progress.teacher_summoned and not teacher.frozen, "Delayed summon activates teacher at corridor patrol start")
+	check(teacher.global_position.y > -1.0 and absf(teacher.global_position.x - teacher.patrol_points[0].x) < 2.5, "Summoned teacher appears near corridor patrol start (not classroom center)")
+	check(classroom.get_node("NavigationLink3D").enabled, "Unlocked Classroom NavigationLink enabled")
+	# Crouch / stand clearance
 	player.teleport_to(Vector3(2.7, 0.04, -4), 0)
 	Input.action_press("crouch")
 	check(player.set_crouch(true), "Player can crouch")
@@ -59,6 +96,8 @@ func run() -> void:
 	low.queue_free()
 	await frames(2)
 	check(player.set_crouch(false), "Standing is allowed after overhead obstruction is removed")
+	# Teacher perception (teacher already active)
+	teacher.frozen = true
 	player.teleport_to(Vector3(-1.7, 0.04, 1), 0)
 	teacher.global_position = Vector3(-1.7, 0.04, -1)
 	teacher.rotation.y = PI
@@ -91,12 +130,13 @@ func run() -> void:
 	teacher.hear_noise(Vector3(3,0,-5), 20, "诱饵", "priority_test")
 	check(teacher.state == "chase", "A lure does not cancel an active pursuit")
 	teacher.frozen = true
+	# Shortcut still classroom-side locked; route via corridor exists after Classroom unlock
 	var door = level.get_node("Doors/Shortcut")
 	var map: RID = player.get_world_3d().navigation_map
 	var source := Vector3(-4.2,.1,-5.5)
 	var destination := Vector3(-1.5,.1,-5.5)
 	var before := NavigationServer3D.map_get_path(map, source, destination, true)
-	check(before.size() > 1, "Initial route connects classroom and print room before shortcut unlock")
+	check(before.size() > 1, "After Classroom unlock, corridor still connects classroom-side and print-side points")
 	player.teleport_to(source, -PI/2)
 	door.interact(player)
 	check(door.locked, "Shortcut cannot be unlocked from the classroom side")
@@ -124,6 +164,27 @@ func run() -> void:
 	panel.operate("zone")
 	panel.operate("stop")
 	check(panel.output_mode == 1 and panel.zone == 1 and panel.stopped, "Broadcast controls independently change route, zone and repetition")
+	# GateAntechamber still locked: physical block into G from E
+	player.teleport_to(Vector3(3.3, 0.04, 1.8), -PI/2)
+	await frames(2)
+	var g_start_x: float = player.global_position.x
+	player.scripted_move = Vector2(0, -1)
+	await frames(55)
+	player.scripted_move = Vector2.ZERO
+	check(player.global_position.x < 3.9, "Locked GateAntechamber blocks capsule into exit antechamber")
+	# Critical path: K2 → Storage → K3 → GateAntechamber
+	game.grant_key("k2", "教具室钥")
+	player.teleport_to(Vector3(-3.6, 0.04, 3.4), 0)
+	storage.interact(player)
+	await frames(35)
+	check(not storage.locked and game.progress.doors_unlocked.storage, "K2 unlocks Storage into progress")
+	game.grant_key("k3", "出口前室钥")
+	player.teleport_to(Vector3(3.4, 0.04, 1.8), -PI/2)
+	gate_door.interact(player)
+	await frames(35)
+	check(not gate_door.locked and game.progress.doors_unlocked.gateantechamber, "K3 unlocks GateAntechamber into progress")
+	check(gate_door.get_node("NavigationLink3D").enabled, "Unlocked GateAntechamber NavigationLink enabled")
+	# Half-chain save: keys + doors + teacher_summoned round-trip
 	game.gate.hold(2.05)
 	await frames(35)
 	check(game.gate.stage == 1 and game.progress.gate_stage == 1, "One completed ratchet stage is retained")
@@ -151,8 +212,14 @@ func run() -> void:
 	game.test_mode = false
 	check(game.save_progress(), "Save transaction writes isolated test profile")
 	game.progress.gate_stage = 0
+	game.progress.teacher_summoned = false
+	game.progress["keys"] = {"k1": false, "k2": false, "k3": false}
+	game.progress.doors_unlocked = {"classroom": false, "storage": false, "gateantechamber": false}
 	game.facts.clear()
 	check(game.load_progress() and game.gate.stage == 1 and game.progress.shortcut, "Load restores gate, shortcut and discovered facts at checkpoint")
+	check(game.has_key("k1") and game.has_key("k2") and game.has_key("k3"), "Half-chain save restores all three keys")
+	check(game.progress.doors_unlocked.classroom and game.progress.doors_unlocked.storage and game.progress.doors_unlocked.gateantechamber, "Half-chain save restores door unlocks")
+	check(game.progress.teacher_summoned and not teacher.frozen, "Half-chain save restores teacher_summoned presence")
 	var save_path: String = game.SAVE_PATH
 	var good_save := FileAccess.get_file_as_string(save_path)
 	var good_data: Dictionary = JSON.parse_string(good_save)
@@ -177,17 +244,20 @@ func run() -> void:
 	game.caught("自动夹具测试")
 	await create_timer(1.3, true).timeout
 	check(game.mode == "game" and game.gate.stage == 1 and game.timer.owned, "Capture recovery retains critical progress and timer ownership")
+	check(game.has_key("k1") and game.has_key("k3") and game.progress.doors_unlocked.classroom, "Capture recovery retains keys and door unlocks")
 	player.global_position.y = -5
 	await frames(3)
 	check(player.global_position.y > -1, "Falling returns player to a legal checkpoint")
 	# --- P1 greybox locks (before final gate exit; restore state so exit stays clean) ---
 	var wedge = level.get_node("DoorWedge")
-	var storage = level.get_node("Doors/Storage")
 	var rack = level.get_node("PushableRack")
 	var hatch_m = level.get_node("HatchM")
 	var hatch_g = level.get_node("HatchG")
 	check(is_instance_valid(wedge) and not wedge.owned and not wedge.held, "DoorWedge exists and was never picked up before exit path")
-	# (2) Ajar Storage: capsule cannot squeeze through (DoorWedge API; stand on FloorS)
+	# Ensure Storage unlocked for ajar (already unlocked above); re-open closed leaf
+	storage.reset_door()
+	await frames(2)
+	check(not storage.locked, "Storage reset keeps unlock from progress")
 	wedge.held = true
 	storage.apply_wedge(wedge)
 	await frames(3)
@@ -205,7 +275,6 @@ func run() -> void:
 	wedge.restore_home()
 	storage.reset_door()
 	await frames(2)
-	# (3) HatchM ↔ HatchG bidirectional after open (rack at limit required for HatchM)
 	rack._set_travel(rack.travel_limit)
 	await frames(2)
 	check(rack.at_limit(), "PushableRack reaches travel limit exposing HatchM")
@@ -266,7 +335,7 @@ func run() -> void:
 	player.teleport_to(Vector3(2.7, 0.04, -4), 0)
 	await frames(2)
 	check(not wedge.owned and not wedge.held, "P1 hatch/ajar path left DoorWedge unowned (not exit-required)")
-	# (1) No-wedge exit: raise shutter and leave without ever calling wedge pick_up
+	# No-wedge exit through unlocked GateAntechamber
 	game.gate.hold(2.05)
 	game.gate.hold(2.05)
 	await frames(40)

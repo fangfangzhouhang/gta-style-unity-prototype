@@ -114,15 +114,17 @@ art（本角色 worktree 提交）
 
 ## 6. 真机验证钉 tip
 
-- **当前总分支 tip（本交接文档提交前的 `origin/feat/chapter01-module-pass`）**：  
-  - 短：`2344404`  
-  - 全长：`234440437190c4612ddd80cdc63c0f5e2d06ff4c`  
-  - message：`fix(godot): lower player footstep atten ~-11 → ~-16 dB`  
-  - （含脚步等非美术 tip；美术内容已在其祖先中。）
+- **本交接 commit（已 push 的 `origin/feat/chapter01-module-pass` tip）**：  
+  - 短：`5401c56`  
+  - 全长：`5401c56318b45562ac0912ccad24328b3c7ffb93`  
+  - message：`docs(art): ART agent handoff 20261028 + residual imports/evidence`
+- **美术内容已齐时的功能 tip（脚步等非美术叠层）**：`2344404` / `234440437190c4612ddd80cdc63c0f5e2d06ff4c`（本交接祖先；含动镜 `5e82703`）。
 - **动镜验收祖先**：看 `5e82703`（`5e8270350cb008bad95380a6649cfdce77ddfe82`）即可；内容 tip 为 `16daf3e`。
 - **静态前情机位祖先**：`d6fec5e` / 内容 `d73f56e`。
 - **S01 角落**：`367012f` / 内容 `ea2d952`。
-- 交接 commit 推送后，以 **`git fetch` + `git rev-parse origin/feat/chapter01-module-pass`** 更新钉 tip；本文件若需 stamp，可再开一笔 `docs: stamp ART_AGENT_HANDOFF tip`。
+- 之后每次再 push，以 **`git fetch` + `git rev-parse origin/feat/chapter01-module-pass`** 更新钉 tip。
+
+同日其它角色交接（已在 feat 祖先链上，供协作）：审核 `CHAPTER01_AGENT_HANDOFF_20261028.md`、情节 `docs/design/AGENT_HANDOFF_PLOT_MECHANICS_20261028.md`、光影 `AUDIO_LIGHTING_AGENT_CONTEXT_20261028.md`。
 
 ---
 
@@ -188,4 +190,4 @@ git ls-remote origin refs/heads/feat/chapter01-module-pass
 
 - 已确认远程 feat 含 `5e82703`（动镜）、`367012f`（S01）、大衣/钥金属等祖先。
 - 旁支 `art/chapter01-module-pass`（远端 tip `d6fec5e`）、本地 `art/prologue-dynamic`（`5e82703`）**无领先 feat 的未推 commit**。
-- 本 commit 额外入库：缺失的 `teacher-p0-*.png.import`、若干 `capture_*.gd.uid`、QA 留存的 `art-coat-body-read/s0*-qa-0066f6d.png`、`art-keychain-metal/key-k2-insitu.png`，以及本文档。
+- 本交接 tip `5401c56` 额外入库：缺失的 `teacher-p0-*.png.import`、若干 `capture_*.gd.uid`、QA 留存的 `art-coat-body-read/s0*-qa-0066f6d.png`、`art-keychain-metal/key-k2-insitu.png`，以及本文档（随后 stamp 本 tip SHA）。

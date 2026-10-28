@@ -3,7 +3,7 @@
 - **角色**：@游戏光影音效设计 → 下任同角色 / 接手 mute+lookdev
 - **日期**：2026-10-28（Asia/Shanghai）
 - **团队分支**：`feat/chapter01-module-pass`（**勿合 main**；路径：游戏开发 fast-merge → 游戏审核 → ark → main）
-- **本交接推送分支**：`audio/mute-fix-player-steps`（可 ff-merge 进 feat）
+- ****本交接推送分支**：`audio/mute-fix-player-steps` tip `a833318`（可 ff-merge 进 feat）
 - **feat tip（写本文时）**：`55d491f`（音频相关落地 tip `2344404` 脚步 −16） — `fix(godot): lower player footstep atten ~-11 → ~-16 dB`
 - **仓库**：`https://github.com/fangfangzhouhang/gta-style-unity-prototype.git`
 - **Godot 工程**：`EscapeExamGodot/` · Godot **4.7.2** Forward+

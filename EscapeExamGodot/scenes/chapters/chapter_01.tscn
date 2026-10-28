@@ -1,4 +1,4 @@
-[gd_scene load_steps=526 format=3]
+[gd_scene load_steps=553 format=3]
 
 [ext_resource type="Script" path="res://scripts/systems/chapter.gd" id="e1"]
 
@@ -28,6 +28,8 @@
 
 [ext_resource type="Script" path="res://scripts/props/note.gd" id="e14"]
 [ext_resource type="Script" path="res://scripts/props/key_pickup.gd" id="e21"]
+
+[ext_resource type="Material" path="res://assets/materials/mat_interact_metal.tres" id="e22"]
 
 [ext_resource type="Script" path="res://scripts/systems/acoustics.gd" id="e15"]
 
@@ -2165,12 +2167,16 @@ size = Vector3(1.25, 0.025, 0.2)
 material = SubResource("r5")
 
 [sub_resource type="BoxMesh" id="rKeyMesh"]
-size = Vector3(0.12, 0.04, 0.04)
+size = Vector3(0.07, 0.07, 0.018)
 
-[sub_resource type="StandardMaterial3D" id="rKeyMat"]
-albedo_color = Color(0.72, 0.62, 0.28, 1)
-roughness = 0.35
-metallic = 0.55
+[sub_resource type="BoxMesh" id="rKeyShaft"]
+size = Vector3(0.11, 0.018, 0.018)
+
+[sub_resource type="BoxMesh" id="rKeyBit"]
+size = Vector3(0.035, 0.042, 0.014)
+
+[sub_resource type="BoxMesh" id="rGateLockPlate"]
+size = Vector3(0.12, 0.2, 0.02)
 
 [sub_resource type="BoxShape3D" id="rKeyShape"]
 size = Vector3(0.35, 0.35, 0.35)
@@ -4590,6 +4596,17 @@ enabled = false
 start_position = Vector3(0, 0.1, -0.9)
 end_position = Vector3(0, 0.1, 0.9)
 
+[node name="Handle-0_065" parent="Doors/GateAntechamber/Hinge/Panel" index="3"]
+surface_material_override/0 = ExtResource("e22")
+
+[node name="Handle0_065" parent="Doors/GateAntechamber/Hinge/Panel" index="4"]
+surface_material_override/0 = ExtResource("e22")
+
+[node name="LockPlate" type="MeshInstance3D" parent="Doors/GateAntechamber/Hinge/Panel" index="5"]
+position = Vector3(0.96, 1.02, 0.048)
+mesh = SubResource("rGateLockPlate")
+surface_material_override/0 = ExtResource("e22")
+
 
 [node name="Player" parent="." instance=ExtResource("e7")]
 position = Vector3(-6.5, 0.04, -5.1)
@@ -5079,7 +5096,17 @@ empty_caption = "讲台第三格 · 空"
 
 [node name="Mesh" type="MeshInstance3D" parent="KeyK1"]
 mesh = SubResource("rKeyMesh")
-surface_material_override/0 = SubResource("rKeyMat")
+surface_material_override/0 = ExtResource("e22")
+
+[node name="Shaft" type="MeshInstance3D" parent="KeyK1"]
+position = Vector3(0.09, 0, 0)
+mesh = SubResource("rKeyShaft")
+surface_material_override/0 = ExtResource("e22")
+
+[node name="Bit" type="MeshInstance3D" parent="KeyK1"]
+position = Vector3(0.155, -0.012, 0)
+mesh = SubResource("rKeyBit")
+surface_material_override/0 = ExtResource("e22")
 
 [node name="Caption" type="Label3D" parent="KeyK1"]
 position = Vector3(0, 0.12, 0.08)
@@ -5087,7 +5114,7 @@ text = "考场值班钥\n\nE  拿起"
 font = ExtResource("e5")
 font_size = 22
 pixel_size = 0.0024
-modulate = Color(0.85, 0.8, 0.55, 1)
+modulate = Color(0.78, 0.64, 0.36, 1)
 outline_size = 0
 shaded = false
 
@@ -5109,7 +5136,17 @@ empty_caption = "洗手池下柜 · 空"
 
 [node name="Mesh" type="MeshInstance3D" parent="KeyK2"]
 mesh = SubResource("rKeyMesh")
-surface_material_override/0 = SubResource("rKeyMat")
+surface_material_override/0 = ExtResource("e22")
+
+[node name="Shaft" type="MeshInstance3D" parent="KeyK2"]
+position = Vector3(0.09, 0, 0)
+mesh = SubResource("rKeyShaft")
+surface_material_override/0 = ExtResource("e22")
+
+[node name="Bit" type="MeshInstance3D" parent="KeyK2"]
+position = Vector3(0.155, -0.012, 0)
+mesh = SubResource("rKeyBit")
+surface_material_override/0 = ExtResource("e22")
 
 [node name="Caption" type="Label3D" parent="KeyK2"]
 position = Vector3(0, 0.12, 0.08)
@@ -5117,7 +5154,7 @@ text = "教具室钥\n\nE  拿起"
 font = ExtResource("e5")
 font_size = 22
 pixel_size = 0.0024
-modulate = Color(0.85, 0.8, 0.55, 1)
+modulate = Color(0.78, 0.64, 0.36, 1)
 outline_size = 0
 shaded = false
 
@@ -5139,7 +5176,17 @@ empty_caption = "教具柜挂牌 · 空"
 
 [node name="Mesh" type="MeshInstance3D" parent="KeyK3"]
 mesh = SubResource("rKeyMesh")
-surface_material_override/0 = SubResource("rKeyMat")
+surface_material_override/0 = ExtResource("e22")
+
+[node name="Shaft" type="MeshInstance3D" parent="KeyK3"]
+position = Vector3(0.09, 0, 0)
+mesh = SubResource("rKeyShaft")
+surface_material_override/0 = ExtResource("e22")
+
+[node name="Bit" type="MeshInstance3D" parent="KeyK3"]
+position = Vector3(0.155, -0.012, 0)
+mesh = SubResource("rKeyBit")
+surface_material_override/0 = ExtResource("e22")
 
 [node name="Caption" type="Label3D" parent="KeyK3"]
 position = Vector3(0, 0.12, 0.08)
@@ -5147,7 +5194,7 @@ text = "出口前室钥\n\nE  拿起"
 font = ExtResource("e5")
 font_size = 22
 pixel_size = 0.0024
-modulate = Color(0.85, 0.8, 0.55, 1)
+modulate = Color(0.78, 0.64, 0.36, 1)
 outline_size = 0
 shaded = false
 

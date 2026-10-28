@@ -5,24 +5,35 @@ extends Node3D
 signal finished(skipped: bool)
 
 const FADE_SECONDS := 0.55
+## ART-PROLOGUE-CAMS 定稿机位（docs/ART_PROLOGUE_CINEMATIC_20261028.md + 教室几何）。
+## VO 九句勿改；仅 eye/look/fov（+时长窗内微调）。Alert 保持 hidden；P07 非跳脸。
 const SHOTS: Array[Dictionary] = [
-	{"id": "P01", "duration": 3.5, "eye": Vector3(-9.05, 1.60, -2.75), "look": Vector3(-14.0, 1.15, -2.75), "fov": 58.0,
+	# P01 ★ 西墙窗洞 z≈-5.4 内看雨幕（占位曾瞄实墙缝 z≈-2.75）
+	{"id": "P01", "duration": 3.5, "eye": Vector3(-8.75, 1.58, -5.35), "look": Vector3(-15.5, 1.05, -5.35), "fov": 58.0,
 		"vo": "雨还没停。外面看起来还正常。"},
-	{"id": "P02", "duration": 2.3, "eye": Vector3(-8.85, 1.58, -2.55), "look": Vector3(-9.55, 1.35, -2.2), "fov": 62.0,
+	# P02 同窗侧微横移 → 玻璃内课桌/灯管倒影
+	{"id": "P02", "duration": 2.3, "eye": Vector3(-8.55, 1.56, -4.95), "look": Vector3(-9.85, 1.40, -3.80), "fov": 63.0,
 		"vo": "灯还亮着。广播还没开始催。"},
-	{"id": "P03", "duration": 3.0, "eye": Vector3(-5.4, 1.55, 0.55), "look": Vector3(-4.1, 1.75, -0.7), "fov": 52.0,
+	# P03 ★ WClockLabel「考场←」廊侧可读（标签在 x≈-2.88 墙东面朝 -X）
+	{"id": "P03", "duration": 3.0, "eye": Vector3(-1.95, 1.68, -0.55), "look": Vector3(-2.88, 2.08, -0.50), "fov": 48.0,
 		"vo": "校牌偏了一点。像有人刚碰过。"},
-	{"id": "P04", "duration": 2.3, "eye": Vector3(-8.15, 1.25, -2.55), "look": Vector3(-8.5, 0.85, -3.05), "fov": 44.0,
+	# P04 ExamSheet 终场须知 (-7.8,1.35,-7.73) 近读规章笔迹
+	{"id": "P04", "duration": 2.3, "eye": Vector3(-7.55, 1.35, -6.90), "look": Vector3(-7.80, 1.35, -7.73), "fov": 44.0,
 		"vo": "规章边角多了一行手写。印刷体里不该有它。"},
-	{"id": "P05", "duration": 2.3, "eye": Vector3(-8.35, 1.45, -2.55), "look": Vector3(-8.5, 0.78, -3.0), "fov": 47.0,
+	# P05 Desk00 卷面 Paper00 (-8.5,0.768,-3) 俯角印章
+	{"id": "P05", "duration": 2.3, "eye": Vector3(-8.30, 1.38, -2.30), "look": Vector3(-8.50, 0.78, -3.05), "fov": 47.0,
 		"vo": "印章的印泥还没干。"},
-	{"id": "P06", "duration": 2.8, "eye": Vector3(-6.5, 1.62, -1.2), "look": Vector3(-6.5, 1.55, -6.5), "fov": 72.0,
+	# P06 走道中景 → 讲台；教师 frozen 剪影将入
+	{"id": "P06", "duration": 2.8, "eye": Vector3(-6.50, 1.62, -1.35), "look": Vector3(-6.50, 1.55, -6.55), "fov": 72.0,
 		"vo": "讲台那边站着人。他不坐。"},
-	{"id": "P07", "duration": 3.5, "eye": Vector3(-6.5, 1.72, -5.15), "look": Vector3(-6.5, 1.78, -6.35), "fov": 38.0,
+	# P07 ★ 略仰对眼镜/微笑（头≈y2.05）；非跳脸缓近景
+	{"id": "P07", "duration": 3.5, "eye": Vector3(-6.50, 1.78, -5.05), "look": Vector3(-6.50, 2.02, -6.34), "fov": 38.0,
 		"vo": "他在笑。笑意不到眼睛。"},
-	{"id": "P08", "duration": 3.0, "eye": Vector3(-6.15, 1.45, -5.55), "look": Vector3(-6.5, 0.95, -6.65), "fov": 52.0,
+	# P08 切至 ExamTimer (-6.5,0.84,-6.65)「未响」
+	{"id": "P08", "duration": 3.0, "eye": Vector3(-6.05, 1.40, -5.45), "look": Vector3(-6.50, 0.95, -6.65), "fov": 52.0,
 		"vo": "铃还没响。时间已经不对了。"},
-	{"id": "P09", "duration": 2.0, "eye": Vector3(-5.15, 1.55, -0.55), "look": Vector3(-3.7, 1.35, 1.0), "fov": 70.0,
+	# P09 低柜后→考场门玻璃观察窗；FOV 近玩法默认
+	{"id": "P09", "duration": 2.0, "eye": Vector3(-4.25, 1.55, -0.55), "look": Vector3(-3.05, 1.42, 1.10), "fov": 74.0,
 		"vo": "先别动。看清楚再说。"},
 ]
 

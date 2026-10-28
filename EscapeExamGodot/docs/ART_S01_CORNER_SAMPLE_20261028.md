@@ -3,7 +3,7 @@
 - **任务 ID**：`ART-S01-CORNER`
 - **分支**：`art/chapter01-module-pass`（worktree `/workspace/wt-art/EscapeExamGodot`）
 - **基线 tip（开工时）**：`5a94a02`（SHOT 文档锁定）；本交付叠在 tip `204e135`（prologue VO 文档）之上
-- **本交付 Commit**：`ea2d952` · full `ea2d95296c1aa3683d2708ba776e782a50d45393`（message 含 ART-S01-CORNER）；tip 含 stamp `52e9136`
+- **本交付 Commit**：`ea2d952` · full `ea2d95296c1aa3683d2708ba776e782a50d45393`（message 含 ART-S01-CORNER）；tip 含 stamp `76e474f`
 - **日期**：2026-10-28（Asia/Shanghai）
 - **Godot**：4.7.2 stable · box 实跑 `gl_compatibility` + llvmpipe（OpenGL 4.5 Mesa）
 - **范围**：共享教室色板材质 + `scenes/modules` 遮挡柜/桌侧低柜 + chapter 教室墙裙/玻璃/讲台面板色对齐 + 课桌木色 + S01 固定机位证据；**未改** `teacher.gd`、game/chapter 主流程、NavMesh、房间拓扑大改、Lighting/AudioBus/后期、Alert UI

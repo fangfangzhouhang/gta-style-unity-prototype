@@ -84,7 +84,7 @@ volume_db = clamp(volume_db, -30.0, -1.0)
 
 ```bash
 cd /workspace/wt-audio-bed-door
-godot --path EscapeExamGodot --headless -s res://tests/acceptance.gd
+godot --path EscapeExamGodot --headless -s res://tests/acceptance.gd -- --test
 # 需已有 EscapeExamGodot/.godot/imported（gitignore；可从其它 worktree 拷贝）
 ```
 

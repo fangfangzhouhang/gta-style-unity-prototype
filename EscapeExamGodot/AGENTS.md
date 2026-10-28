@@ -5,7 +5,7 @@
 - 用户于 2026-10-26 授权将本项目源码发布到现有 Unity 仓库的 EscapeExamGodot/ 子目录。原本机独立工程仍用于本对话开发；仓库副本是交付快照，不是同时编辑的第二工作副本。后续同步应明确源与目标，避免覆盖新改动。未经明确要求不合并主干。
 - 克隆仓库后将 AI 工具工作目录设为 EscapeExamGodot，Godot 直接打开该目录的 project.godot。勿打开旧 GodotPilot201 代替本项目。本项目不依赖 Unity；不修改仓库根目录 Assets/、Packages/、ProjectSettings/。
 - 需要 Godot 4.7.2 标准版，不需要 .NET、Blender、Python 或原机器 D 盘路径即可运行。可用 GODOT_BIN 指定本机引擎，再运行 tools/run.ps1 -Mode Editor；引擎与缓存不纳入 Git。
-- 自动测试必须用 tools/run.ps1 -Mode Check（隔离测试存档）；不得让测试覆盖玩家存档。工具 author_scene.py 仅供离线重新生成原型，会覆盖场景，不能作为启动步骤。手动编辑场景后不要随意重跑它。
+- 自动测试必须用 tools/run.ps1 -Mode Check（隔离测试存档），或等价命令 `godot --path EscapeExamGodot --headless -s res://tests/acceptance.gd -- --test`；**必须带 `-- --test`**，裸跑会让 prologue 污染夹具（acceptance 会强制 test_mode 兜底，但 CI/脚本仍须写死 flag）。不得让测试覆盖玩家存档。工具 author_scene.py 仅供离线重新生成原型，会覆盖场景，不能作为启动步骤。手动编辑场景后不要随意重跑它。
 - 先读 README、PROJECT_STATUS、DESIGN，再执行当前阶段。场景与参数应可在 Godot 编辑器中检查，不用一个运行时巨型脚本生成整章。
 - 重要视觉修改必须实际渲染/运行检查，截图记录版本、机位、渲染器与验证类型。
 - 分开记录静态检查、引擎自动测试、脚本辅助通关、操作系统真实输入测试、人工试玩；没有执行的项目不得标记完成。

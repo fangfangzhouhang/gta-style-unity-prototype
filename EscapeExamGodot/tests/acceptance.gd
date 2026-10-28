@@ -22,6 +22,13 @@ func frames(count: int) -> void:
 func run() -> void:
 	root.size = Vector2i(1280, 800)
 	game = root.get_node("Game")
+	# Bare `godot -s res://tests/acceptance.gd` (no `-- --test`) leaves Game.test_mode false,
+	# so start_new() enters prologue and pollutes Phase0 fixtures. Force test_mode here.
+	var user_args := OS.get_cmdline_user_args()
+	if "--test" not in user_args and "--bake" not in user_args:
+		push_warning("acceptance: missing `-- --test`; forcing Game.test_mode so prologue cannot pollute fixtures. Preferred: godot --headless -s res://tests/acceptance.gd -- --test")
+		print("WARN acceptance: missing `-- --test`; forcing test_mode (prefer: ... acceptance.gd -- --test)")
+	game.test_mode = true
 	level = load("res://scenes/chapters/chapter_01.tscn").instantiate()
 	root.add_child(level)
 	await process_frame

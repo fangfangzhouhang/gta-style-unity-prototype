@@ -57,7 +57,13 @@ Windows PowerShell 可在本目录执行：
 ./tools/run.ps1 -Mode TimerRoute
 ```
 
-Check 是夹具式引擎测试；Route / TimerRoute 是使用真实角色物理与活动 AI 的脚本辅助路线，不是实体键鼠或人工试玩。请勿直接以玩家存档目录运行 acceptance.gd；测试会写入测试档。
+Linux / 直接调用引擎时，**acceptance 必须带用户参数 `-- --test`**（否则 prologue 会污染 Phase0 夹具；acceptance 入口会强制 `test_mode` 兜底，但 CI/文档仍须写死带 flag）：
+
+```sh
+godot --path EscapeExamGodot --headless -s res://tests/acceptance.gd -- --test
+```
+
+`tools/run.ps1 -Mode Check` 已自动附加 `-- --test`。Check 是夹具式引擎测试；Route / TimerRoute 是使用真实角色物理与活动 AI 的脚本辅助路线，不是实体键鼠或人工试玩。请勿直接以玩家存档目录运行 acceptance.gd；测试会写入测试档。
 
 历史记录为 38 项引擎检查通过；广播和纯计时器各有脚本通关记录。失败路线也保留供分析。15—25 分钟只是首玩目标，脚本几十秒通关不能证明体验成立。真实电脑输入检查被用户物理 Escape 中止，不能标记为完成。
 

@@ -31,19 +31,23 @@ func _ready() -> void:
 	_rain.stream = RAIN
 	_rain.bus = AMBIENT_BUS
 	_rain.volume_db = BED_RAIN_DB
+	_rain.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child(_rain)
 	_hum = AudioStreamPlayer.new()
 	_hum.name = "TubeHum"
 	_hum.stream = HUM
 	_hum.bus = AMBIENT_BUS
 	_hum.volume_db = BED_HUM_DB
+	_hum.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child(_hum)
 	_sting = AudioStreamPlayer.new()
 	_sting.name = "CatchSting"
 	_sting.stream = STING
 	_sting.bus = STING_BUS
 	_sting.volume_db = 2.0
+	_sting.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child(_sting)
+	_clear_bus_mute_flags()
 	# 仅玩法/标题后开床；测试模式也开以便总线存在，但不依赖 AI。
 	if not _quiet:
 		if not _rain.playing:
@@ -59,6 +63,16 @@ func _ensure_buses() -> void:
 			var idx := AudioServer.bus_count - 1
 			AudioServer.set_bus_name(idx, bus_name)
 			AudioServer.set_bus_send(idx, "Master")
+	_clear_bus_mute_flags()
+
+func _clear_bus_mute_flags() -> void:
+	## Harden: Ambient/SFX must not stay muted/solo after duck or bad local_data.
+	for bus_name in [AMBIENT_BUS, "SFX", STING_BUS, "Master"]:
+		var i := AudioServer.get_bus_index(bus_name)
+		if i < 0:
+			continue
+		AudioServer.set_bus_mute(i, false)
+		AudioServer.set_bus_solo(i, false)
 
 func set_loop_quiet(quiet: bool) -> void:
 	## Broadcast 停播 → 床真正安静（淡出后 stop）；恢复则重开循环床。
@@ -136,7 +150,7 @@ func _ensure_beds_playing() -> void:
 		_hum.play()
 
 func reset_audio_state() -> void:
-	## 关卡重开 / stop：杀掉 duck/bed Tween，作废待恢复的刺音计时。
+	## 关卡重开 / stop / enter_b0：杀掉 duck/bed Tween，作废待恢复的刺音计时；清 mute；重开床。
 	_sting_gen += 1
 	if _duck_tw:
 		_duck_tw.kill()
@@ -147,6 +161,7 @@ func reset_audio_state() -> void:
 	_catching = false
 	if _sting and _sting.playing:
 		_sting.stop()
+	_clear_bus_mute_flags()
 	var i := AudioServer.get_bus_index(AMBIENT_BUS)
 	if i >= 0:
 		AudioServer.set_bus_volume_db(i, AMBIENT_NORMAL_DB)

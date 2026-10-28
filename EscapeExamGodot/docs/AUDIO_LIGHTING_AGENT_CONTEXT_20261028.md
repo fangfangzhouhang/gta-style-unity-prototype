@@ -1,203 +1,149 @@
-# 游戏光影音效设计 Agent 上下文交接 · AUDIO_LIGHTING_AGENT_CONTEXT_20261028
+# 【光影音效交接】下一任 Agent 上下文 · 2026-10-28
 
+- **角色**：@游戏光影音效设计 → 下任同角色 / 接手 mute+lookdev
 - **日期**：2026-10-28（Asia/Shanghai）
-- **交接目的**：给 **新的**「游戏光影音效设计」agent 一份可独立开工的现状包；**不要**只留本地。
-- **本包分支**：`audio/agent-handoff-20261028`（从 feat tip `2344404` 切出；仅加本文档）
-- **总分支（集成）**：`feat/chapter01-module-pass` @ **`234440437190c4612ddd80cdc63c0f5e2d06ff4c`**（`2344404`）
-- **Repo**：https://github.com/fangfangzhouhang/gta-style-unity-prototype.git
-- **硬约束**：**禁止** push / merge **`main`**。体验未 PASS、无 ark Forward+ 笔记前不得宣称耳听/观感 PASS。
+- **团队分支**：`feat/chapter01-module-pass`（**勿合 main**；路径：游戏开发 fast-merge → 游戏审核 → ark → main）
+- ****本交接推送分支**：`audio/mute-fix-player-steps` tip `a833318`（可 ff-merge 进 feat）
+- **feat tip（写本文时）**：`55d491f`（音频相关落地 tip `2344404` 脚步 −16） — `fix(godot): lower player footstep atten ~-11 → ~-16 dB`
+- **仓库**：`https://github.com/fangfangzhouhang/gta-style-unity-prototype.git`
+- **Godot 工程**：`EscapeExamGodot/` · Godot **4.7.2** Forward+
+- **紧急背景**：usage 告急；光影音效进度必须在 GitHub，禁止只留 box 本地。
 
 ---
 
-## 1. Role scope（职责边界）
+## 1) 已在 feat / 已合并（Done）
 
-### 做（In scope）
+| 交付 | 代表 SHA / 说明 | 状态 |
+|------|-----------------|------|
+| Ambient 恐怖床抬高 | `c4d08e8` rain **−14→−9** / hum **−18→−13**；仍只走 Ambient、不进 AI | **在 feat** |
+| 门声软化 + 铰链变慢 | 同床批次 / horror-bed；door 额外衰减 + pitch 0.94 + hinge 0.45→0.60s | **在 feat**（本 mute 分支把门额外 −4/−6 **调为 −2/−3**） |
+| 教师脚步近大远小 | `d05dc66`；chase hard / 其它 soft；距离 lerp −2…−26；**source_id=teacher 不进自身 hear** | **在 feat** |
+| Alert-off 运行证据 | `982e98c` 等；夹具 beds/duck/Alert hidden；**≠ ear PASS** | 内容已合 feat；原 remote 标 gone |
+| Fixture4 / coat-rim / cold spill lookdev | `bc10edc` F4 fill · `6b05191` F4 aim · `1af8e06` coat-rim joint · `60fd24a` / `139cec8` cold spill | **在 feat**（Omni 影子灯 **≤4 hold**） |
+| 玩家脚步 −16 | **`2344404` 游戏开发** −11→−16；`acoustics.gd` `source_id == "player": volume_db -= 16` | **在 feat** — **下任勿再改除非耳听回退** |
+| 前情动态 / cams | art：`5e82703` ART-PROLOGUE-DYNAMIC 等叠在 aa09ce8 上 | **在 feat** |
+| P0 柜/闸防跳 | `aa09ce8` | **在 feat** |
 
-| 域 | 内容 |
-|----|------|
-| 实时光照 | `WorldEnvironment`、Omni/Directional 颜色·能量·阴影；暗考场 lookdev；冷/暖对比；Omni shadow **≤4–5** 预算 |
-| 音频总线 | `Master` → `Music` / **`Ambient`** / **`SFX`** / **`Sting`**（`default_bus_layout.tres` + `ambience.gd` `_ensure_buses`） |
-| Ambient 床 | rain / tube_hum；duck / `set_loop_quiet`；catch sting；`reset_audio_state` |
-| 玩法反馈音 | 门声软化、脚步衰减、教师近大远小（仍走 Acoustics/`emit_sound`，床 **不**进 AI 听力） |
-| 证据 | 截图 / runtime 证据文档；**人耳 PASS 必须**有 ark Forward+ 实测笔记 |
+**侧分支说明**：`audio/horror-bed-door-soft`、`audio/alert-off-runtime-evidence`、`audio/fixture4-*`、`audio/cold-corridor-*`、`audio/chapter01-lookdev-ambience` 等相对 feat **ahead=0**（内容已合）；部分 origin 已 prune 为 gone — **不必强推旧 tip**，以 feat 为准。
 
-### 不做（Out of scope）
+交付文档目录（均在 `EscapeExamGodot/docs/`）：
 
-- 地图拓扑 / NavMesh / 房间连通
-- 教师 AI（巡逻速度、FOV、sight、suspicion）
-- 玩家移动速度 / 探测半径
-- 谜题逻辑、钥匙柜 UX、闸门/门禁逻辑
-- **Alert UI 重开**（已确认 Alert-off；危险反馈走非 Alert 的 A/V）
-- Unity 工程（**Unity ≠ Godot**；本线只维护 `EscapeExamGodot/`）
-
-### 合并链（handoff 顺序）
-
-```
-游戏光影音效设计  →  游戏开发（merge 进 feat）  →  游戏审核  →  ark（Forward+ 人测）  →  main
-```
-
-本角色 **直接推 feat 仅限文档/已协调的小补丁**；功能音效修复优先走侧分支 → 请 **@游戏开发** merge 进 `feat/chapter01-module-pass`。**永远不要**自行 merge `main`。
+- `AUDIO_HORROR_BED_DOOR_SOFT_20261028.md`
+- `AUDIO_ALERT_OFF_RUNTIME_EVIDENCE.md`
+- `AUDIO_FIXTURE4_*.md` / `AUDIO_COLD_CORRIDOR_SPILL_20261027.md` / `AUDIO_JOINT_COAT_F4_RECHECK.md`
+- `AUDIO_MUTE_FIX_PLAYER_STEPS_20261028.md`（本轮 mute 硬化）
+- `AUDIO_LIGHTING_HANDOFF.md`（总线图旧稿）
 
 ---
 
-## 2. Current baseline（当前基线）
+## 2) 进行中 / 未完成（In progress）
 
-| 项 | 值 |
-|----|-----|
-| Feat tip | **`2344404`** `fix(godot): lower player footstep atten ~-11 → ~-16 dB` |
-| 含 P0 | `aa09ce8` hard gate anti-skip + real key cabinet UX（TECH PASS QA） |
-| 含 prologue | `5e82703` ART-PROLOGUE-DYNAMIC（动态镜头）及之前 cams |
-| 含脚步 | 玩家脚步 atten **-16 dB**（相对 path 公式结果再减） |
-| **不是** | `main` / `origin/main` — 不要从 main 开分支做本章 |
-| 游玩入口 | Windows：**`D:\game\play.cmd`**，Forward+ 渲染；box 上 Godot 4.7.2 headless **不能**替代 ark 人耳 |
+### Mute / 听不见 SFX+床（ark A1）— 本分支部分硬化
 
-祖先链摘要（新近 → 旧）：
+**现象（ark playtest）**：交互/门/环境几乎听不到；玩家脚步却很响 ⇒ Master/SFX **未全死**。
 
-```
-2344404  footstep -11 → -16
-5e82703  ART-PROLOGUE-DYNAMIC tip stamp
-… 16daf3e prologue dynamic …
-aa09ce8  P0 gate/cabinet + footstep -7 → -11（TECH PASS）
-… art cams / prologue skip …
-（更早：lookdev / coat-rim / horror bed+door soft 等已并入 feat 祖先）
-```
+**已排查（代码，非 Windows 终局）**：
 
----
+1. Bus layout 正常；脚步证明 SFX→Master 通。
+2. 相对混音：历史脚步过响 + door 过软 + 床连续噪声源低 → 主观「无 SFX」。
+3. `enter_b0`（Skip 前情）原先不 `Ambience.reset_audio_state` → Ambient 可能卡在 duck **−22**。
+4. `试玩.cmd` 把 `APPDATA` 指到 `local_data`；设置里 Master 可存 **−30**。
+5. 床 WAV 曾 `compress/mode=2`（IMA-ADPCM）长循环 — Windows 播放风险。
 
-## 3. Done（已完成，附已知 SHA）
+**本分支已做硬化**（待 ark 耳听）：`enter_b0` reset 床；清 Ambient/SFX mute；Master ≤−24→0；door −2/−3；床 import PCM；**未动** −16 脚步行。
 
-### 3.1 Ambient 床 + 门软化 + 教师脚步曲线
+**仍待**：
 
-| 项 | 值 / SHA |
-|----|----------|
-| 分支 | `audio/horror-bed-door-soft`（仍在 origin；内容 **已在** feat 祖先） |
-| 代码 tip | **`d05dc66`** `audio: teacher footsteps louder when closer to player` |
-| 文档 tip | **`2b95d84`** `docs: restore content SHA in AUDIO_HORROR_BED_DOOR_SOFT` |
-| Rain bed | **−9 dB**（`BED_RAIN_DB`） |
-| Hum bed | **−13 dB**（`BED_HUM_DB`） |
-| Door | soft **−4** clamp **−6**；pitch **0.94**；hinge tween **0.60s** |
-| Teacher step | distance→dB 曲线（`teacher_step` / `teacher_step_soft` via acoustics） |
+- ark 真机 `D:\game\play.cmd`（或包内 `试玩.cmd`）Forward+ 耳听：床 / 门 / 闸 / notice。
+- 若仍无床：抓 `local_data/**/settings.cfg`、Godot 音频设备、Ambient bus 运行时 dB。
+- key_pickup 开柜/取钥 **无** `emit_sound`（柜出 scope；若 ark 仍报「交互无声」可能要另卡）。
+- **禁止**在无录音证据时写 ear PASS。
 
-交付文：`EscapeExamGodot/docs/AUDIO_HORROR_BED_DOOR_SOFT_20261028.md`
+### Lookdev 未闭环
 
-### 3.2 光照 / 轮廓 / Alert-off 证据
-
-| 项 | SHA / 说明 |
-|----|------------|
-| Fixture4 coat-rim | **`1af8e06`**（joint S02/S03 证据；分支 `audio/fixture4-coat-rim` origin **gone**，commit **在** 2344404） |
-| Cold corridor spill | Fixture5/7 冷出口 rim；见 `AUDIO_COLD_CORRIDOR_SPILL_20261027.md`（`60fd24a` stamp；origin gone，内容在 feat） |
-| Alert-off runtime | **`982e98c`** stamp；`AUDIO_ALERT_OFF_RUNTIME_EVIDENCE.md` |
-| Mood / lookdev | `AUDIO_LIGHTING_HANDOFF.md` + Fixture4 aim/fill 文档 |
-| Omni 预算 | **Omni shadow ≤4 hold**（勿再加阴影 Omni） |
-| Art metal keychain | 已更早并入相关 art/feat 线（钥匙链金属观感）；光影侧勿回退 |
-
-**注意**：截图 / runtime 证据 ≠ 人耳/观感 **PASS**。无 ark Forward+ 笔记不得宣称 PASS。
-
-### 3.3 Dev / QA 相关（feat 上）
-
-| 项 | SHA |
-|----|-----|
-| 玩家脚步 −7 → −11 | 随 **`aa09ce8`**（P0 同提交 message） |
-| 玩家脚步 −11 → −16 | **`2344404`** |
-| P0 TECH PASS QA | **`aa09ce8`**（acceptance 机检绿；体验仍待 ark） |
+- Omni≤4 hold，勿再加影灯。
+- Forward+ 真机 mood 与 xvfb 截图不等价。
+- 教师剪影冷廊可读性：spill/rim 已合，耳听+眼看联调未最终签。
 
 ---
 
-## 4. Open / unfinished（未完成）
+## 3) 未来工作（P0 / P1 / P2）
 
-### P1 — 整体 SFX/氛围「人听几乎无听」Mute 诊断（进行中）
+### P0（光影音效 · 阻塞体验）
 
-- **现象**：代码里 beds / duck / door soft 已存在，但人类试玩仍觉得整体环境声/部分 SFX **听不见**。
-- **反证**：玩家 **脚步听得见** → **Master / SFX 总线并非整条死掉**。
-- **排查方向（box executor 进行中）**：
-  1. **Ambient 路径**：`ambience.gd` 是否真在进章时 `_ready` / 床是否 `play()`；bus 名是否落到 `Ambient`
-  2. **`set_loop_quiet(true)`**：广播 stop / 某状态是否把床 fade→stop 后未恢复
-  3. **`local_data` / 用户 Master volume**：Windows 存档是否把 Master 或 Ambient 打到极低
-  4. **`D:\game\play.cmd` 启动路径**：是否打到旧包 / 非 Forward+ / 非本 tip 构建
-- **协调**：另一 executor 可能在 **`audio/mute-fix-player-steps`**（worktree `/workspace/wt-audio-bed-door`）上修 mute — **不要抢同一分支改同一文件**；本交接包只写 CONTEXT，不碰 mute 修复。
+1. **Mute 闭环**：跟 ark 复测本 `audio/mute-fix-player-steps`；若仍无声，按 settings/设备/总线采样下钻；必要时再抬床或交互 oneshot（仍不进 AI）。
+2. **玩家脚步 −16 耳听确认**（已由开发改码；光影只收听感，勿擅自再降除非 ark 点名）。
+3. **门/闸/广播** 在 Skip→B0 后可听；Ambient duck 后必回 0。
+4. 交接/合并：本分支 → **游戏开发** ff-merge 进 `feat/chapter01-module-pass` → 游戏审核 → ark → **勿自行合 main**。
 
-### 耳听 / 观感 PASS
+### P1
 
-- 仍 **需要 ark Forward+** 笔记与实测。
-- Experience **NOT PASS**；**无 ark → 不上 main**。
+1. 开柜/拾取反馈音（与柜 UX 协同；勿改钥链逻辑）。
+2. 教师脚步 vs 床 平衡微调（保持距离曲线结构）。
+3. Lookdev：S01/S02 样本室与章内灯一致性抽检；截图机位用既有 SHOT_BLOCKS。
+4. 广播 LoopAudio（场景内 Ambient −24 chime）与 Ambience 雨/hum 是否叠糊 — 听感整理。
 
----
+### P2
 
-## 5. Future work（后续工作清单）
-
-1. **完成 mute 根因修复** → push `audio/mute-fix-player-steps`（或等价分支）→ 请 **@游戏开发** merge 进 `feat/chapter01-module-pass`。
-2. Mute 修好后做 **全链路耳听 QA**：beds 可闻 → duck → sting → reset/stop 广播后恢复；记录 dB/主观。
-3. **P0 危险 A/V 反馈**（**不**重开 Alert UI）— 与 art 联合：抓到/逼近时的视觉+Sting/SFX。
-4. 若光照再改，**刷新三mood样张**（暖窗 / 冷廊 / 中间态）。
-5. **永不**在无实测下宣称 ear PASS。
+1. 雨窗/局部床（设计稿有；勿抢 P0）。
+2. Music bus 是否需要极低频垫 — 默认不要盖过脚步可读。
+3. 导出/发包：确保 `.godot/imported` 或首次 import；`local_data` 勿携带 −30 volume。
 
 ---
 
-## 6. Local worktrees on box（路径）& remotes
+## 4) 约束（硬）
 
-共享 box；多 agent 共用文件系统。相关 worktree：
-
-| Path | Branch / HEAD | origin 状态 | vs `2344404` |
-|------|---------------|-------------|--------------|
-| `/workspace/wt-feat-integrate` | `feat/chapter01-module-pass` @ 2344404（本包切 `audio/agent-handoff-20261028`） | tracking | **baseline** |
-| `/workspace/wt-audio-bed-door` | `audio/mute-fix-player-steps` @ 2344404 | → feat tip；**留给 mute 修复** | 无独有 commit |
-| `/workspace/wt-audio` | `audio/chapter01-lookdev-ambience` @ 139cec8 | **gone** | 已祖先于 2344404 |
-| `/workspace/wt-audio-joint` | `audio/fixture4-coat-rim` @ 1af8e06 | **gone** | 已祖先于 2344404 |
-| `/workspace/wt-audio-spill` | `audio/cold-corridor-silhouette-spill` @ 60fd24a | **gone** | 已祖先于 2344404 |
-| `/workspace/wt-audio-f4` | `audio/fixture4-west-fill` @ bc10edc | **gone** | 已祖先于 2344404 |
-| `/workspace/wt-audio-f4-aim` | `audio/fixture4-aim-coat` @ 6b05191 | **gone** | 已祖先于 2344404 |
-| `/workspace/wt-audio-evidence` | `audio/alert-off-runtime-evidence` @ 982e98c | **gone** | 已祖先于 2344404 |
-| `/workspace/wt-art` | `art/prologue-dynamic` @ 5e82703 | behind feat 1 | prologue 已在 feat |
-| （qa detached）`/workspace/wt-qa-*` | 各类 tip 快照 | n/a | 只读证据用 |
-
-**Re-push 策略（本包执行时）**：
-
-- 上表 **gone** 侧分支经 `git merge-base --is-ancestor <tip> 2344404` **全部已在 feat** → **无需**为独有 commit 重推。
-- 仍在 origin 的音频相关：`origin/audio/horror-bed-door-soft`、`origin/feat/chapter01-module-pass`。
-- **最低保证**：本 CONTEXT 文档必须在 GitHub（本分支 + 尽量 cherry-pick 到 feat）。
-
----
-
-## 7. 仓库内关键文档（已有）
-
-路径均相对 `EscapeExamGodot/docs/`：
-
-| 文档 | 用途 |
+| 禁止 | 说明 |
 |------|------|
-| [`AUDIO_LIGHTING_HANDOFF.md`](./AUDIO_LIGHTING_HANDOFF.md) | MODULE B lookdev + bus + ambience 总交接 |
-| [`AUDIO_HORROR_BED_DOOR_SOFT_20261028.md`](./AUDIO_HORROR_BED_DOOR_SOFT_20261028.md) | 床 −9/−13、门软化、教师脚步曲线 |
-| [`AUDIO_FIXTURE4_COAT_RIM_20261027.md`](./AUDIO_FIXTURE4_COAT_RIM_20261027.md) | Fixture4 coat rim |
-| [`AUDIO_FIXTURE4_AIM_20261027.md`](./AUDIO_FIXTURE4_AIM_20261027.md) | Fixture4 aim |
-| [`AUDIO_FIXTURE4_FILL_20261027.md`](./AUDIO_FIXTURE4_FILL_20261027.md) | Fixture4 west fill |
-| [`AUDIO_COLD_CORRIDOR_SPILL_20261027.md`](./AUDIO_COLD_CORRIDOR_SPILL_20261027.md) | 冷廊 silhouette spill |
-| [`AUDIO_ALERT_OFF_RUNTIME_EVIDENCE.md`](./AUDIO_ALERT_OFF_RUNTIME_EVIDENCE.md) | Alert-off runtime 证据 |
-| [`AUDIO_JOINT_COAT_F4_RECHECK.md`](./AUDIO_JOINT_COAT_F4_RECHECK.md) | coat+F4 联合复核 |
-| [`QA_CHAPTER01_MODULE_PASS_20261027.md`](./QA_CHAPTER01_MODULE_PASS_20261027.md) | 模块 PASS QA 记录 |
-| **本文** [`AUDIO_LIGHTING_AGENT_CONTEXT_20261028.md`](./AUDIO_LIGHTING_AGENT_CONTEXT_20261028.md) | 新 agent 总上下文（2026-10-28） |
+| 改教师 AI 数值 / FOV / 速度 / 五态表 | 除非另卡 |
+| 改房间拓扑 / NavMesh / 钥链 / 门 progress id | 剧情/开发卡 |
+| 恢复 Alert `?`/`!` UI | ark 已关 |
+| 床进 `acoustics.emit_sound` / AI 听力 | 雨/hum **永不** |
+| 合 **main** | 只推侧支或交开发合 feat |
+| Unity `Assets/` 大改 | Godot 章独立 |
+| 无证据 ear PASS | box=dummy audio |
+
+**路由**：光影音效侧支 → **游戏开发** merge feat → **游戏审核** → **ark** → main。
 
 ---
 
-## 8. 给下一任 agent 的起步检查清单
+## 5) 如何试玩
 
-1. `git fetch origin`；从 **`origin/feat/chapter01-module-pass`（2344404 或更新 tip）** 开侧分支，**不要**从 `main`。
-2. 读本文 §3–§5；再读 `AUDIO_LIGHTING_HANDOFF.md` + `AUDIO_HORROR_BED_DOOR_SOFT_20261028.md`。
-3. 若修 mute：先确认 `/workspace/wt-audio-bed-door` / `audio/mute-fix-player-steps` 是否已有进行中改动，**避免冲突**。
-4. Windows 验证用 **`D:\game\play.cmd` Forward+**；box headless 只做机检。
-5. 交付走：侧分支 push → @游戏开发 merge feat → @游戏审核 → ark →（仅 ark 后）main。
-6. Omni shadow 保持 ≤4；Ambient 床永不 `emit_sound` 进 AI。
+1. **代码**：`feat/chapter01-module-pass` tip（或已 merge 的 `audio/mute-fix-player-steps`）。
+2. **Windows 包**：`D:\game\play.cmd` 或工程内 `EscapeExamGodot\试玩.cmd`（`APPDATA`→`local_data`）。
+3. **渲染**：项目 Forward+（勿用 Compatibility 当最终观感）。
+4. **流程**：标题 → 开始新的试走 → Skip 前情 → B0 教室；听雨/hum；开门；走几步对比脚步与床。
+5. **设置**：Esc → 设置 → 音量靠近 0；若曾拉到头，删 `local_data` 下 `settings.cfg` 再开。
+6. **机检（box）**：
+   ```bash
+   godot --path EscapeExamGodot --headless -s res://tests/acceptance.gd
+   ```
+7. **证据夹具（旧）**：`tests/audio_alert_off_evidence.gd` — bus/playing 断言，**不是**耳听。
 
 ---
 
-## 9. English summary (secondary)
+## 6) Worktree / 推送速查
 
-**Role:** realtime lighting + Ambient/SFX/Sting + play-feedback audio. **Not:** map topology, AI, player speed, puzzles, cabinets/gates, Alert UI reopen. Unity ≠ Godot. Pipeline: lighting/audio → 游戏开发 → 游戏审核 → ark → main.
+| 路径 | 分支 |
+|------|------|
+| `/workspace/wt-audio-bed-door` | `audio/mute-fix-player-steps`（本交接） |
+| `/workspace/wt-feat-integrate` | `feat/chapter01-module-pass` |
+| `/workspace/wt-audio*` | 历史 lookdev/evidence（ahead 0） |
 
-**Baseline:** feat tip **`2344404`** (P0 `aa09ce8`, prologue `5e82703`, footsteps −16). Play via `D:\game\play.cmd` Forward+. **Not main.**
+```bash
+git fetch origin
+git checkout audio/mute-fix-player-steps
+git log -1 --oneline   # 应交 tip SHA
+# 开发合并示例：
+git checkout feat/chapter01-module-pass
+git merge --ff-only audio/mute-fix-player-steps
+git push origin feat/chapter01-module-pass
+```
 
-**Done:** horror beds −9/−13 + soft door + teacher distance curve (`d05dc66` / `2b95d84`); Fixture4 coat-rim `1af8e06`; cold spill; Alert-off evidence; Omni≤4; footsteps −7→−11→−16.
+**Remote**：`https://github.com/fangfangzhouhang/gta-style-unity-prototype/tree/audio/mute-fix-player-steps`
 
-**Open:** P1 ambience still inaudible on human play despite code (mute diagnosis in progress; footsteps prove Master/SFX alive). Ear/visual PASS need ark Forward+. Experience NOT PASS.
+---
 
-**Next:** finish mute root-cause on `audio/mute-fix-player-steps` → merge to feat; full ear QA; P0 danger A/V without Alert UI; refresh mood shots if lighting changes; never claim ear PASS without measured playtest.
+## 7) 一句话给下任
 
-**Remotes:** several `audio/*` origin refs are **gone** but commits are ancestors of `2344404` — no unique re-push required. This CONTEXT doc must live on GitHub.
+Mute 不是「总线全灭」；feat 上已有床抬高/门软/教师曲线/F4/Alert-off 证据/脚步 −16。本侧支硬化了进 B0 复位床、Master 误存、door 略抬、床 PCM。下一步 **只做 ark 耳听闭环 + 让开发 ff-merge feat**，不要合 main，不要动 AI/拓扑/Alert。

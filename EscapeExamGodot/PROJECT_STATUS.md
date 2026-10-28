@@ -3,6 +3,16 @@
 2026-10-26 · A-M2.1 可玩原型，M1 核心机制已实现，M2 章节流程可通关；M3 美术质量与人工乐趣验收未完成。用户选择 A，参考作品确认是《你好，邻居》。
 
 
+## 额度交接指针（2026-10-28 · Asia/Shanghai）
+
+- **总分支**：`feat/chapter01-module-pass`（**不合 main**）
+- **运行时基线 tip**：`234440437190c4612ddd80cdc63c0f5e2d06ff4c`（脚步 ≈−16 dB；祖先含 `aa09ce8` P0 门禁+柜、`5e82703` 前情动镜）
+- **开发 Agent 交接真源**：`docs/HANDOFF_CHAPTER01_AGENT_20261028.md`
+- 角色专属：审核 `docs/CHAPTER01_AGENT_HANDOFF_20261028.md`；情节 `docs/design/AGENT_HANDOFF_PLOT_MECHANICS_20261028.md`；光影音效 `docs/AUDIO_LIGHTING_AGENT_CONTEXT_20261028.md`
+- 验收：`godot --headless -s res://tests/acceptance.gd -- --test` → 期望 95/95；体验仍 NOT PASS，等 ark
+
+
+
 
 ## P1 解谜/地图灰盒（进行中 · 2026-10-27）
 

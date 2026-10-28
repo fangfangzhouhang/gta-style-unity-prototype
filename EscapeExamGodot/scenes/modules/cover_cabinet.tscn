@@ -1,0 +1,115 @@
+[gd_scene load_steps=16 format=3]
+
+[ext_resource type="Material" path="res://assets/materials/mat_cabinet_body.tres" id="e1"]
+[ext_resource type="Material" path="res://assets/materials/mat_cabinet_door.tres" id="e2"]
+[ext_resource type="Material" path="res://assets/materials/mat_cabinet_metal.tres" id="e3"]
+[ext_resource type="Material" path="res://assets/materials/mat_wood_school.tres" id="e4"]
+[ext_resource type="Material" path="res://assets/materials/mat_baseboard.tres" id="e5"]
+
+[sub_resource type="BoxMesh" id="rBody"]
+size = Vector3(0.6, 1.54, 1.35)
+material = ExtResource("e1")
+
+[sub_resource type="BoxShape3D" id="rShape"]
+size = Vector3(0.6, 1.54, 1.35)
+
+[sub_resource type="BoxMesh" id="rDoor0"]
+size = Vector3(0.04, 0.62, 0.58)
+material = ExtResource("e2")
+
+[sub_resource type="BoxMesh" id="rDoor1"]
+size = Vector3(0.04, 0.62, 0.58)
+material = ExtResource("e2")
+
+[sub_resource type="BoxMesh" id="rDoor2"]
+size = Vector3(0.04, 0.58, 0.58)
+material = ExtResource("e2")
+
+[sub_resource type="BoxMesh" id="rDoor3"]
+size = Vector3(0.04, 0.58, 0.58)
+material = ExtResource("e2")
+
+[sub_resource type="BoxMesh" id="rHandle"]
+size = Vector3(0.03, 0.09, 0.018)
+material = ExtResource("e3")
+
+[sub_resource type="BoxMesh" id="rKick"]
+size = Vector3(0.62, 0.08, 1.37)
+material = ExtResource("e5")
+
+[sub_resource type="BoxMesh" id="rTop"]
+size = Vector3(0.64, 0.04, 1.39)
+material = ExtResource("e4")
+
+[sub_resource type="BoxMesh" id="rShelf"]
+size = Vector3(0.04, 0.035, 1.2)
+material = ExtResource("e4")
+
+[node name="CoverCabinet" type="Node3D"]
+
+[node name="Body" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.77, 0)
+mesh = SubResource("rBody")
+
+[node name="Collision" type="StaticBody3D" parent="Body"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Body/Collision"]
+shape = SubResource("rShape")
+
+[node name="DoorUL" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.31, 1.12, -0.32)
+mesh = SubResource("rDoor0")
+
+[node name="DoorUR" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.31, 1.12, 0.32)
+mesh = SubResource("rDoor1")
+
+[node name="DoorLL" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.31, 0.42, -0.32)
+mesh = SubResource("rDoor2")
+
+[node name="DoorLR" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.31, 0.42, 0.32)
+mesh = SubResource("rDoor3")
+
+[node name="HandleUL" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.335, 1.05, -0.08)
+mesh = SubResource("rHandle")
+
+[node name="HandleUR" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.335, 1.05, 0.08)
+mesh = SubResource("rHandle")
+
+[node name="HandleLL" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.335, 0.48, -0.08)
+mesh = SubResource("rHandle")
+
+[node name="HandleLR" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.335, 0.48, 0.08)
+mesh = SubResource("rHandle")
+
+[node name="Kick" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.04, 0)
+mesh = SubResource("rKick")
+
+[node name="TopCap" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.56, 0)
+mesh = SubResource("rTop")
+
+[node name="Shelf0" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.32, 0.25, 0)
+mesh = SubResource("rShelf")
+
+[node name="Shelf1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.32, 0.62, 0)
+mesh = SubResource("rShelf")
+
+[node name="Shelf2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.32, 1.0, 0)
+mesh = SubResource("rShelf")
+
+[node name="Shelf3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.32, 1.37, 0)
+mesh = SubResource("rShelf")

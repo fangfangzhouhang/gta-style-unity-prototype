@@ -1,0 +1,9 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[resource]
+resource_name = "WindowCold"
+transparency = 1
+albedo_color = Color(0.376471, 0.470588, 0.529412, 0.22)
+roughness = 0.28
+metallic_specular = 0.18
+cull_mode = 2

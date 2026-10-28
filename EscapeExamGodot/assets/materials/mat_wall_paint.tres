@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[resource]
+resource_name = "WallPaint"
+albedo_color = Color(0.847059, 0.827451, 0.772549, 1)
+roughness = 0.86
+metallic = 0.0

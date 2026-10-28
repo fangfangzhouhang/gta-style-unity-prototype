@@ -1,4 +1,4 @@
-[gd_scene load_steps=553 format=3]
+[gd_scene load_steps=558 format=3]
 
 [ext_resource type="Script" path="res://scripts/systems/chapter.gd" id="e1"]
 
@@ -31,6 +31,12 @@
 
 [ext_resource type="Material" path="res://assets/materials/mat_interact_metal.tres" id="e22"]
 
+[ext_resource type="PackedScene" path="res://scenes/modules/cover_cabinet.tscn" id="e23"]
+[ext_resource type="PackedScene" path="res://scenes/modules/desk_side_cover.tscn" id="e24"]
+[ext_resource type="Material" path="res://assets/materials/mat_dado_cap.tres" id="e25"]
+[ext_resource type="Material" path="res://assets/materials/mat_wood_school.tres" id="e26"]
+[ext_resource type="Material" path="res://assets/materials/mat_window_cold.tres" id="e27"]
+
 [ext_resource type="Script" path="res://scripts/systems/acoustics.gd" id="e15"]
 
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="e16"]
@@ -45,12 +51,12 @@
 
 [sub_resource type="ShaderMaterial" id="r1"]
 shader = ExtResource("e2")
-shader_parameter/base_color = Color(0.66, 0.65, 0.57, 1)
+shader_parameter/base_color = Color(0.847059, 0.827451, 0.772549, 1)
 shader_parameter/surface_kind = 0
 
 [sub_resource type="ShaderMaterial" id="r2"]
 shader = ExtResource("e2")
-shader_parameter/base_color = Color(0.32, 0.43, 0.37, 1)
+shader_parameter/base_color = Color(0.443137, 0.52549, 0.478431, 1)
 shader_parameter/surface_kind = 0
 
 [sub_resource type="ShaderMaterial" id="r3"]
@@ -70,7 +76,7 @@ metallic = 0
 
 [sub_resource type="ShaderMaterial" id="r6"]
 shader = ExtResource("e2")
-shader_parameter/base_color = Color(0.43, 0.28, 0.15, 1)
+shader_parameter/base_color = Color(0.619608, 0.45098, 0.313725, 1)
 shader_parameter/surface_kind = 2
 
 [sub_resource type="StandardMaterial3D" id="r7"]
@@ -113,9 +119,9 @@ metallic = 0
 
 [sub_resource type="StandardMaterial3D" id="r14"]
 transparency = 1
-albedo_color = Color(0.53, 0.63, 0.64, 0.16)
-roughness = 0.35
-metallic_specular = 0.12
+albedo_color = Color(0.376471, 0.470588, 0.529412, 0.22)
+roughness = 0.28
+metallic_specular = 0.18
 cull_mode = 2
 
 [sub_resource type="Environment" id="r15"]
@@ -344,7 +350,7 @@ material = SubResource("r5")
 
 [sub_resource type="BoxMesh" id="r73"]
 size = Vector3(14, 0.025, 0.2)
-material = SubResource("r5")
+material = ExtResource("e25")
 
 [sub_resource type="BoxMesh" id="r74"]
 size = Vector3(0.18, 1.15, 1.6)
@@ -366,7 +372,7 @@ material = SubResource("r5")
 
 [sub_resource type="BoxMesh" id="r79"]
 size = Vector3(0.2, 0.025, 1.6)
-material = SubResource("r5")
+material = ExtResource("e25")
 
 [sub_resource type="BoxMesh" id="r80"]
 size = Vector3(0.18, 0.96, 2)
@@ -429,7 +435,7 @@ material = SubResource("r5")
 
 [sub_resource type="BoxMesh" id="r96"]
 size = Vector3(0.2, 0.025, 2.35)
-material = SubResource("r5")
+material = ExtResource("e25")
 
 [sub_resource type="BoxMesh" id="r97"]
 size = Vector3(0.18, 0.96, 2.1)
@@ -492,7 +498,7 @@ material = SubResource("r5")
 
 [sub_resource type="BoxMesh" id="r113"]
 size = Vector3(0.2, 0.025, 2.45)
-material = SubResource("r5")
+material = ExtResource("e25")
 
 [sub_resource type="BoxMesh" id="r114"]
 size = Vector3(7, 1.15, 0.18)
@@ -514,7 +520,7 @@ material = SubResource("r5")
 
 [sub_resource type="BoxMesh" id="r119"]
 size = Vector3(7, 0.025, 0.2)
-material = SubResource("r5")
+material = ExtResource("e25")
 
 [sub_resource type="BoxMesh" id="r120"]
 size = Vector3(0.18, 1.15, 1.9)
@@ -536,7 +542,7 @@ material = SubResource("r5")
 
 [sub_resource type="BoxMesh" id="r125"]
 size = Vector3(0.2, 0.025, 1.9)
-material = SubResource("r5")
+material = ExtResource("e25")
 
 [sub_resource type="BoxMesh" id="r126"]
 size = Vector3(0.18, 1, 1.2)
@@ -565,7 +571,7 @@ material = SubResource("r5")
 
 [sub_resource type="BoxMesh" id="r133"]
 size = Vector3(0.2, 0.025, 5.4)
-material = SubResource("r5")
+material = ExtResource("e25")
 
 [sub_resource type="BoxMesh" id="r134"]
 size = Vector3(0.18, 1, 1.2)
@@ -594,7 +600,7 @@ material = SubResource("r5")
 
 [sub_resource type="BoxMesh" id="r141"]
 size = Vector3(0.2, 0.025, 3.8)
-material = SubResource("r5")
+material = ExtResource("e25")
 
 [sub_resource type="BoxMesh" id="r142"]
 size = Vector3(0.625, 1.15, 0.18)
@@ -616,7 +622,7 @@ material = SubResource("r5")
 
 [sub_resource type="BoxMesh" id="r147"]
 size = Vector3(0.625, 0.025, 0.2)
-material = SubResource("r5")
+material = ExtResource("e25")
 
 [sub_resource type="BoxMesh" id="r148"]
 size = Vector3(1.25, 1, 0.18)
@@ -645,7 +651,7 @@ material = SubResource("r5")
 
 [sub_resource type="BoxMesh" id="r155"]
 size = Vector3(3.25, 0.025, 0.2)
-material = SubResource("r5")
+material = ExtResource("e25")
 
 [sub_resource type="BoxMesh" id="r156"]
 size = Vector3(1.25, 1, 0.18)
@@ -674,7 +680,7 @@ material = SubResource("r5")
 
 [sub_resource type="BoxMesh" id="r163"]
 size = Vector3(0.625, 0.025, 0.2)
-material = SubResource("r5")
+material = ExtResource("e25")
 
 [sub_resource type="BoxMesh" id="r164"]
 size = Vector3(0.18, 1.15, 5)
@@ -696,7 +702,7 @@ material = SubResource("r5")
 
 [sub_resource type="BoxMesh" id="r169"]
 size = Vector3(0.2, 0.025, 5)
-material = SubResource("r5")
+material = ExtResource("e25")
 
 [sub_resource type="BoxMesh" id="r170"]
 size = Vector3(0.18, 1.15, 5)
@@ -718,7 +724,7 @@ material = SubResource("r5")
 
 [sub_resource type="BoxMesh" id="r175"]
 size = Vector3(0.2, 0.025, 5)
-material = SubResource("r5")
+material = ExtResource("e25")
 
 [sub_resource type="BoxMesh" id="r176"]
 size = Vector3(2, 1.15, 0.18)
@@ -740,7 +746,7 @@ material = SubResource("r5")
 
 [sub_resource type="BoxMesh" id="r181"]
 size = Vector3(2, 0.025, 0.2)
-material = SubResource("r5")
+material = ExtResource("e25")
 
 [sub_resource type="BoxMesh" id="r182"]
 size = Vector3(2.4, 1.15, 0.18)
@@ -762,7 +768,7 @@ material = SubResource("r5")
 
 [sub_resource type="BoxMesh" id="r187"]
 size = Vector3(2.4, 0.025, 0.2)
-material = SubResource("r5")
+material = ExtResource("e25")
 
 [sub_resource type="BoxMesh" id="r188"]
 size = Vector3(2.2, 0.96, 0.18)
@@ -825,7 +831,7 @@ material = SubResource("r5")
 
 [sub_resource type="BoxMesh" id="r204"]
 size = Vector3(2.4, 0.025, 0.2)
-material = SubResource("r5")
+material = ExtResource("e25")
 
 [sub_resource type="BoxMesh" id="r205"]
 size = Vector3(0.18, 1.15, 3.8)
@@ -847,7 +853,7 @@ material = SubResource("r5")
 
 [sub_resource type="BoxMesh" id="r210"]
 size = Vector3(0.2, 0.025, 3.8)
-material = SubResource("r5")
+material = ExtResource("e25")
 
 [sub_resource type="BoxMesh" id="r211"]
 size = Vector3(0.18, 1, 1.2)
@@ -876,7 +882,7 @@ material = SubResource("r5")
 
 [sub_resource type="BoxMesh" id="r218"]
 size = Vector3(0.2, 0.025, 1.7)
-material = SubResource("r5")
+material = ExtResource("e25")
 
 [sub_resource type="BoxMesh" id="r219"]
 size = Vector3(0.18, 1, 1.2)
@@ -905,7 +911,7 @@ material = SubResource("r5")
 
 [sub_resource type="BoxMesh" id="r226"]
 size = Vector3(0.2, 0.025, 1.15)
-material = SubResource("r5")
+material = ExtResource("e25")
 
 [sub_resource type="BoxMesh" id="r227"]
 size = Vector3(0.18, 1, 1.5)
@@ -934,7 +940,7 @@ material = SubResource("r5")
 
 [sub_resource type="BoxMesh" id="r234"]
 size = Vector3(0.2, 0.025, 2.95)
-material = SubResource("r5")
+material = ExtResource("e25")
 
 [sub_resource type="BoxMesh" id="r235"]
 size = Vector3(4, 1.15, 0.18)
@@ -956,7 +962,7 @@ material = SubResource("r5")
 
 [sub_resource type="BoxMesh" id="r240"]
 size = Vector3(4, 0.025, 0.2)
-material = SubResource("r5")
+material = ExtResource("e25")
 
 [sub_resource type="BoxMesh" id="r241"]
 size = Vector3(0.18, 1.15, 1.6)
@@ -978,7 +984,7 @@ material = SubResource("r5")
 
 [sub_resource type="BoxMesh" id="r246"]
 size = Vector3(0.2, 0.025, 1.6)
-material = SubResource("r5")
+material = ExtResource("e25")
 
 [sub_resource type="BoxMesh" id="r247"]
 size = Vector3(0.18, 0.96, 2)
@@ -1041,7 +1047,7 @@ material = SubResource("r5")
 
 [sub_resource type="BoxMesh" id="r263"]
 size = Vector3(0.2, 0.025, 1.9)
-material = SubResource("r5")
+material = ExtResource("e25")
 
 [sub_resource type="BoxMesh" id="r264"]
 size = Vector3(4, 1.15, 0.18)
@@ -1063,7 +1069,7 @@ material = SubResource("r5")
 
 [sub_resource type="BoxMesh" id="r269"]
 size = Vector3(4, 0.025, 0.2)
-material = SubResource("r5")
+material = ExtResource("e25")
 
 [sub_resource type="BoxMesh" id="r270"]
 size = Vector3(7, 1.15, 0.18)
@@ -1085,7 +1091,7 @@ material = SubResource("r5")
 
 [sub_resource type="BoxMesh" id="r275"]
 size = Vector3(7, 0.025, 0.2)
-material = SubResource("r5")
+material = ExtResource("e25")
 
 [sub_resource type="BoxMesh" id="r276"]
 size = Vector3(0.18, 1.15, 0.3)
@@ -1107,7 +1113,7 @@ material = SubResource("r5")
 
 [sub_resource type="BoxMesh" id="r281"]
 size = Vector3(0.2, 0.025, 0.3)
-material = SubResource("r5")
+material = ExtResource("e25")
 
 [sub_resource type="BoxMesh" id="r282"]
 size = Vector3(0.18, 1, 2.1)
@@ -1136,7 +1142,7 @@ material = SubResource("r5")
 
 [sub_resource type="BoxMesh" id="r289"]
 size = Vector3(0.2, 0.025, 0.5)
-material = SubResource("r5")
+material = ExtResource("e25")
 
 [sub_resource type="BoxMesh" id="r290"]
 size = Vector3(0.18, 1.15, 2.9)
@@ -1158,7 +1164,7 @@ material = SubResource("r5")
 
 [sub_resource type="BoxMesh" id="r295"]
 size = Vector3(0.2, 0.025, 2.9)
-material = SubResource("r5")
+material = ExtResource("e25")
 
 [sub_resource type="BoxMesh" id="r296"]
 size = Vector3(3, 1.15, 0.18)
@@ -1180,7 +1186,7 @@ material = SubResource("r5")
 
 [sub_resource type="BoxMesh" id="r301"]
 size = Vector3(3, 0.025, 0.2)
-material = SubResource("r5")
+material = ExtResource("e25")
 
 [sub_resource type="BoxMesh" id="r302"]
 size = Vector3(0.5, 2.4, 1.5)
@@ -1234,7 +1240,7 @@ size = Vector3(1.9, 0.8, 0.65)
 
 [sub_resource type="BoxMesh" id="r315"]
 size = Vector3(1.55, 0.48, 0.04)
-material = SubResource("r2")
+material = ExtResource("e26")
 
 [sub_resource type="BoxMesh" id="r316"]
 size = Vector3(4.2, 1.4, 0.1)
@@ -2116,11 +2122,11 @@ material = SubResource("r5")
 
 [sub_resource type="BoxMesh" id="r511"]
 size = Vector3(9.85, 0.025, 0.2)
-material = SubResource("r5")
+material = ExtResource("e25")
 
 [sub_resource type="BoxMesh" id="r512"]
 size = Vector3(3.05, 0.025, 0.2)
-material = SubResource("r5")
+material = ExtResource("e25")
 
 [sub_resource type="BoxMesh" id="r513"]
 size = Vector3(1.65, 1.15, 0.18)
@@ -2160,11 +2166,11 @@ material = SubResource("r5")
 
 [sub_resource type="BoxMesh" id="r523"]
 size = Vector3(1.65, 0.025, 0.2)
-material = SubResource("r5")
+material = ExtResource("e25")
 
 [sub_resource type="BoxMesh" id="r524"]
 size = Vector3(1.25, 0.025, 0.2)
-material = SubResource("r5")
+material = ExtResource("e25")
 
 [sub_resource type="BoxMesh" id="rKeyMesh"]
 size = Vector3(0.07, 0.07, 0.018)
@@ -3951,32 +3957,11 @@ outline_size = 0
 shaded = false
 no_depth_test = false
 
-[node name="CoverCabinet" type="MeshInstance3D" parent="Architecture/Furniture"]
-position = Vector3(-4, 0.77, -0.8)
-mesh = SubResource("r318")
+[node name="CoverCabinet" parent="Architecture/Furniture" instance=ExtResource("e23")]
+position = Vector3(-4, 0, -0.8)
 
-[node name="Body" type="StaticBody3D" parent="Architecture/Furniture/CoverCabinet"]
-collision_layer = 1
-collision_mask = 0
-
-[node name="Shape" type="CollisionShape3D" parent="Architecture/Furniture/CoverCabinet/Body"]
-shape = SubResource("r319")
-
-[node name="CabinetShelf0.25" type="MeshInstance3D" parent="Architecture/Furniture"]
-position = Vector3(-4.32, 0.25, -0.8)
-mesh = SubResource("r320")
-
-[node name="CabinetShelf0.62" type="MeshInstance3D" parent="Architecture/Furniture"]
-position = Vector3(-4.32, 0.62, -0.8)
-mesh = SubResource("r321")
-
-[node name="CabinetShelf1.0" type="MeshInstance3D" parent="Architecture/Furniture"]
-position = Vector3(-4.32, 1, -0.8)
-mesh = SubResource("r322")
-
-[node name="CabinetShelf1.37" type="MeshInstance3D" parent="Architecture/Furniture"]
-position = Vector3(-4.32, 1.37, -0.8)
-mesh = SubResource("r323")
+[node name="DeskSideCover" parent="Architecture/Furniture" instance=ExtResource("e24")]
+position = Vector3(-9.48, 0, -0.55)
 
 [node name="PrintDivider" type="MeshInstance3D" parent="Architecture/Furniture"]
 position = Vector3(0.4, 0.9, -4.8)

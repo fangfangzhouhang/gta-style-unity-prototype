@@ -1,6 +1,7 @@
 # 第一章推进环重设计 · 教室禁锢→钥匙链→开门招老师
 
-- **状态**：**「用户已批准」最小钥匙链** · ark · 2026-10-28（Asia/Shanghai）· **仍未实现 / 未改代码** · 未改 `.gd` / `.tscn` / `DESIGN.md` 正文 · **未宣称已实现**
+- **状态**：**设计「用户已批准」**最小钥匙链 · ark · 2026-10-28（Asia/Shanghai）· **代码已落地** feat tip `9121693209ffa42a67c576b47b87ebedb7559978`（FF · `feat/chapter01-gated-min-keychain` / `feat/chapter01-module-pass`）· **体验未 PASS** · **未合 main** · 本策划文件**不改** `.gd` / `.tscn` / `DESIGN.md` 正文
+- **落地戳**：2026-10-28（Asia/Shanghai）· schema2 `keys` {k1,k2,k3} · `doors_unlocked` {classroom,storage,gateantechamber} · `teacher_summoned` · **G·K3 锁定** `Doors/GateAntechamber`（**不是** Gate/Handle）
 - **日期**：2026-10-28（Asia/Shanghai）
 - **角色**：情节 / 机制 / 关卡策划（EscapeExamGodot · Godot 4.7.2 · 章 A-M2.1）
 - **对照**：`DESIGN.md` · `docs/design/SPACE_UNLOCK_AB.md` · `docs/design/CHAPTER01_BEATS_10_15.md` · `docs/design/CHAPTER01_GATED_IMPL_CARD.md` · `docs/design/DESIGN_HARD_SENTENCE_PATCHES_GATED.md`
@@ -11,9 +12,27 @@
 
 ## 「用户已批准」· 最小钥匙链（ark · 2026-10-28 Asia/Shanghai）
 
+### 落地状态（feat merge 后 · 2026-10-28 Asia/Shanghai）
+
+| 项 | 状态 |
+| --- | --- |
+| **设计** | 「用户已批准」最小钥匙链（不变） |
+| **代码** | 已实现并 FF 至 feat tip `9121693209ffa42a67c576b47b87ebedb7559978` |
+| **G·K3 节点** | **已锁定** `Doors/GateAntechamber`（否决 Gate/Handle 挂锁） |
+| **Progress** | schema2：`keys` {k1,k2,k3}；`doors_unlocked` {classroom,storage,gateantechamber}；`teacher_summoned` |
+| **体验** | **NOT PASS**（未宣称章节体验验收通过） |
+| **main** | **未合** |
+
+**已知缺口（非阻塞 · 不挡 feat 留存；须跟进）**
+
+1. `route_trial.gd` **尚未**按 gated 开场重定向 / 作废旧「开场即环」假设。
+2. 锁门时 **navmesh hole cut**（锁门导航洞）**未做**。
+3. 体验验收 **NOT PASS**；**未合 main**。
+
+
 > Widget 原文：「批准最小钥匙链：C出廊硬锁 + K1/K2/K3，S必经，老师开门后延迟上场」
 
-### 已批准（产品方向 · 代码仍按自由回路 A 跑，直至游戏开发落地）
+### 已批准（产品方向 · **代码已在 feat 落地**；main / 体验验收仍开放）
 
 | 项 | 批准内容 |
 | --- | --- |
@@ -32,7 +51,7 @@
 | D2 | M · `Doors/Print` | **保持可开**（不硬锁） |
 | D3 | 对外时长口径 | **保持**先前已批熟练 **10–15** / 首玩 **15–25**，直至试玩；gated 可能把首玩推向 **18–28** 仅作 **待测假设**，**不是**新批准时长 |
 | D4 | H 暗道 | 保持 §7 线索包装 · **可选** |
-| D5 | G 区 K3 锁节点 | **TBD with 游戏开发**（新建门 vs Gate Handle） |
+| D5 | G 区 K3 锁节点 | **已锁定** · `Doors/GateAntechamber`（**不是** Gate/Handle）· 游戏开发 · feat tip `9121693…` |
 
 ### 明确未选（本票）
 
@@ -53,7 +72,7 @@
 | **硬 B1**（教室/主环硬锁 + 逐层解锁）曾被明确否决 / 不推荐 | 同上 | **已落为「最小冲击」钥匙链（已批）**，**不是**把整主环每扇门层层上锁的旧 B1 |
 | B2 / B3 | 未选 / 搁置 | 本票**未**选半锁 / 维持 A / 搁置；混合（M 硬锁）未选 |
 
-### 0.2 本提案主张什么（**已批准为产品方向** · 仍未实现）
+### 0.2 本提案主张什么（**已批准为产品方向** · **代码已在 feat 落地**）
 
 玩家体验优先（ark 2026-10-28 口述，经整理）：
 
@@ -70,7 +89,7 @@
 
 > **C 出廊硬锁 + K1/K2/K3 有动机钥门**（教室正门 → 教具室 S → 出口前室 G 区），**主环 W–J–E 大部分仍可走**；**不要**每扇门一把钥；**不要**把整主环层层锁死。
 
-几何拓扑可不动；老师在**首次成功打开教室门后延迟到场于走廊巡逻起点**（禁止瞬移进教室中心）。**代码尚未改**。
+几何拓扑可不动；老师在**首次成功打开教室门后延迟到场于走廊巡逻起点**（禁止瞬移进教室中心）。**代码已落地** feat tip `9121693…`；**体验未 PASS** / **未合 main**。
 
 ### 0.4 硬边界（除非 ark 日后另批）
 
@@ -189,7 +208,7 @@ Phase3  [G] 三档卷栅 + 诱饵布置 → [O] 离场
 | --- | --- | --- | --- | --- | --- |
 | **K1** | **考场值班钥** | C：讲台抽屉 / 第三格柜（短读指向） | `Doors/Classroom`（C→W） | **进度永久**：进 `Game.progress`；被抓不丢；检查点保留 | K1 只在 C 内可取；C 始终可达（起点 / 检查点）；取走后抽屉空态可读 |
 | **K2** | **教具室钥** | J：洗手池下柜 | `Doors/Storage`（进 S） | 同上，永久 | 仅在已出 C 且老师已上场后的可走廊获取；J 不锁死；被抓回 C 后钥仍在包里，可再出（Classroom 已解锁保持开锁进度） |
-| **K3** | **出口前室钥** | S：教具柜挂牌 | G 区门禁（见 §12 门表；节点名待开发确认，可能为新门或 Gate Handle 锁） | 同上，永久 | S 在持 K2 后可达；K3 不放在 G 锁后门后；无「钥落锁内房」 |
+| **K3** | **出口前室钥** | S：教具柜挂牌 | **`Doors/GateAntechamber`**（G 区门禁 · **已锁定**；**不是** Gate/Handle） | 同上，永久 | S 在持 K2 后可达；K3 不放在 G 锁后门后；无「钥落锁内房」 |
 
 ### 4.1 明确不做的第四钥
 
@@ -245,7 +264,7 @@ Phase0 若误响计时器：**仍待定 · 设计默认 = 不召唤老师**（�
 
 ## 6. 与现骨架兼容
 
-| 系统 | 挂接方式（已批方向 · 仍未实现） | 仍可选？ |
+| 系统 | 挂接方式（已批 · feat tip `9121693…`） | 仍可选？ |
 | --- | --- | --- |
 | **延时计时器** | Phase0 可拿可练；Phase1+ 仍是主诱饵 | 策略可选（可纯潜行） |
 | **广播** | 仍不锁门；Phase2/3 远程诱导 | **保持可选策略** |
@@ -353,7 +372,7 @@ flowchart LR
 
 ## 11. 决策票给 ark（回写 · 2026-10-28 Asia/Shanghai）
 
-- [x] **批准「最小钥匙链」本默认**（C 出廊硬锁 + K1/K2/K3 · S 必经 · G 区第三钥 · W–J–E 大体可走 · 老师延迟到场）← **「用户已批准」** · ark · 2026-10-28 · **仍未实现 / 未改代码**
+- [x] **批准「最小钥匙链」本默认**（C 出廊硬锁 + K1/K2/K3 · S 必经 · G 区第三钥 · W–J–E 大体可走 · 老师延迟到场）← **「用户已批准」** · ark · 2026-10-28 · **代码已落地** feat tip `9121693…` · **体验未 PASS** · **未合 main**
 - [ ] **半锁（仅出教室）**：只锁 `Doors/Classroom` + K1 + 开门招老师；S/G 不硬锁钥 ← **未选**
 - [ ] **维持 A**：撤销本次重开，继续自由回路（`SPACE_UNLOCK_AB.md` 2026-10-27）← **未选**（A 降为当前代码历史基线）
 - [ ] **混合**：最小钥链 + 要求 **M 也硬锁**（K3 改开 `Doors/Print`，G 不再单独钥）← **未选**
@@ -362,7 +381,7 @@ flowchart LR
 - [ ] H 暗道：按 §7 包装 / 本版完全不提暗道 ← **仍待定** · 设计默认 = **按 §7 · 可选**
 - [ ] 搁置整题，维持代码不动 ← **未选**
 
-**G 区 K3 锁节点**（新门 vs Gate Handle）← **仍待定** · TBD with 游戏开发（见 §14 / 实现卡）。
+**G 区 K3 锁节点** ← **已锁定** · `Doors/GateAntechamber`（**不是** Gate/Handle）· 游戏开发 · feat tip `9121693…`（见 §14 / 实现卡）。
 
 ---
 
@@ -387,13 +406,14 @@ flowchart LR
 
 ### 12.3 最小门表草稿（对照 `scenes/chapters/chapter_01.tscn`）
 
-| 节点 | 现况（代码真相摘要） | 已批准拟改（**仍未实现**） |
+| 节点 | 现况 / 基线 | 已批准落地（feat tip `9121693…` · **体验未 PASS**） |
 | --- | --- | --- |
 | `Doors/Classroom` | 普通门实例 | **初锁** · 需 **K1** · 首次打开触发老师延迟召唤 + 高噪声 |
 | `Doors/Storage` | 通 S | **初锁** · 需 **K2** · 开锁噪声 |
 | `Doors/Print` | 通 M | **保持可开**（**仍待定默认** = 不硬锁；混合票未选） |
 | `Doors/Shortcut` | `is_shortcut` · 进度闩 | **不改钥**；仍 M 侧闩 |
-| `Gate` / `Gate/Handle` | 三档卷栅 | **G 区门禁**：优先在 E→G 增锁门或 Handle 上挂 **K3**（**节点名 TBD**，请开发定：新建 `Doors/GateAntechamber` 或锁 Handle） |
+| `Doors/GateAntechamber` | （feat 新建钥门） | **K3 门禁 · 已锁定** · 需 **K3** · 开锁噪声 · tip `9121693…` |
+| `Gate` / `Gate/Handle` | 三档卷栅 | **不**挂 K3；卷栅语义不变（K3 在 `Doors/GateAntechamber`） |
 | `HatchM` / `HatchG` | 可选夹道 | **不锁钥**；§7 线索包装 |
 
 ---
@@ -415,7 +435,7 @@ flowchart LR
 
 ## 14. 开放问题（**仍待定** · 设计默认已填 · 非新批准）
 
-1. **仍待定** · G 区 K3 锁在 **新门节点** 还是 **Gate Handle**？→ **TBD with 游戏开发**（无设计默认节点名）。
+1. ~~G 区 K3 锁在新门 vs Gate Handle~~ → **已锁定** · `Doors/GateAntechamber`（**不是** Gate/Handle）· feat tip `9121693…`。
 2. **仍待定** · Phase0 计时器误响是否召唤老师？→ **设计默认：不召唤**（远应一声仍不上场 OK）。
 3. **仍待定** · M 是否硬必经（锁 Print）？→ **设计默认：保持可开**（混合票未选）。
 4. **仍待定** · 对外时长是否改 18–28 / 12–18？→ **设计默认：保持**已批 10–15 / 15–25；18–28 仅待测假设。
@@ -424,4 +444,4 @@ flowchart LR
 
 ---
 
-*主方案「最小钥匙链」已「用户已批准」（ark · 2026-10-28）。**仍未实现 / 未改代码**。实现交游戏开发排期；本 bot 不改 `.gd` / `.tscn` / `DESIGN.md` 正文。DESIGN 硬句改写见 `DESIGN_HARD_SENTENCE_PATCHES_GATED.md`；落地切片见 `CHAPTER01_GATED_IMPL_CARD.md`。*
+*主方案「最小钥匙链」已「用户已批准」（ark · 2026-10-28）。**代码已落地** feat tip `9121693209ffa42a67c576b47b87ebedb7559978`；**G·K3**=`Doors/GateAntechamber`；**体验未 PASS** / **未合 main**。本 bot 不改 `.gd` / `.tscn` / `DESIGN.md` 正文。DESIGN 硬句改写见 `DESIGN_HARD_SENTENCE_PATCHES_GATED.md`（**仍待合入 DESIGN.md**）；落地切片与已知缺口见 `CHAPTER01_GATED_IMPL_CARD.md`。*

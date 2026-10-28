@@ -4,8 +4,10 @@
 - **角色**：情节/机制/关卡策划 · **任务卡 only** · **禁止本 bot 改** `.gd` / `.tscn` / 存档 schema / 教师 AI 数值
 - **批准源**：`docs/design/CHAPTER01_GATED_PROGRESSION_REDESIGN.md` · ark **「用户已批准」最小钥匙链** · 2026-10-28
 - **Widget 原文**：「批准最小钥匙链：C出廊硬锁 + K1/K2/K3，S必经，老师开门后延迟上场」
-- **代码状态**：**仍未实现 / 未改代码**；当前运行时仍为自由回路 A（见 `SPACE_UNLOCK_AB.md` 重开横幅）
-- **排期**：等 **游戏开发** 自行排期；策划不催实现、不改代码
+- **代码状态**：**已落地** feat tip `9121693209ffa42a67c576b47b87ebedb7559978`（FF · `feat/chapter01-gated-min-keychain` / 已 tip 到 `feat/chapter01-module-pass`）· **体验未 PASS** · **未合 main**
+- **G·K3**：**已锁定** `Doors/GateAntechamber`（**不是** Gate/Handle）
+- **Progress**：schema2 `keys` {k1,k2,k3} · `doors_unlocked` {classroom,storage,gateantechamber} · `teacher_summoned`
+- **排期**：实现切片已合 feat；后续跟进已知缺口 + 体验盲测；策划不改代码
 - **引擎边界**：只动 EscapeExamGodot（Godot）；**禁止** Unity / Godot 交叉覆盖
 
 ---
@@ -20,7 +22,7 @@
 
 | 项 | 内容 |
 | --- | --- |
-| 硬锁 | `Doors/Classroom`（需 **K1**）；`Doors/Storage`（需 **K2**）；G 区门禁（需 **K3**，节点 TBD） |
+| 硬锁 | `Doors/Classroom`（需 **K1**）；`Doors/Storage`（需 **K2**）；**`Doors/GateAntechamber`**（需 **K3** · **已锁定**） |
 | 必经 | **S**（取 K3） |
 | 老师 | 首次成功打开 Classroom 后 **延迟** 上场于 **走廊巡逻起点**；**禁止**瞬移进教室 |
 | 主环 | W–J–E **大体可走**（最小冲击） |
@@ -35,19 +37,20 @@
 | `Doors/Print` | **保持可开** |
 | 时长对外口径 | 保持已批 10–15 / 15–25；18–28 仅待测假设 |
 | H | §7 线索包装 · 可选 |
-| G·K3 节点 | **TBD with 游戏开发**（新建门 vs Gate Handle） |
+| G·K3 节点 | **已锁定** · `Doors/GateAntechamber`（**不是** Gate/Handle）· tip `9121693…` |
 
 ---
 
 ## 2. 门表（对照 `scenes/chapters/chapter_01.tscn`）
 
-| 节点 | 现况（自由回路代码） | 拟改（已批 · 待实现） |
+| 节点 | 现况 / 基线 | 落地（feat tip `9121693…`） |
 | --- | --- | --- |
 | `Doors/Classroom` | 普通门 | **初锁** · **K1** · 首次打开 → 高噪声 + **延迟召唤老师** |
 | `Doors/Storage` | 通 S | **初锁** · **K2** · 开锁噪声 |
 | `Doors/Print` | 通 M | **保持可开**（默认） |
 | `Doors/Shortcut` | `is_shortcut` 进度闩 | **不改钥**；仍 M 侧闩 |
-| `Gate` / `Gate/Handle` | 三档卷栅 | **K3 门禁**：新建 `Doors/GateAntechamber` **或** Handle 挂锁 → **TBD** |
+| `Doors/GateAntechamber` | （feat 新建） | **K3 门禁 · 已锁定** · **不是** Gate/Handle |
+| `Gate` / `Gate/Handle` | 三档卷栅 | **不**挂 K3；卷栅语义不变 |
 | `HatchM` / `HatchG` | 可选夹道 | **不锁钥**；线索包装 |
 
 锁门时禁用对应 `NavigationLink3D`（对齐 Shortcut 既有模式）。
@@ -120,7 +123,7 @@
 1. Progress / 存档字段 + 门 `key_id`（或等价）扩展（仿现有 `locked` / shortcut）。
 2. 初锁 Classroom + K1 放置 + Phase0 无老师。
 3. 首次打开 → 噪声 + 延迟召唤（走廊起点）+ `teacher_summoned`。
-4. Storage + K2；S 内 K3；G 区 K3 门禁（节点 TBD 后落）。
+4. Storage + K2；S 内 K3；**`Doors/GateAntechamber`** K3 门禁（**已锁定**）。
 5. 导航链接禁用；被抓保留；半链存档夹具。
 6. 短读物 / 空态可读；Phase0 误铃默认。
 7. 更新/作废失效 route 夹具；关键路径夹具；再约盲测。
@@ -133,6 +136,20 @@
 
 **完整含夹具改写与盲测准备可能更长**；本卡不绑定排期日。
 
+
+---
+
+## 9b. 已知缺口（feat tip `9121693…` merge 后 · 非阻塞）
+
+> 2026-10-28 Asia/Shanghai · 代码已 FF 到 feat tip；下列**不挡** feat 留存，但体验 **NOT PASS** / **未合 main** 前须跟进。
+
+| # | 缺口 | 说明 |
+| --- | --- | --- |
+| G1 | `route_trial.gd` 未重定向 | 仍带旧「开场即环」假设；须按 gated Phase0 禁锢重写或作废/隔离 |
+| G2 | 锁门 navmesh hole cut 未做 | 锁门时导航洞未切；现依赖 NavigationLink 禁用等权宜；正式洞切待做 |
+| G3 | 体验 **NOT PASS** | acceptance 夹具绿 ≠ 乐趣；须关键路径人工盲测 |
+| G4 | **未合 main** | 仅在 feat 线（`feat/chapter01-gated-min-keychain` / tip 于 `feat/chapter01-module-pass`） |
+
 ---
 
 ## 10. 协作约定
@@ -140,10 +157,10 @@
 | 角色 | 做 | 不做 |
 | --- | --- | --- |
 | 策划（本文作者 bot） | 设计文档 / 任务卡 / 补丁句列表 | 不改代码；不宣称已实现 |
-| 游戏开发 | 按卡实现、定 G·K3 节点、改夹具 | 不擅自扩钥墙 / 不恢复 Alert UI |
+| 游戏开发 | 已定 G·K3=`Doors/GateAntechamber`；跟进已知缺口与夹具 | 不擅自扩钥墙 / 不恢复 Alert UI |
 | 游戏审核 | 关键路径夹具 + 盲测 | 不以 acceptance 绿代替乐趣 |
 | ark | 覆盖「仍待定」默认；批准 DESIGN 硬句合入 | — |
 
 ---
 
-*等游戏开发排期。设计面已「用户已批准」最小钥匙链；**代码零改动直至开发动手**。*
+*设计面已「用户已批准」；**代码已落地** feat tip `9121693209ffa42a67c576b47b87ebedb7559978`；**G·K3**=`Doors/GateAntechamber`；见 §9b 已知缺口；**体验未 PASS** / **未合 main**。策划不改 `.gd` / `.tscn` / `DESIGN.md` 正文。*

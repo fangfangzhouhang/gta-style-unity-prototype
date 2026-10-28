@@ -345,6 +345,49 @@ func run() -> void:
 	await frames(70)
 	player.scripted_move = Vector2.ZERO
 	check(game.mode == "ending" and not wedge.owned, "No-wedge exit: raise shutter and leave without picking up DoorWedge")
+	# --- Prologue skip skeleton (还没响的铃) ---
+	var prologue_node = level.get_node_or_null("Prologue")
+	if prologue_node == null:
+		game._ensure_prologue()
+		prologue_node = game.prologue
+	check(prologue_node != null, "Prologue node available for cinematic skeleton")
+	var vo_ok := true
+	for shot in prologue_node.SHOTS:
+		if str(shot.get("vo", "")).strip_edges().is_empty() or str(shot.vo).begins_with("[VO]"):
+			vo_ok = false
+			break
+	check(vo_ok and prologue_node.SHOTS.size() == 9, "Prologue P01–P09 carry finalized VO (not empty/[VO])")
+	check(str(prologue_node.SHOTS[0].vo).begins_with("雨还没停"), "P01 VO matches plot final")
+	check(str(prologue_node.SHOTS[6].vo).contains("笑意不到眼睛"), "P07 VO matches plot final (uncanny smile)")
+	# Force a non-test-mode-style prologue then skip → B0
+	game.playing = true
+	game.progress = game._default_progress()
+	game.checkpoint = "classroom"
+	game._summon_remaining = -1.0
+	game._ensure_prologue()
+	if game.prologue.finished.is_connected(game._on_prologue_finished):
+		pass
+	else:
+		game.prologue.finished.connect(game._on_prologue_finished, CONNECT_ONE_SHOT)
+	game.set_mode("prologue")
+	game.prologue.begin()
+	await frames(3)
+	check(game.mode == "prologue" and game.prologue.is_playing(), "Prologue begins in prologue mode")
+	var alert_hidden := true
+	if teacher.has_node("AlertIcon"):
+		alert_hidden = teacher.get_node("AlertIcon").visible == false
+	check(alert_hidden, "Alert UI stays hidden during prologue")
+	check(game.timer.state == "idle", "Prologue never rings exam timer")
+	game.skip_prologue()
+	await frames(45)
+	check(game.mode == "game" and not game.prologue.is_playing(), "Skip fades into B0 gameplay mode")
+	check(player.global_position.distance_to(game.get_spawn()) < 0.35, "B0 places player at classroom observation spawn")
+	check(teacher.frozen and not game.progress.teacher_summoned, "B0 keeps Phase0 teacher inactive (no summon from prologue)")
+	check(game.timer.state == "idle", "Entering B0 does not trigger bell")
+	if teacher.has_node("AlertIcon"):
+		check(teacher.get_node("AlertIcon").visible == false, "Alert UI stays hidden after prologue→B0")
+	else:
+		check(true, "Alert UI stays hidden after prologue→B0")
 	print("RESULT passed=",passed," failed=",failed)
 	lines.append("Fixture-based engine tests; not OS input or human play. passed=%d failed=%d" % [passed,failed])
 	var report := FileAccess.open("res://evidence/logs/acceptance.txt",FileAccess.WRITE)

@@ -1,10 +1,10 @@
-# 双引擎仓库协作边界
+# Godot 仓库协作边界
 
-- 使用中文。先明确本次任务属于 Unity 还是 Godot；不要同时修改两套游戏逻辑。
-- Unity 工程位于根目录 Assets/、Packages/、ProjectSettings/，交接见 Docs/19-开发过程与后续交接.md 与 Docs/20-V1.2手账叙事与存档恢复.md。
-- 新 Godot 独立版位于 EscapeExamGodot/，先读其 AGENTS.md、README.md、PROJECT_STATUS.md；直接打开该目录 project.godot。
-- Godot 不依赖 Unity 资产、不共享存档，不要将 Godot 文件放进 Unity Assets；旧 GodotPilot201 不代表新 Godot 版本。
-- Godot acceptance：`godot --path EscapeExamGodot --headless -s res://tests/acceptance.gd -- --test`（**必须** `-- --test`；`run.ps1 -Mode Check` 已带）。
-- Unity 第五阶段已提交但人工/发行验收未完成；Godot 为 A-M2.1 原型，不能把脚本通关当人工试玩。
-- 不提交 Library、.godot、引擎、导出包、本机存档或凭据。不推送和合并无关未提交实验；仅处理用户授权范围。
-- 本交付分支保存 d5192ed Unity 基线与独立 Godot 快照；主干合并须有明确任务授权，不因存在 PR 自动合并。
+- 使用中文。当前游戏仅使用 Godot，工程入口 EscapeExamGodot/project.godot。
+- 当前改动提交到 feat/chapter01-module-pass；用户明确确认前不得合并或推送 main。
+- 2026-10-28 用户明确授权清理本研发分支的非 Godot 目录。本次仅删除旧 Unity 内容，保留 Godot 子目录原样。
+- 进入 EscapeExamGodot 阅读 README、AGENTS、PROJECT_STATUS、DESIGN 和最新设计文档；旧双引擎/旧本机目录声明按历史记录理解。当前本机源是 D:/Unity/EscapeExamRepository/EscapeExamGodot，不用旧 D:/Unity/EscapeExamGodot 覆盖新成果。
+- 不恢复 Unity Assets/Packages/ProjectSettings，不要求 Unity 编辑器，不自动生成或重写游戏场景。
+- 自动检查使用 tools/run.ps1 -Mode Check，隔离测试存档并带 -- --test；不能让测试覆盖玩家存档。
+- 不提交 .godot、引擎、构建、存档或凭据。既有已跟踪证据保留；未经用户要求不要批量提交本地自动截图。
+- 区分静态核对、引擎检查、脚本通关、真实输入与人工试玩。目录清理不等于新版游戏完成验收。

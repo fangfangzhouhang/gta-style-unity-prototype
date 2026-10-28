@@ -1,4 +1,0 @@
-PASS: Unity 2022.3.49f1c1 batch editor opened the validation project and exited with code 0 after integration of origin/main 99324a2.
-No error CS / Compilation failed / Scripts have compiler errors found in campus-v12-stage5-main-compile.log.
-Includes existing ArtLab201 editor source and scene/material imports; no ArtLab lighting generation or visual acceptance rerun was performed.
-Campus full route and 13 scene-reload/7 legacy-startup checks were performed before the independent ArtLab source integration; all current C# sources byte-match the compile-checked validation copy.

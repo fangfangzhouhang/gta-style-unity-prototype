@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>前情 P01–P09 · 镜头流 V2</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-paper:   #EDEAE4;
+      --color-ink:     #2A2E38;
+      --color-muted:   #607887;
+      --font-sans:     "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+      --font-serif:    "Noto Serif SC", "Songti SC", serif;
+      --font-mono:     "Geist Mono", "IBM Plex Mono", ui-monospace, monospace;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-paper);
+      color: var(--color-ink);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+    }
+    .frame { max-width: 1200px; width: 100%; }
+    .diagram-container { width: 100%; overflow-x: auto; }
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+      margin-bottom: 0.5rem;
+    }
+    h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.45rem, 2.2vw + 0.7rem, 1.95rem);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 0.35rem;
+    }
+    .sub {
+      font-size: 0.85rem;
+      color: var(--color-muted);
+      margin-bottom: 1.4rem;
+      line-height: 1.45;
+    }
+    svg { width: 100%; min-width: 1020px; display: block; }
+    @media print {
+      .diagram-container { overflow-x: visible; }
+      svg { min-width: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">Shot flow · ART-PROLOGUE-SHOT-LANG-V2</p>
+    <h1>P01–P09 固定电影镜头流</h1>
+    <p class="sub">焦点色标三拍高光：P01 雨窗 · P03 诡异标识 · P07 监考微笑 · ID 独立于 S01–S05</p>
+
+    <div class="diagram-container">
+      <svg viewBox="0 0 1080 620" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="sf-title sf-desc">
+        <title id="sf-title">前情镜头流 P01 到 P09</title>
+        <desc id="sf-desc">九个电影镜头卡片按阅读顺序排列，三拍高光用冷窗蓝灰、金属铜与印章红描边。</desc>
+        <defs>
+          <marker id="sf-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#607887"/></marker>
+          <pattern id="sf-dots" width="22" height="22" patternUnits="userSpaceOnUse">
+            <circle cx="1" cy="1" r="0.85" fill="rgba(42,46,56,0.08)"/>
+          </pattern>
+        </defs>
+
+        <rect width="100%" height="100%" fill="#EDEAE4"/>
+        <rect width="100%" height="100%" fill="url(#sf-dots)" opacity="0.45"/>
+
+        <!-- Row 1: P01-P05 -->
+        <!-- P01 highlight cold -->
+        <rect x="36" y="56" width="184" height="148" rx="5" fill="#E4E9EC" stroke="#607887" stroke-width="2"/>
+        <text x="48" y="78" font-family="var(--font-mono), monospace" font-size="9" font-weight="500" letter-spacing="0.14em" fill="#607887">HIGHLIGHT</text>
+        <text x="48" y="102" font-family="var(--font-sans), sans-serif" font-size="16" font-weight="600" fill="#2A2E38">P01 窗外大雨</text>
+        <text x="48" y="124" font-family="var(--font-mono), monospace" font-size="10" fill="#607887">3.0–4.0s · FOV 55–60</text>
+        <text x="48" y="144" font-family="var(--font-sans), sans-serif" font-size="11" fill="#2A2E38">冷窗 · 雨丝 · 室内倒影</text>
+        <text x="48" y="164" font-family="var(--font-serif), serif" font-size="12" font-style="italic" fill="#607887">「雨还没停。」</text>
+        <text x="48" y="186" font-family="var(--font-mono), monospace" font-size="8" fill="#9D5048">文案待情节定稿</text>
+
+        <line x1="220" y1="130" x2="248" y2="130" stroke="#607887" stroke-width="1" marker-end="url(#sf-arrow)"/>
+
+        <!-- P02 -->
+        <rect x="250" y="56" width="164" height="148" rx="5" fill="#EDEAE4" stroke="rgba(42,46,56,0.22)" stroke-width="1"/>
+        <text x="262" y="78" font-family="var(--font-mono), monospace" font-size="9" letter-spacing="0.14em" fill="#607887">BRIDGE</text>
+        <text x="262" y="102" font-family="var(--font-sans), sans-serif" font-size="15" font-weight="600" fill="#2A2E38">P02 倒影</text>
+        <text x="262" y="124" font-family="var(--font-mono), monospace" font-size="10" fill="#607887">2.0–2.5s · FOV 60–65</text>
+        <text x="262" y="144" font-family="var(--font-sans), sans-serif" font-size="11" fill="#2A2E38">窗→室内缓扫</text>
+        <text x="262" y="164" font-family="var(--font-serif), serif" font-size="12" font-style="italic" fill="#607887">「考场灯还亮着。」</text>
+        <text x="262" y="186" font-family="var(--font-mono), monospace" font-size="8" fill="#9D5048">文案待情节定稿</text>
+
+        <line x1="414" y1="130" x2="442" y2="130" stroke="#607887" stroke-width="1" marker-end="url(#sf-arrow)"/>
+
+        <!-- P03 highlight metal -->
+        <rect x="444" y="56" width="184" height="148" rx="5" fill="#F4EEE4" stroke="#B78C48" stroke-width="2"/>
+        <text x="456" y="78" font-family="var(--font-mono), monospace" font-size="9" font-weight="500" letter-spacing="0.14em" fill="#B78C48">HIGHLIGHT</text>
+        <text x="456" y="102" font-family="var(--font-sans), sans-serif" font-size="16" font-weight="600" fill="#2A2E38">P03 诡异标识</text>
+        <text x="456" y="124" font-family="var(--font-mono), monospace" font-size="10" fill="#607887">2.5–3.5s · FOV 50–55</text>
+        <text x="456" y="144" font-family="var(--font-sans), sans-serif" font-size="11" fill="#2A2E38">校牌歪 · 秩序裂缝起</text>
+        <text x="456" y="164" font-family="var(--font-serif), serif" font-size="12" font-style="italic" fill="#607887">「牌子……是不是歪了。」</text>
+        <text x="456" y="186" font-family="var(--font-mono), monospace" font-size="8" fill="#9D5048">文案待情节定稿</text>
+
+        <line x1="628" y1="130" x2="656" y2="130" stroke="#607887" stroke-width="1" marker-end="url(#sf-arrow)"/>
+
+        <!-- P04 -->
+        <rect x="658" y="56" width="164" height="148" rx="5" fill="#F5EBE9" stroke="rgba(157,80,72,0.45)" stroke-width="1"/>
+        <text x="670" y="78" font-family="var(--font-mono), monospace" font-size="9" letter-spacing="0.14em" fill="#9D5048">CLUE</text>
+        <text x="670" y="102" font-family="var(--font-sans), sans-serif" font-size="15" font-weight="600" fill="#2A2E38">P04 规章笔迹</text>
+        <text x="670" y="124" font-family="var(--font-mono), monospace" font-size="10" fill="#607887">2.0–2.5s · FOV 40–48</text>
+        <text x="670" y="144" font-family="var(--font-sans), sans-serif" font-size="11" fill="#2A2E38">近读 · 不剧透</text>
+        <text x="670" y="164" font-family="var(--font-serif), serif" font-size="12" font-style="italic" fill="#607887">「规章上多了一行字。」</text>
+        <text x="670" y="186" font-family="var(--font-mono), monospace" font-size="8" fill="#9D5048">文案待情节定稿</text>
+
+        <line x1="822" y1="130" x2="850" y2="130" stroke="#607887" stroke-width="1" marker-end="url(#sf-arrow)"/>
+
+        <!-- P05 -->
+        <rect x="852" y="56" width="184" height="148" rx="5" fill="#F5EBE9" stroke="#9D5048" stroke-width="1.25"/>
+        <text x="864" y="78" font-family="var(--font-mono), monospace" font-size="9" letter-spacing="0.14em" fill="#9D5048">CLUE</text>
+        <text x="864" y="102" font-family="var(--font-sans), sans-serif" font-size="15" font-weight="600" fill="#2A2E38">P05 卷面印章</text>
+        <text x="864" y="124" font-family="var(--font-mono), monospace" font-size="10" fill="#607887">2.0–2.5s · FOV 45–50</text>
+        <text x="864" y="144" font-family="var(--font-sans), sans-serif" font-size="11" fill="#2A2E38">印章 #9D5048 小面积</text>
+        <text x="864" y="164" font-family="var(--font-serif), serif" font-size="12" font-style="italic" fill="#607887">「印章还是湿的。」</text>
+        <text x="864" y="186" font-family="var(--font-mono), monospace" font-size="8" fill="#9D5048">文案待情节定稿</text>
+
+        <!-- Elbow to row 2 -->
+        <path d="M944 204 L944 236 L120 236 L120 268" fill="none" stroke="#607887" stroke-width="1" marker-end="url(#sf-arrow)"/>
+
+        <!-- Row 2: P06-P09 -->
+        <rect x="36" y="272" width="184" height="148" rx="5" fill="#EDEAE4" stroke="rgba(42,46,56,0.22)" stroke-width="1"/>
+        <text x="48" y="294" font-family="var(--font-mono), monospace" font-size="9" letter-spacing="0.14em" fill="#607887">APPROACH</text>
+        <text x="48" y="318" font-family="var(--font-sans), sans-serif" font-size="15" font-weight="600" fill="#2A2E38">P06 讲台方向</text>
+        <text x="48" y="340" font-family="var(--font-mono), monospace" font-size="10" fill="#607887">2.5–3.0s · FOV 70–74</text>
+        <text x="48" y="360" font-family="var(--font-sans), sans-serif" font-size="11" fill="#2A2E38">空场 · 大衣剪影将入</text>
+        <text x="48" y="380" font-family="var(--font-serif), serif" font-size="12" font-style="italic" fill="#607887">「他还站在那里。」</text>
+        <text x="48" y="402" font-family="var(--font-mono), monospace" font-size="8" fill="#9D5048">文案待情节定稿</text>
+
+        <line x1="220" y1="346" x2="248" y2="346" stroke="#607887" stroke-width="1" marker-end="url(#sf-arrow)"/>
+
+        <!-- P07 smile highlight -->
+        <rect x="250" y="272" width="220" height="148" rx="5" fill="#F5EBE9" stroke="#9D5048" stroke-width="2.25"/>
+        <text x="262" y="294" font-family="var(--font-mono), monospace" font-size="9" font-weight="500" letter-spacing="0.14em" fill="#9D5048">HIGHLIGHT · EXPRESSIVE</text>
+        <text x="262" y="318" font-family="var(--font-sans), sans-serif" font-size="16" font-weight="600" fill="#2A2E38">P07 监考微笑近景</text>
+        <text x="262" y="340" font-family="var(--font-mono), monospace" font-size="10" fill="#607887">3.0–4.0s · FOV 35–42 · 略仰</text>
+        <text x="262" y="360" font-family="var(--font-sans), sans-serif" font-size="11" fill="#2A2E38">眼镜反光 · 礼貌不到眼 · 非跳脸</text>
+        <text x="262" y="380" font-family="var(--font-serif), serif" font-size="12" font-style="italic" fill="#607887">「他在笑。眼睛没有。」</text>
+        <text x="262" y="402" font-family="var(--font-mono), monospace" font-size="8" fill="#9D5048">文案待情节定稿</text>
+
+        <line x1="470" y1="346" x2="498" y2="346" stroke="#607887" stroke-width="1" marker-end="url(#sf-arrow)"/>
+
+        <!-- P08 -->
+        <rect x="500" y="272" width="200" height="148" rx="5" fill="#EDEAE4" stroke="rgba(42,46,56,0.22)" stroke-width="1"/>
+        <text x="512" y="294" font-family="var(--font-mono), monospace" font-size="9" letter-spacing="0.14em" fill="#607887">VO LANDING</text>
+        <text x="512" y="318" font-family="var(--font-sans), sans-serif" font-size="15" font-weight="600" fill="#2A2E38">P08 独白 · 铃未响</text>
+        <text x="512" y="340" font-family="var(--font-mono), monospace" font-size="10" fill="#607887">2.5–3.5s · FOV 50–55</text>
+        <text x="512" y="360" font-family="var(--font-sans), sans-serif" font-size="11" fill="#2A2E38">计时器暗位 · 金属可点缀</text>
+        <text x="512" y="380" font-family="var(--font-serif), serif" font-size="12" font-style="italic" fill="#607887">「铃……还没响。」</text>
+        <text x="512" y="402" font-family="var(--font-mono), monospace" font-size="8" fill="#9D5048">文案待情节定稿</text>
+
+        <line x1="700" y1="346" x2="728" y2="346" stroke="#607887" stroke-width="1" marker-end="url(#sf-arrow)"/>
+
+        <!-- P09 -->
+        <rect x="730" y="272" width="214" height="148" rx="5" fill="#E8ECEF" stroke="#607887" stroke-width="1.5"/>
+        <text x="742" y="294" font-family="var(--font-mono), monospace" font-size="9" letter-spacing="0.14em" fill="#607887">HANDOFF</text>
+        <text x="742" y="318" font-family="var(--font-sans), sans-serif" font-size="15" font-weight="600" fill="#2A2E38">P09 淡出进 B0</text>
+        <text x="742" y="340" font-family="var(--font-mono), monospace" font-size="10" fill="#607887">1.5–2.5s · eye≈1.62</text>
+        <text x="742" y="360" font-family="var(--font-sans), sans-serif" font-size="11" fill="#2A2E38">电影机 → 玩家观察窗</text>
+        <text x="742" y="380" font-family="var(--font-serif), serif" font-size="12" font-style="italic" fill="#607887">「先别动。」</text>
+        <text x="742" y="402" font-family="var(--font-mono), monospace" font-size="8" fill="#9D5048">文案待情节定稿</text>
+
+        <!-- Relation to S01-S05 -->
+        <rect x="36" y="456" width="1008" height="88" rx="5" fill="#EDEAE4" stroke="rgba(42,46,56,0.14)" stroke-width="1"/>
+        <text x="52" y="484" font-family="var(--font-mono), monospace" font-size="9" letter-spacing="0.14em" fill="#607887">RELATION · PLAYABLE ART</text>
+        <text x="52" y="508" font-family="var(--font-sans), sans-serif" font-size="13" font-weight="600" fill="#2A2E38">P 镜可复用教室空间，ID 独立 · 进游戏后验收仍用 S01–S05（勿把验收坐标改成电影镜）</text>
+        <text x="52" y="528" font-family="var(--font-mono), monospace" font-size="10" fill="#607887">S01 坐位讲台 · S02 门口廊角 · S03 柜后蹲 · S04 计时器近读 · S05 廊反看教室</text>
+
+        <!-- Legend -->
+        <line x1="36" y1="564" x2="1044" y2="564" stroke="rgba(42,46,56,0.12)" stroke-width="1"/>
+        <rect x="36" y="576" width="14" height="14" fill="#E4E9EC" stroke="#607887" stroke-width="2"/>
+        <text x="56" y="588" font-family="var(--font-mono), monospace" font-size="9" fill="#2A2E38">P01 雨窗</text>
+        <rect x="160" y="576" width="14" height="14" fill="#F4EEE4" stroke="#B78C48" stroke-width="2"/>
+        <text x="180" y="588" font-family="var(--font-mono), monospace" font-size="9" fill="#2A2E38">P03 标识</text>
+        <rect x="284" y="576" width="14" height="14" fill="#F5EBE9" stroke="#9D5048" stroke-width="2"/>
+        <text x="304" y="588" font-family="var(--font-mono), monospace" font-size="9" fill="#2A2E38">P07 微笑</text>
+        <text x="420" y="588" font-family="var(--font-mono), monospace" font-size="9" fill="#607887">无阴影 · 无 Alert UI · 无跳脸开场</text>
+      </svg>
+    </div>
+  </div>
+</body>
+</html>

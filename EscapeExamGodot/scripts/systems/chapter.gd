@@ -2,6 +2,10 @@ extends Node3D
 
 func _ready() -> void:
 	Game.boot(self)
+	# V2 画面域自注册（VisualMood 只做环境/灯光/后期/氛围，不碰玩法状态）。
+	var mood := preload("res://scripts/systems/visual_mood.gd").new()
+	mood.name = "VisualMood"
+	add_child(mood)
 
 func reset_world() -> void:
 	for door in get_tree().get_nodes_in_group("doors"):

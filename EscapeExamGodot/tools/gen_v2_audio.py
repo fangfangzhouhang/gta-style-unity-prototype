@@ -191,6 +191,27 @@ def drone_loop():
     return normalize(out, 0.4)
 
 
+def chalk():
+    # 粉笔落地（集成期补入，参数与集成时的一次性合成一致，种子独立可复现）：
+    # 脆响 = 宽带噪声快衰减（exp -55/s, ×0.5）+ 190 Hz 软敲（exp -30/s, ×0.25）；
+    # 70 ms 后一次更弱的二次弹跳（噪声 exp -70/s ×0.18 + 170 Hz exp -40/s ×0.08）；
+    # 硬钳 ±0.55，不做 normalize。总长 0.22 s。
+    rng = random.Random(20261102)
+    dur = 0.22
+    n = int(SR * dur)
+    out = [0.0] * n
+    for i in range(n):
+        t = i / SR
+        noise = rng.uniform(-1, 1) * math.exp(-t * 55) * 0.5
+        tap = math.sin(2 * math.pi * 190 * t) * math.exp(-t * 30) * 0.25
+        b = 0.0
+        if t > 0.07:
+            tb = t - 0.07
+            b = rng.uniform(-1, 1) * math.exp(-tb * 70) * 0.18 + math.sin(2 * math.pi * 170 * tb) * math.exp(-tb * 40) * 0.08
+        out[i] = max(-0.55, min(0.55, noise + tap + b))
+    return out
+
+
 def main():
     out_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "assets", "audio")
     if "--out" in sys.argv:
@@ -202,6 +223,7 @@ def main():
     write_wav(os.path.join(out_dir, "pulse_loop.wav"), pulse_loop())
     write_wav(os.path.join(out_dir, "tension_strings.wav"), tension_strings())
     write_wav(os.path.join(out_dir, "drone_loop.wav"), drone_loop())
+    write_wav(os.path.join(out_dir, "chalk.wav"), chalk())
 
 
 if __name__ == "__main__":

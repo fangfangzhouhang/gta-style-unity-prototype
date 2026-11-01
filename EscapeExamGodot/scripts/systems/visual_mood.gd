@@ -8,8 +8,9 @@ extends Node
 ## 3. 后期链：CanvasLayer + 全屏 ColorRect（post_process.gdshader），暗角/颗粒/色差由 tension 驱动。
 ## 4. 动态氛围：教室西窗光柱浮尘 + 窗外（庭院方向）雨幕，GPUParticles3D 代码创建。
 ##
-## tension 自算口径与音频域一致：教师与玩家的直线距离 + 教师状态（state 字符串）。
-## 不依赖其他 agent 的文件；教师未上场（不可见）时 tension 回落到基线。
+## tension 来源（集成后）：游戏态下优先消费 Director 的 teacher.get_tension()
+## （全游戏统一张力轴，见 _update_tension 集成段）；不在场时回落本域自算
+## （教师与玩家直线距离 + 教师状态），教师未上场时回落到基线。
 ## 所有数值均为初值，待 Forward+ 真机同机位校准（见 docs/v2/VISUAL_V2.md）。
 
 @export var post_enabled := true ## 后期链总开关（无障碍：可关暗角/色差/颗粒）

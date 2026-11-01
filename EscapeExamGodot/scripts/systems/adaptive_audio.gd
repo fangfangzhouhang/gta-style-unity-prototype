@@ -1,8 +1,9 @@
 extends Node
 ## AdaptiveAudio — V2 自适应张力音频层（由 Ambience 在 _ready 自注册创建）。
 ##
-## 自己算 tension，不依赖其他 agent 的 Director（集成期可改喂外部 tension，
-## 只需外部调用 set_external_tension(v) 并置 _external = true，本层即停自算）。
+## tension 来源（集成后）：游戏态下由 Director 接管（_process 中每帧
+## set_external_tension(teacher.get_tension())，全游戏统一一根张力轴）；
+## Director 不在场时回落本层自算（距离+同房间+教师 state+玩家速度）。
 ##
 ## 输入：教师↔玩家欧氏距离 + 同房间加权（Game.acoustics.room_at）、
 ##       Game.teacher.state（chase/suspicious 权重最高）、玩家奔跑/速度。

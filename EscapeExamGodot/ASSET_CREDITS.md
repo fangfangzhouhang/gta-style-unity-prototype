@@ -84,6 +84,7 @@
 | `assets/audio/pulse_loop.wav` | 追击脉冲循环（4.0 s 无缝，55 Hz 正弦脉冲 1 拍/s，PCM，峰值 0.50） | 自适应音乐 pulse 层（tension>0.25） |
 | `assets/audio/tension_strings.wav` | 弦乐擦弦张力循环（8.0 s 无缝，带通噪声+0.25 Hz 颤音，交叉淡化成环，PCM，峰值 0.34） | 自适应音乐 strings 层（tension>0.5） |
 | `assets/audio/drone_loop.wav` | 低频氛围嗡鸣（8.0 s 无缝，55/82.5/110/165 Hz 整周期叠加，PCM，峰值 0.40） | 自适应音乐 drone 常底层 |
+| `assets/audio/chalk.wav` | 粉笔落地（0.22 s，宽带噪声脆响+190 Hz 软敲+70 ms 二次弹跳，硬钳 0.55；集成期补入 `tools/gen_v2_audio.py` 的 `chalk()`，种子 20261102，逐字节可复现，MD5 1fa90fe1…） | 粉笔投掷落地声，kind="chalk"（集成提交补登记，回应 QA 审计中级问题 1） |
 
 `.import` 约定：三个循环素材 loop_mode=1 且 compress/mode=0（PCM，沿用 2026-10-28 床素材的 Windows 播放硬化结论）；heartbeat/keys 为短 one-shot。
 

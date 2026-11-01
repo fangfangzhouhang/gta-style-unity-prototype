@@ -11,7 +11,8 @@ const CLIPS := {
 	"notice": preload("res://assets/audio/notice.wav"),
 	"broadcast": preload("res://assets/audio/chime.wav"),
 	# V2 新增 kind（tools/gen_v2_audio.py 程序合成）：
-	# keys = 教师钥匙串签名（AdaptiveAudio 节流发射，source_id="teacher"）；
+	# keys = 教师钥匙串签名（AdaptiveAudio 节流发射 + prologue P06 一次性节拍发射，
+	# 两处均为 source_id="teacher"，不触发教师听觉；QA 审计低级问题已据实更正本注释）；
 	# heartbeat = 心跳 lub-dub（注册备用，AdaptiveAudio 默认走自己的播放器）。
 	"keys": preload("res://assets/audio/keys.wav"),
 	"heartbeat": preload("res://assets/audio/heartbeat.wav"),

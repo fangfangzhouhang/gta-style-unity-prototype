@@ -12,6 +12,9 @@ var gate
 var acoustics
 var ui
 var mode := "title"
+## 粉笔随身计数（V2）：上限 CHALK_MAX，不入存档（被抓/读档按 0 或随身值处理，见 PLOT_V2）。
+const CHALK_MAX := 2
+var chalk_count := 0
 var facts: Dictionary = {}
 var progress: Dictionary = {}
 var checkpoint := "classroom"
@@ -36,8 +39,10 @@ func _ready() -> void:
 	load_settings()
 
 func _register_inputs() -> void:
+	# V2 按键：Q/E 改为探头（arm 让出 Q → R）；E 与 interact 同键，轻点仍是交互、按住才是探头。
 	var keys = {"forward": KEY_W, "back": KEY_S, "left": KEY_A, "right": KEY_D,
-		"sprint": KEY_SHIFT, "crouch": KEY_CTRL, "interact": KEY_E, "arm": KEY_Q,
+		"sprint": KEY_SHIFT, "crouch": KEY_CTRL, "interact": KEY_E, "arm": KEY_R,
+		"lean_left": KEY_Q, "lean_right": KEY_E,
 		"pause_game": KEY_ESCAPE, "journal": KEY_TAB, "screenshot": KEY_F8}
 	for action in keys:
 		if not InputMap.has_action(action):
@@ -49,6 +54,10 @@ func _register_inputs() -> void:
 	var click := InputEventMouseButton.new()
 	click.button_index = MOUSE_BUTTON_LEFT
 	InputMap.action_add_event("place", click)
+	InputMap.add_action("throw")
+	var throw_click := InputEventMouseButton.new()
+	throw_click.button_index = MOUSE_BUTTON_RIGHT
+	InputMap.action_add_event("throw", throw_click)
 
 func boot(level: Node3D) -> void:
 	world = level
@@ -59,6 +68,17 @@ func boot(level: Node3D) -> void:
 	acoustics = level.get_node("Acoustics")
 	ui = level.get_node("HUD")
 	player.camera.fov = view_fov
+	# V2 自注册（情节/机制域）：红笔标记系统 + 讲台粉笔生成器，不改场景文件。
+	var red_marks := Node3D.new()
+	red_marks.name = "RedMarks"
+	red_marks.set_script(load("res://scripts/systems/red_marks.gd"))
+	level.add_child(red_marks)
+	var chalk_spawner := RigidBody3D.new()
+	chalk_spawner.name = "ChalkSpawner"
+	chalk_spawner.set_script(load("res://scripts/props/chalk.gd"))
+	chalk_spawner.set("role", "spawner")
+	chalk_spawner.position = Vector3(-6.5, 0.9, -6.65)  # 讲台面（计时器同台，实测自 chapter_01.tscn）
+	level.add_child(chalk_spawner)
 	set_mode("title")
 	trace("boot", {"build": build_id, "renderer": RenderingServer.get_current_rendering_method()})
 
@@ -120,6 +140,7 @@ func start_new() -> void:
 	facts.clear()
 	progress = _default_progress()
 	checkpoint = "classroom"
+	chalk_count = 0
 	caught_count = 0
 	elapsed = 0
 	_summon_remaining = -1.0

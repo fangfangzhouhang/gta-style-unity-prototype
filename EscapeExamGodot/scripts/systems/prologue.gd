@@ -35,6 +35,7 @@ const SHOTS: Array[Dictionary] = [
 	# P06 走道中景缓推向讲台剪影
 	{"id": "P06", "duration": 2.8, "eye": Vector3(-6.50, 1.62, -1.35), "look": Vector3(-6.50, 1.55, -6.55),
 		"eye_end": Vector3(-6.50, 1.60, -1.85), "look_end": Vector3(-6.50, 1.58, -6.55), "fov": 72.0, "fov_end": 70.0,
+		"event": "door_shadow_keys",
 		"vo": "讲台那边站着人。他不坐。"},
 	# P07 ★ 缓推近微笑眼镜高度（略远起 → CAMS 近景）；非跳脸
 	{"id": "P07", "duration": 3.5, "eye": Vector3(-6.50, 1.72, -4.55), "look": Vector3(-6.50, 1.95, -6.34),
@@ -159,6 +160,8 @@ func _advance_shot() -> void:
 	if is_instance_valid(Game.ui) and Game.ui.has_method("set_prologue_vo"):
 		Game.ui.set_prologue_vo(str(shot.vo))
 	Game.trace("prologue_shot", {"id": str(shot.id), "vo": str(shot.vo), "dynamic": true})
+	if shot.has("event"):
+		_run_shot_event(str(shot.event))
 
 	_start_shot_motion(eye0, eye1, look0, look1, fov0, fov1, dur)
 	if str(shot.id) == "P07":
@@ -173,6 +176,16 @@ func _advance_shot() -> void:
 		Game.ui.set_prologue_fade(0.0)
 
 	_advancing = false
+
+func _run_shot_event(event_id: String) -> void:
+	match event_id:
+		"door_shadow_keys":
+			# V2 节拍（圣经 §5：压迫先于解释）：P06 讲台剪影即"门外身影"的本体，
+			# 钥匙声先于画面自考场门方向入耳。身影的独立视觉（门玻璃投影）留待视觉/集成域；
+			# 音色 kind="keys" 未注册时 acoustics 回退 door，真钥匙串音色待音频域补 CLIPS。
+			Game.trace("prologue_event", {"id": event_id, "shot": "P06"})
+			if is_instance_valid(Game.acoustics):
+				Game.acoustics.emit_sound(Vector3(-3.0, 1.6, 1.1), "keys", 10.0, "门外钥匙轻响", "prologue")
 
 func _start_shot_motion(eye0: Vector3, eye1: Vector3, look0: Vector3, look1: Vector3, fov0: float, fov1: float, dur: float) -> void:
 	_shot_tween = create_tween()

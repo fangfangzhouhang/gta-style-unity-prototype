@@ -8,6 +8,11 @@ extends CharacterBody3D
 @onready var camera: Camera3D = $Head/Camera3D
 @onready var body_shape: CollisionShape3D = $CollisionShape3D
 var crouched := false
+## 探头（V2）：lean_current in [-1, 1]，负=左探、正=右探，已按墙体可达分段收分。
+## 教师感知集成接口建议：暴露量取 abs(lean_current)（0=完全缩回，1=满探 0.35m），与 crouched 并列读取。
+const LEAN_OFFSET := 0.35
+const LEAN_ROLL := 0.18
+var lean_current := 0.0
 var target
 var step_distance := 0.0
 var last_position := Vector3.ZERO
@@ -30,6 +35,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event.is_action_pressed("arm"):
 		Game.timer.arm()
 		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed("throw"):
+		throw_chalk()
+		get_viewport().set_input_as_handled()
 	elif event.is_action_pressed("place") and Game.timer.held:
 		Game.timer.place_from_camera()
 		get_viewport().set_input_as_handled()
@@ -37,6 +45,7 @@ func _unhandled_input(event: InputEvent) -> void:
 func _physics_process(delta: float) -> void:
 	if Game.mode != "game" or input_locked: return
 	set_crouch(Input.is_action_pressed("crouch"))
+	_update_lean(delta)
 	var stick := Input.get_vector("left", "right", "forward", "back") + scripted_move
 	stick = stick.limit_length()
 	var direction := global_basis * Vector3(stick.x, 0, stick.y)
@@ -57,6 +66,47 @@ func _physics_process(delta: float) -> void:
 	if global_position.y < -3: Game.fall_recover()
 	if global_position.x > 8.8 and global_position.z > 0.5 and global_position.z < 3.4:
 		Game.finish()
+
+func _update_lean(delta: float) -> void:
+	var side := 0.0
+	if Input.is_action_pressed("lean_right"): side += 1.0
+	if Input.is_action_pressed("lean_left"): side -= 1.0
+	var allowed := 0.0
+	if side != 0.0:
+		allowed = side * _lean_clear_fraction(side)
+	lean_current = move_toward(lean_current, allowed, delta * 5.0)
+	$Head.position.x = lean_current * LEAN_OFFSET
+	$Head.rotation.z = -lean_current * LEAN_ROLL
+
+func _lean_clear_fraction(side: float) -> float:
+	# 目标点小球 shapecast（分段试探）：满探会穿墙时自动收分到最近的可达档。
+	var head_point := camera.global_position
+	var right := global_basis.x
+	for fraction in [1.0, 0.66, 0.33]:
+		var query := PhysicsShapeQueryParameters3D.new()
+		var ball := SphereShape3D.new()
+		ball.radius = 0.12
+		query.shape = ball
+		query.transform = Transform3D(Basis.IDENTITY, head_point + right * side * LEAN_OFFSET * fraction)
+		query.collision_mask = 1 | 16 | 32
+		query.exclude = [get_rid()]
+		if get_world_3d().direct_space_state.intersect_shape(query, 1).is_empty():
+			return fraction
+	return 0.0
+
+## 探头暴露接口（供教师感知集成）：0=缩回，1=满探。
+func lean_exposure() -> float:
+	return absf(lean_current)
+
+func throw_chalk() -> void:
+	if Game.chalk_count <= 0:
+		return
+	Game.chalk_count -= 1
+	var from := camera.global_position + (-camera.global_basis.z) * 0.35 + Vector3.DOWN * 0.05
+	var direction := -camera.global_basis.z
+	var chalk_script: GDScript = load("res://scripts/props/chalk.gd")
+	chalk_script.spawn_thrown(Game.world, from, direction)
+	Game.trace("chalk_thrown", {"count": Game.chalk_count})
 
 func set_crouch(wanted: bool) -> bool:
 	if wanted == crouched: return true
@@ -96,6 +146,9 @@ func update_target() -> void:
 func teleport_to(point: Vector3, yaw: float) -> void:
 	global_position = point
 	rotation.y = yaw
+	lean_current = 0.0
+	$Head.position.x = 0.0
+	$Head.rotation.z = 0.0
 	$Head.rotation.x = 0
 	velocity = Vector3.ZERO
 	last_position = point

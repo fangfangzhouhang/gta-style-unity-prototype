@@ -73,3 +73,17 @@
 
 上述 WAV 非第三方采样；后续若替换为录音/授权素材须在本表更新来源与许可。
 
+## V2 自适应音频素材（2026-11-02 · claude/v2-audio）
+
+生成工具：`tools/gen_v2_audio.py`（纯 Python stdlib 程序合成，固定种子可复现；参数注释在脚本内）。全部为本项目原创合成，**无第三方采样、无预训练模型权重**，状态：原型占位 / 可交付本机原型。
+
+| 路径 | 性质 | 用途 |
+| --- | --- | --- |
+| `assets/audio/heartbeat.wav` | 心跳 lub-dub 两拍 one-shot（0.85 s，58/52 Hz 正弦衰减包络，峰值 0.55） | AdaptiveAudio 按 BPM 计时重播 |
+| `assets/audio/keys.wav` | 钥匙串轻晃（0.38 s，5 次 3.1–6.2 kHz 金属 ping + 短噪声擦声，峰值 0.42） | 教师移动声音签名，kind="keys" |
+| `assets/audio/pulse_loop.wav` | 追击脉冲循环（4.0 s 无缝，55 Hz 正弦脉冲 1 拍/s，PCM，峰值 0.50） | 自适应音乐 pulse 层（tension>0.25） |
+| `assets/audio/tension_strings.wav` | 弦乐擦弦张力循环（8.0 s 无缝，带通噪声+0.25 Hz 颤音，交叉淡化成环，PCM，峰值 0.34） | 自适应音乐 strings 层（tension>0.5） |
+| `assets/audio/drone_loop.wav` | 低频氛围嗡鸣（8.0 s 无缝，55/82.5/110/165 Hz 整周期叠加，PCM，峰值 0.40） | 自适应音乐 drone 常底层 |
+
+`.import` 约定：三个循环素材 loop_mode=1 且 compress/mode=0（PCM，沿用 2026-10-28 床素材的 Windows 播放硬化结论）；heartbeat/keys 为短 one-shot。
+

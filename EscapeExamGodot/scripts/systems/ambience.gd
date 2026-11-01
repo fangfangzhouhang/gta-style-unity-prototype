@@ -7,6 +7,7 @@ const STING := preload("res://assets/audio/catch_sting.wav")
 
 const AMBIENT_BUS := "Ambient"
 const STING_BUS := "Sting"
+const OCCLUDED_BUS := "SFXOccluded"
 const BED_RAIN_DB := -9.0
 const BED_HUM_DB := -13.0
 const AMBIENT_NORMAL_DB := 0.0
@@ -16,6 +17,8 @@ const BED_FADE_OUT_DB := -40.0
 var _rain: AudioStreamPlayer
 var _hum: AudioStreamPlayer
 var _sting: AudioStreamPlayer
+## V2 自适应张力层（adaptive_audio.gd），_ready 自注册为本节点子节点。
+var _adaptive: Node
 var _duck_tw: Tween
 var _bed_tw: Tween
 var _quiet := false
@@ -48,6 +51,13 @@ func _ready() -> void:
 	_sting.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child(_sting)
 	_clear_bus_mute_flags()
+	# V2：自适应张力音频层自注册（不改 project.godot / 场景）。quiet 状态
+	# 由 set_loop_quiet 转发 + 它自身轮询 _quiet 兜底，两者缺一不可。
+	_adaptive = preload("res://scripts/systems/adaptive_audio.gd").new()
+	_adaptive.name = "AdaptiveAudio"
+	add_child(_adaptive)
+	if _quiet and _adaptive.has_method("set_quiet"):
+		_adaptive.set_quiet(true)
 	# 仅玩法/标题后开床；测试模式也开以便总线存在，但不依赖 AI。
 	if not _quiet:
 		if not _rain.playing:
@@ -56,18 +66,48 @@ func _ready() -> void:
 			_hum.play()
 
 func _ensure_buses() -> void:
-	# 若项目未挂 layout，运行时补 Music / Ambient / SFX / Sting。
-	for bus_name in ["Music", AMBIENT_BUS, "SFX", STING_BUS]:
+	# 若项目未挂 layout，运行时补 Music / Ambient / SFX / Sting / SFXOccluded。
+	for bus_name in ["Music", AMBIENT_BUS, "SFX", STING_BUS, OCCLUDED_BUS]:
 		if AudioServer.get_bus_index(bus_name) == -1:
 			AudioServer.add_bus()
 			var idx := AudioServer.bus_count - 1
 			AudioServer.set_bus_name(idx, bus_name)
 			AudioServer.set_bus_send(idx, "Master")
+	_ensure_occluded_effects()
 	_clear_bus_mute_flags()
+
+func _ensure_occluded_effects() -> void:
+	## SFXOccluded：隔墙/隔门声的统一去向——低通 ~800 Hz 砍掉高频细节，
+	## 再叠一层轻混响（wet 克制，只是"隔了一层"的空间感，不是大厅回声）。
+	## 幂等：已有同类效果不重复添加（layout 将来若内置同名总线与效果，
+	## 这里按类型查重后跳过）。
+	var idx := AudioServer.get_bus_index(OCCLUDED_BUS)
+	if idx < 0:
+		return
+	var has_lp := false
+	var has_rev := false
+	for e in AudioServer.get_bus_effect_count(idx):
+		var eff := AudioServer.get_bus_effect(idx, e)
+		if eff is AudioEffectLowPassFilter:
+			has_lp = true
+		elif eff is AudioEffectReverb:
+			has_rev = true
+	if not has_lp:
+		var lp := AudioEffectLowPassFilter.new()
+		lp.cutoff_hz = 800.0
+		lp.resonance = 0.4
+		AudioServer.add_bus_effect(idx, lp)
+	if not has_rev:
+		var rev := AudioEffectReverb.new()
+		rev.room_size = 0.55
+		rev.damping = 0.65
+		rev.wet = 0.18
+		rev.dry = 1.0
+		AudioServer.add_bus_effect(idx, rev)
 
 func _clear_bus_mute_flags() -> void:
 	## Harden: Ambient/SFX must not stay muted/solo after duck or bad local_data.
-	for bus_name in [AMBIENT_BUS, "SFX", STING_BUS, "Master"]:
+	for bus_name in [AMBIENT_BUS, "SFX", STING_BUS, OCCLUDED_BUS, "Music", "Master"]:
 		var i := AudioServer.get_bus_index(bus_name)
 		if i < 0:
 			continue
@@ -76,7 +116,10 @@ func _clear_bus_mute_flags() -> void:
 
 func set_loop_quiet(quiet: bool) -> void:
 	## Broadcast 停播 → 床真正安静（淡出后 stop）；恢复则重开循环床。
+	## V2：自适应层（脉冲/擦弦/心跳/drone）同样必须静默——"真安静"不许打折。
 	_quiet = quiet
+	if is_instance_valid(_adaptive) and _adaptive.has_method("set_quiet"):
+		_adaptive.set_quiet(quiet)
 	if _catching:
 		return
 	if quiet:
@@ -166,6 +209,8 @@ func reset_audio_state() -> void:
 	if i >= 0:
 		AudioServer.set_bus_volume_db(i, AMBIENT_NORMAL_DB)
 	_quiet = Game.progress.get("loop_stopped", false) if is_instance_valid(Game) else false
+	if is_instance_valid(_adaptive) and _adaptive.has_method("set_quiet"):
+		_adaptive.set_quiet(_quiet)
 	if _quiet:
 		_rain.stop()
 		_hum.stop()

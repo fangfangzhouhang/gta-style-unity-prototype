@@ -121,6 +121,9 @@ func can_see_player() -> bool:
 	if not is_instance_valid(Game.player): return false
 	var eye := global_position + Vector3.UP * 1.9
 	var target_point: Vector3 = Game.player.global_position + Vector3.UP * (0.83 if Game.player.crouched else 1.36)
+	# 集成（v2-integration）：探头时视线目标点随玩家头部横移（情节域 lean 接口）。
+	if "lean_current" in Game.player:
+		target_point += Game.player.global_basis.x * float(Game.player.get("lean_current")) * 0.35
 	var offset := target_point - eye
 	if offset.length() > sight_range: return false
 	if offset.length() > 1.2 and -global_basis.z.dot(offset.normalized()) < cos(deg_to_rad(half_fov)): return false
@@ -222,6 +225,11 @@ func _exposure_rate() -> float:
 		posture_factor = 1.3
 	elif flat_speed < 0.2:
 		posture_factor = 0.45
+	# 集成（v2-integration）：探头只露头，警觉积累按探出比例打折（满探=1.0，不探不打折）。
+	if Game.player.has_method("lean_exposure"):
+		var lean_exposure := float(Game.player.lean_exposure())
+		if lean_exposure > 0.05:
+			posture_factor *= 0.45 + 0.55 * lean_exposure
 	return clampf(distance_factor * angle_factor * posture_factor, 0.15, 2.2)
 
 func _physics_process(delta: float) -> void:

@@ -58,6 +58,12 @@ func _update_tension(delta: float) -> void:
 	if debug_force_tension >= 0.0:
 		tension = clampf(debug_force_tension, 0.0, 1.0)
 		return
+	# 集成（v2-integration）：Director 在场时用全游戏统一的 tension 轴，本域自算只作兜底。
+	if is_instance_valid(Game.teacher) and Game.teacher.has_method("get_tension") and Game.mode == "game":
+		var ext := clampf(float(Game.teacher.get_tension()), 0.0, 1.0)
+		var ext_rate := 2.2 if ext > tension else 0.55
+		tension = clampf(lerpf(tension, ext, clampf(delta * ext_rate, 0.0, 1.0)), 0.0, 1.0)
+		return
 	var target := 0.08
 	var teacher: Node3D = Game.teacher
 	var player: Node3D = Game.player

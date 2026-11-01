@@ -14,7 +14,9 @@ const CLIPS := {
 	# keys = 教师钥匙串签名（AdaptiveAudio 节流发射，source_id="teacher"）；
 	# heartbeat = 心跳 lub-dub（注册备用，AdaptiveAudio 默认走自己的播放器）。
 	"keys": preload("res://assets/audio/keys.wav"),
-	"heartbeat": preload("res://assets/audio/heartbeat.wav")
+	"heartbeat": preload("res://assets/audio/heartbeat.wav"),
+	# chalk = 粉笔落地（集成期补注册，情节域投掷物发射；合成参数见集成提交说明）。
+	"chalk": preload("res://assets/audio/chalk.wav")
 }
 
 # --- V2 播放侧：AudioStreamPlayer3D 池化（只改播放，不改传播/听觉契约）---
@@ -24,7 +26,7 @@ const POOL_SIZE := 12
 const KIND_PRIORITY := {
 	"teacher_step": 3, "teacher_step_soft": 3, "notice": 3,
 	"timer": 2, "gate": 2, "broadcast": 2,
-	"door": 1, "keys": 1, "heartbeat": 1,
+	"door": 1, "keys": 1, "heartbeat": 1, "chalk": 1,
 	"player_step": 0, "tick": 0
 }
 var _pool: Array[AudioStreamPlayer3D] = []

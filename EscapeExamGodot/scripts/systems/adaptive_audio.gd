@@ -105,6 +105,11 @@ func _process(delta: float) -> void:
 		for p in [_pulse, _strings, _drone]:
 			if not p.playing:
 				p.play()
+	# 集成（v2-integration）：Director 在场时接管 tension，统一全游戏张力轴；离开游戏态则释放回自算。
+	if is_instance_valid(Game.teacher) and Game.teacher.has_method("get_tension") and Game.mode == "game":
+		set_external_tension(float(Game.teacher.get_tension()))
+	elif _external:
+		clear_external_tension()
 	if not _external:
 		_update_tension(delta)
 	_update_layers(delta)

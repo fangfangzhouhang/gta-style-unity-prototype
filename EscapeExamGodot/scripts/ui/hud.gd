@@ -30,7 +30,9 @@ func _process(delta: float) -> void:
 	$Sound.visible = sound_time > 0 and Game.mode == "game" and Game.sound_captions
 	if is_instance_valid(Game.timer):
 		var clock = Game.timer
-		$Inventory.text = ("计时器在手  ·  Q 上弦/停止  ·  左键放下" if clock.held else ("计时器已放置  ·  靠近按 Q 上弦" if clock.owned else "WASD 移动  ·  鼠标观察  ·  E 调查"))
+		$Inventory.text = ("计时器在手  ·  R 上弦/停止  ·  左键放下" if clock.held else ("计时器已放置  ·  靠近按 R 上弦" if clock.owned else "WASD 移动  ·  鼠标观察  ·  E 调查  ·  Q/E 按住探头"))
+		if Game.chalk_count > 0:
+			$Inventory.text += "  ·  粉笔 ×%d（右键扔出声响）" % Game.chalk_count
 		if clock.state != "idle": $Inventory.text += "  |  " + ("响铃 " if clock.state == "ringing" else "预备 ") + str(ceili(maxf(0, clock.remaining)))
 
 func show_mode(mode: String) -> void:

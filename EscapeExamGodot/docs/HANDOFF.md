@@ -1,4 +1,4 @@
-# HANDOFF — 《逃离考场·最后一遍铃》开发交接（2026-11-02）
+# HANDOFF — 《逃离考场·最后一遍铃》开发交接（2026-11-02 首版，2026-11-03 更新推送状态）
 
 > 给接手本项目的 AI 编程助手（Claude Code / Codex 等）：读完这份文档，你就拥有与上一任
 > 助手（Muse）相同的项目上下文。先读仓库根 `AGENTS.md` 与 `EscapeExamGodot/AGENTS.md`
@@ -22,9 +22,11 @@ Godot 4.7.2 第一人称微恐潜行游戏：学生在考场用延时计时器 +
 - **当前最新：`claude/v2-model` @e9f8712**（在集成之上完成 V3 教师建模），从这里继续。
 - 其余 Muse/* 分支是 V2 的分域工作分支与 QA 分支（v2-teacher-ai / v2-audio / v2-visual /
   v2-story / v2-qa），内容均已合入集成，不要再往这些分支提交。
-- **推送状态：全部 Muse/* 分支尚未 push 到 GitHub**（上一任助手所在机器无 git 凭据）。
-  ark 会通过 bundle 文件（escape-exam-v2.bundle，含全部 7 个分支）fetch 后自行 push，
-  或已另行处理；接手时先 `git fetch` + `git branch -a` 核对远端实际状态，不要假设。
+- **推送状态：全部 7 个 Muse/* 分支已于 2026-11-03 推送到 GitHub 远端**（由上一任
+  助手经 ark 的游戏本完成：其所在 VM 无 GitHub 凭据，借游戏本的登录态 push；
+  含完整提交历史，不是快照）。接手第一步：在本机 clone 里 `git fetch origin`，
+  然后 `git checkout claude/v2-model` 即为最新工作线。若本地还留有
+  escape-exam-v2.bundle，那是离线备份，已不需要。
 
 ## 设计口径（不可自行推翻，要改先问 ark）
 

@@ -19,14 +19,14 @@ Godot 4.7.2 第一人称微恐潜行游戏：学生在考场用延时计时器 +
   不得用 main 旧基线覆盖 feat 的开发成果。**
 - 开发基线：`feat/chapter01-module-pass` @895f985（原自动验收 95/95，但人工体验 NOT PASS、无人工盲测）。
 - V2 集成：`claude/v2-redesign` @f4b2ee5（四域合入 + QA 报告）。
-- **当前最新：`claude/v2-model` @e9f8712**（在集成之上完成 V3 教师建模），从这里继续。
-- 其余 Muse/* 分支是 V2 的分域工作分支与 QA 分支（v2-teacher-ai / v2-audio / v2-visual /
+- **当前最新：`claude/v2-model`（V3 建模提交 e9f8712，其上还有若干文档提交，tip 以 git log 为准）**（在集成之上完成 V3 教师建模），从这里继续。
+- 其余 claude/v2-* 分支是 V2 的分域工作分支与 QA 分支（v2-teacher-ai / v2-audio / v2-visual /
   v2-story / v2-qa），内容均已合入集成，不要再往这些分支提交。
-- **推送状态（2026-11-03 晚）：7 个 Muse/* 分支（含完整提交历史）已经上一任助手
+- **推送状态（2026-11-03 晚）：7 个 claude/v2-* 分支（含完整提交历史）已经上一任助手
   送进游戏本的本地 clone（`D:\game\gta-style-unity-prototype`），只差最后一步 push：**
   该机 Git 凭据管理器里没存 GitHub 登录，远程无头会话弹不出登录窗，必须在交互终端
   跑一次（首次会弹浏览器登录）：
-  `git push origin 'refs/heads/Muse/*:refs/heads/Muse/*'`
+  `git push origin 'refs/heads/claude/*:refs/heads/claude/*'`
   ——由 ark 本人跑，或由你（Codex 在桌面交互会话里）代跑，效果相同。推完后接手
   第一步：`git fetch origin` → `git checkout claude/v2-model`，即是最新工作线。
   （上一任助手所在 VM 无 GitHub 凭据、其 SSH 密钥未获 ark 的 GitHub 账号授权，

@@ -22,11 +22,16 @@ Godot 4.7.2 第一人称微恐潜行游戏：学生在考场用延时计时器 +
 - **当前最新：`claude/v2-model` @e9f8712**（在集成之上完成 V3 教师建模），从这里继续。
 - 其余 Muse/* 分支是 V2 的分域工作分支与 QA 分支（v2-teacher-ai / v2-audio / v2-visual /
   v2-story / v2-qa），内容均已合入集成，不要再往这些分支提交。
-- **推送状态：全部 7 个 Muse/* 分支已于 2026-11-03 推送到 GitHub 远端**（由上一任
-  助手经 ark 的游戏本完成：其所在 VM 无 GitHub 凭据，借游戏本的登录态 push；
-  含完整提交历史，不是快照）。接手第一步：在本机 clone 里 `git fetch origin`，
-  然后 `git checkout claude/v2-model` 即为最新工作线。若本地还留有
-  escape-exam-v2.bundle，那是离线备份，已不需要。
+- **推送状态（2026-11-03 晚）：7 个 Muse/* 分支（含完整提交历史）已经上一任助手
+  送进游戏本的本地 clone（`D:\game\gta-style-unity-prototype`），只差最后一步 push：**
+  该机 Git 凭据管理器里没存 GitHub 登录，远程无头会话弹不出登录窗，必须在交互终端
+  跑一次（首次会弹浏览器登录）：
+  `git push origin 'refs/heads/Muse/*:refs/heads/Muse/*'`
+  ——由 ark 本人跑，或由你（Codex 在桌面交互会话里）代跑，效果相同。推完后接手
+  第一步：`git fetch origin` → `git checkout claude/v2-model`，即是最新工作线。
+  （上一任助手所在 VM 无 GitHub 凭据、其 SSH 密钥未获 ark 的 GitHub 账号授权，
+  直推与连接器快照推送都走不通，才用的这个借道方案；本地若还留有
+  escape-exam-v2.bundle，那是离线备份。）
 
 ## 设计口径（不可自行推翻，要改先问 ark）
 
